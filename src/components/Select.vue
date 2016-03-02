@@ -246,7 +246,9 @@
       },
 
       typeAheadSelect() {
+        if( this.filteredOptions[ this.typeAheadPointer ] ) {
         this.select( this.filteredOptions[ this.typeAheadPointer ] );
+        }
         this.search = "";
       },
 
