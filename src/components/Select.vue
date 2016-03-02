@@ -153,7 +153,7 @@
       },
       searchable: {
         type: Boolean,
-        default: true
+        default: false
       },
       multiple: {
         type: Boolean,
@@ -246,8 +246,7 @@
       },
 
       typeAheadSelect() {
-        var option = this.filteredOptions[ this.typeAheadPointer ];
-        this.select( this.getOptionValue(option) );
+        this.select( this.filteredOptions[ this.typeAheadPointer ] );
         this.search = "";
       },
 

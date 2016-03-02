@@ -1,9 +1,11 @@
 # vue-select
 
-Rather than bringing in jQuery just to use Select2 or Chosen, this VueJS component provides similar functionality without the extra overhead of jQuery.
+Rather than bringing in jQuery just to use Select2 or Chosen, this Vue.js component provides similar functionality without the extra overhead of jQuery.
+
 
 #### Features
-- typeahead auto-scompletion
+- bootstrap styling
+- typeahead auto-completion
 - options param accepts simple arrays, and arrays of objects: `['foo','bar']` or `[{label: 'Foo', value: 'foo'}, {label: 'Bar', value: 'bar'}]`
 
 
