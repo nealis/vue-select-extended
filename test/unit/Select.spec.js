@@ -33,6 +33,7 @@ describe('Select.vue', () => {
   //
   //   expect(vm.$children[0].$get('value')).toEqual({label: 'This is Foo', value: 'foo'})
   // })
+  // 
 
   it('can determine if the value prop is empty', () => {
     const vm = new Vue({
