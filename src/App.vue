@@ -54,7 +54,7 @@
           <label class="control-label">
             <input v-model="multiple" type="checkbox"> Multiple
           </label>
-          <span class="help-block">Equivalent to the <code>multiple</code> attribute to a <code>&#x3C;select&#x3E;</code></span>
+          <span class="help-block">Equivalent to the <code>multiple</code> attribute to a <code>&#x3C;select&#x3E;</code>. You'll want to clear any selections you have made before changing this option. It's not one that should be changed after render.</span>
         </div>
 
         <div class="form-group">
@@ -94,10 +94,10 @@ export default {
       // select: [{label: 'This is Foo', value: 'foo'}, {label: 'This is Bar', value: 'bar'}],
       select: null,
       placeholder: 'Choose a Country',
-      multiple: false,
+      multiple: true,
       maxHeight: '400px',
-      // options: require('./countries.js')
-      options: ['one','two','three']
+      options: require('./countries.js')
+      // options: ['one','two','three']
       // options: [{label: 'This is Foo', value: 'foo'}, {label: 'This is Bar', value: 'bar'}, {label: 'This is Baz', value: 'baz'}]
     }
   }

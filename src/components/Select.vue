@@ -117,7 +117,7 @@
           {{ placeholder }}
         </span>
 
-        <span class="alert alert-info" v-for="option in value">
+        <span class="alert alert-info" v-for="option in valueAsArray">
           {{ getOptionLabel(option) }}
           <button v-if="multiple" @click="select(option)" type="button" class="close">
             <span aria-hidden="true">&times;</span>
@@ -211,24 +211,25 @@
         }
       });
     },
-
-    watch: {
-      value (val, oldVal) {
-        // return this.$set('value', ['test'])
-      }
-    },
-
+    
     methods: {
-      select(v) {
-          if (this.value.indexOf(v) === -1) {
+      select(option) {
+          if (! this.isOptionSelected(option) ) {
             if (this.multiple) {
-              this.value.push(v)
+
+              // check if value is currently null/undefined/false
+              if( ! this.value ) {
+                  this.$set('value', [option])
+              } else {
+                this.value.push(option)
+              }
+
             } else {
-              this.value = [v]
+              this.value = option
             }
           } else {
             if (this.multiple) {
-              this.value.$remove(v)
+              this.value.$remove(option)
             }
           }
 
@@ -244,7 +245,7 @@
       },
 
       isOptionSelected( option ) {
-        if( this.multiple ) {
+        if( this.multiple && this.value ) {
           return this.value.indexOf(option) !== -1
         }
 
@@ -314,6 +315,16 @@
         }
 
         return true;
+      },
+
+      valueAsArray() {
+        if( this.multiple ) {
+          return this.value
+        } else if (this.value) {
+            return [this.value]
+        }
+
+        return []
       }
     }
 
