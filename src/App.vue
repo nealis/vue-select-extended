@@ -66,23 +66,16 @@
     <hr>
 
     <h3>Build Setup</h3>
-
-
-      <h5>install dependencies</h5>
-      <p><code>npm install</code></p>
-
-      <h5>serve with hot reload at localhost:8080</h5>
-      <p><code>npm run dev</code></p>
-
-      <h5>build for production with minification</h5>
-      <p><code>npm run build</code></p>
-
-      <h5>lint all *.js and *.vue files</h5>
-      <p><code>npm run lint</code></p>
-
-      <h5>run unit tests</h5>
-      <p><code>npm test</code></p>
-
+    <h5>install dependencies</h5>
+    <p><code>npm install</code></p>
+    <h5>serve with hot reload at localhost:8080</h5>
+    <p><code>npm run dev</code></p>
+    <h5>build for production with minification</h5>
+    <p><code>npm run build</code></p>
+    <h5>lint all *.js and *.vue files</h5>
+    <p><code>npm run lint</code></p>
+    <h5>run unit tests</h5>
+    <p><code>npm test</code></p>
 
   </div>
 </template>
@@ -99,9 +92,9 @@ export default {
   data() {
     return {
       // select: [{label: 'This is Foo', value: 'foo'}, {label: 'This is Bar', value: 'bar'}],
-      select: ['one'],
+      select: null,
       placeholder: 'Choose a Country',
-      multiple: true,
+      multiple: false,
       maxHeight: '400px',
       // options: require('./countries.js')
       options: ['one','two','three']

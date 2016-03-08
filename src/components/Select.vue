@@ -113,7 +113,7 @@
 <template>
   <div class="dropdown" :class="{open: open, }">
     <div v-el:toggle @click="toggleDropdown" class="btn dropdown-toggle clearfix" type="button">
-        <span class="form-control" v-if="! searchable && placeholder && ! value.length">
+        <span class="form-control" v-if="! searchable && placeholder && isValueEmpty">
           {{ placeholder }}
         </span>
 
@@ -137,13 +137,12 @@
           @blur="open = false"
           type="search"
           class="form-control"
-
           :placeholder="searchPlaceholder"
         >
     </div>
 
     <ul v-show="open" :transition="transition" :style="{ 'max-height': maxHeight }" class="dropdown-menu animated">
-      <li v-for="option in filteredOptions" :class="{ active: value.indexOf(option) !== -1, highlight: $index === typeAheadPointer }">
+      <li v-for="option in filteredOptions" :class="{ active: isOptionSelected(option), highlight: $index === typeAheadPointer }">
         <a @mousedown.prevent="select(option)">
           {{ getOptionLabel(option) }}
         </a>
@@ -160,7 +159,7 @@
 
     props: {
       value: {
-        type: Array,
+        // type: Array,
         twoway: true,
         required: true
       },
@@ -213,6 +212,12 @@
       });
     },
 
+    watch: {
+      value (val, oldVal) {
+        // return this.$set('value', ['test'])
+      }
+    },
+
     methods: {
       select(v) {
           if (this.value.indexOf(v) === -1) {
@@ -236,6 +241,14 @@
         // if( e.target == this.$els.toggle || e.target == this.$els.search ) {
           // this.open = !this.open
         // }
+      },
+
+      isOptionSelected( option ) {
+        if( this.multiple ) {
+          return this.value.indexOf(option) !== -1
+        }
+
+        return this.value === option;
       },
 
       getOptionValue( option ) {
@@ -285,30 +298,22 @@
     },
 
     computed: {
-      // selected() {
-      //   let foundItems = []
-      //   if (this.value && this.value.length) {
-      //     for (let item in this.value) {
-      //       if (typeof this.value[item] === "string") {
-      //         foundItems.push(this.value[item])
-      //       }
-      //
-      //       console.log(this.value[item])
-      //       // this.$log('value')
-      //     }
-      //   }
-      //
-      //   return foundItems
-      // },
-
       searchPlaceholder() {
-        if( ! this.value.length && this.placeholder ) {
+        if( this.isValueEmpty && this.placeholder ) {
           return this.placeholder;
         }
       },
 
       filteredOptions() {
         return this.$options.filters.filterBy(this.options, this.search)
+      },
+
+      isValueEmpty() {
+        if( this.value ) {
+          return ! this.value.length
+        }
+
+        return true;
       }
     }
 
