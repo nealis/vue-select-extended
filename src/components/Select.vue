@@ -1,10 +1,13 @@
 <style scoped>
+  .dropdown {
+    position: relative;
+  }
+
   .dropdown-toggle {
     display: block;
     padding: 0;
-    max-width: 100%;
     background: none;
-    text-align: left;
+    border: 1px solid rgba(60,60,60,.26);
   }
 
   .dropdown-toggle:hover,
@@ -27,7 +30,7 @@
 
   .dropdown-menu {
     margin: 0;
-    max-height: 400px;
+    width: 100%;
     overflow-y: scroll;
     border-top: none;
     border-color: #337ab7;
@@ -37,7 +40,7 @@
 
   .alert {
     margin: 0;
-    margin-left: .25em;
+    margin-left: 6px;
     padding: .25em;
   }
 
@@ -55,6 +58,7 @@
     width: 100%;
     background: none;
     position: relative;
+    box-shadow: none;
   }
 
   input[type=search]:focus {
@@ -67,8 +71,6 @@
 
   .dropdown-toggle:after {
     display: block;
-    /*width: 10px;
-    height: 10px;*/
     position: absolute;
     top: 10px;
     right: 10px;
@@ -79,7 +81,9 @@
     line-height: 1;
     -webkit-font-smoothing: antialiased;
     content: "\e114";
-    transition: all .25s;
+
+    transition: all 150ms cubic-bezier(1.000, -0.115, 0.975, 0.855);
+    transition-timing-function: cubic-bezier(1.000, -0.115, 0.975, 0.855);
   }
 
   .open .dropdown-toggle:after {
@@ -94,17 +98,22 @@
     cursor: pointer;
   }
 
-  .highlight a,
-  .active.highlight a {
+  .active a {
     background: rgba(50,50,50,.1);
     color: #333;
+  }
+
+  .highlight a,
+  li:hover a {
+    background: #337ab7;
+    color: #fff;
   }
 </style>
 
 <template>
   <div class="dropdown" :class="{open: open, }">
-    <div v-el:toggle @click="toggleDropdown" class="btn btn-default dropdown-toggle clearfix" type="button">
-        <span class="form-control" v-if="! searchable && placeholder && ! selected.length">
+    <div v-el:toggle @click="toggleDropdown" class="btn dropdown-toggle clearfix" type="button">
+        <span class="form-control" v-if="! searchable && placeholder && ! value.length">
           {{ placeholder }}
         </span>
 
@@ -116,22 +125,25 @@
         </span>
 
         <input
+          v-el:search
+          v-show="searchable"
+          v-model="search"
           @keydown.delete="maybeDeleteValue"
           @keydown.esc="onEscape"
           @keydown.up.prevent="typeAheadUp"
           @keydown.down.prevent="typeAheadDown"
           @keydown.enter.prevent="typeAheadSelect"
-          v-bind:placeholder="searchPlaceholder"
+          @focus="open = true"
+          @blur="open = false"
+          type="search"
           class="form-control"
-          :class="{inline: selected.length}"
-          v-el:search type="search"
-          v-show="searchable"
-          v-model="search"
+
+          :placeholder="searchPlaceholder"
         >
     </div>
 
-    <ul v-if="open" :style="{width: dropdownWidth + 'px'}" :transition="transition" class="dropdown-menu animated">
-      <li v-for="option in filteredOptions" :class="{ active: value.indexOf(option.value) !== -1, highlight: $index === typeAheadPointer }">
+    <ul v-show="open" :transition="transition" :style="{ 'max-height': maxHeight }" class="dropdown-menu animated">
+      <li v-for="option in filteredOptions" :class="{ active: value.indexOf(option) !== -1, highlight: $index === typeAheadPointer }">
         <a @mousedown.prevent="select(option)">
           {{ getOptionLabel(option) }}
         </a>
@@ -148,8 +160,13 @@
 
     props: {
       value: {
+        type: Array,
         twoway: true,
         required: true
+      },
+      maxHeight: {
+        type: String,
+        default: '400px'
       },
       searchable: {
         type: Boolean,
@@ -161,7 +178,7 @@
       },
       placeholder: {
         type: String,
-        default: null
+        default: ''
       },
       transition: {
         type: String,
@@ -216,9 +233,9 @@
       },
 
       toggleDropdown( e ) {
-        if( e.target == this.$els.toggle || e.target == this.$els.search ) {
-          this.open = !this.open
-        }
+        // if( e.target == this.$els.toggle || e.target == this.$els.search ) {
+          // this.open = !this.open
+        // }
       },
 
       getOptionValue( option ) {
@@ -247,7 +264,7 @@
 
       typeAheadSelect() {
         if( this.filteredOptions[ this.typeAheadPointer ] ) {
-        this.select( this.filteredOptions[ this.typeAheadPointer ] );
+          this.select( this.filteredOptions[ this.typeAheadPointer ] );
         }
         this.search = "";
       },
@@ -268,27 +285,26 @@
     },
 
     computed: {
-      selected() {
-        let foundItems = []
-        if (this.value.length) {
-          for (let item in this.value) {
-            if (typeof this.value[item] === "string") {
-              foundItems.push(this.value[item])
-            }
-          }
-        }
-
-        return foundItems
-      },
+      // selected() {
+      //   let foundItems = []
+      //   if (this.value && this.value.length) {
+      //     for (let item in this.value) {
+      //       if (typeof this.value[item] === "string") {
+      //         foundItems.push(this.value[item])
+      //       }
+      //
+      //       console.log(this.value[item])
+      //       // this.$log('value')
+      //     }
+      //   }
+      //
+      //   return foundItems
+      // },
 
       searchPlaceholder() {
         if( ! this.value.length && this.placeholder ) {
           return this.placeholder;
         }
-      },
-
-      dropdownWidth() {
-        return this.$els.toggle.offsetWidth
       },
 
       filteredOptions() {
