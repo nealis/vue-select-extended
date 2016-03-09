@@ -42,6 +42,12 @@
   #v-select.open .dropdown-menu {
     border-color: #4CC3D9;
   }
+
+  #output {
+    height: 200px;
+    border: none;
+    color: #404040;
+  }
 </style>
 
 <template>
@@ -68,7 +74,7 @@
 
         <div class="col-md-4">
           <!-- <h4>Output</h4> -->
-          <pre>{{ select | json }}</pre>
+          <pre id="output">{{ select | json }}</pre>
         </div>
       </div>
     </div>
