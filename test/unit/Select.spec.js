@@ -4,6 +4,21 @@ import Vue from 'vue'
 import vSelect from '../../src/components/Select.vue'
 
 describe('Select.vue', () => {
+
+  // it('sets open to true when search on focus and false on blur', () => {
+  //   const vm = new Vue({
+  //     template: '<div><v-select :value.sync="value"></v-select></div>',
+  //     components: { vSelect },
+  //     data: {
+  //       value: ['one'],
+  //       options: ['one','two','three']
+  //     }
+  //   }).$mount()
+  //
+  //   vm.$children[0].$els.search.focus()
+  //   expect(vm.$children[0].$get('open')).toEqual(true)
+  // })
+
   it('can accept an array with pre-selected values', () => {
     const vm = new Vue({
       template: '<div><v-select :value.sync="value"></v-select></div>',
@@ -33,7 +48,7 @@ describe('Select.vue', () => {
   //
   //   expect(vm.$children[0].$get('value')).toEqual({label: 'This is Foo', value: 'foo'})
   // })
-  // 
+  //
 
   it('can determine if the value prop is empty', () => {
     const vm = new Vue({
@@ -56,6 +71,34 @@ describe('Select.vue', () => {
     expect(select.isValueEmpty).toEqual(true)
     select.$set('value', null)
     expect(select.isValueEmpty).toEqual(true)
+  })
+
+  it('resets the selected values when the options property changes', () => {
+    const vm = new Vue({
+      template: '<div><v-select :value.sync="value"></v-select></div>',
+      components: { vSelect },
+      data: {
+        value: ['one'],
+        options: ['one','two','three']
+      }
+    }).$mount()
+
+    vm.$children[0].options = ['four','five','six']
+    expect(vm.$children[0].$get('value')).toEqual([])
+  })
+
+  it('can retain values present in a new array of options', () => {
+    const vm = new Vue({
+      template: '<div><v-select :value.sync="value"></v-select></div>',
+      components: { vSelect },
+      data: {
+        value: ['one'],
+        options: ['one','two','three']
+      }
+    }).$mount()
+
+    vm.$children[0].$set('options', ['one','five','six'])
+    expect(vm.$children[0].value).toEqual(['one'])
   })
 })
 

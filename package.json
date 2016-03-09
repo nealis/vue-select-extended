@@ -17,9 +17,9 @@
       "babelify"
     ]
   },
-  "repository" : {
-    "type" : "git",
-     "url" : "https://github.com/sagalbot/vue-select.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sagalbot/vue-select.git"
   },
   "dependencies": {
     "vue": "^1.0.0"

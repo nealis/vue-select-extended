@@ -142,7 +142,7 @@
     </div>
 
     <ul v-show="open" :transition="transition" :style="{ 'max-height': maxHeight }" class="dropdown-menu animated">
-      <li v-for="option in filteredOptions" :class="{ active: isOptionSelected(option), highlight: $index === typeAheadPointer }">
+      <li v-for="option in filteredOptions" :class="{ active: isOptionSelected(option), highlight: $index === typeAheadPointer }" @mouseover="typeAheadPointer = $index">
         <a @mousedown.prevent="select(option)">
           {{ getOptionLabel(option) }}
         </a>
@@ -159,7 +159,6 @@
 
     props: {
       value: {
-        // type: Array,
         twoway: true,
         required: true
       },
@@ -201,17 +200,23 @@
       }
     },
 
-    ready() {
-      this.$watch('open', function(open) {
+    watch: {
+      open( open ) {
         if( open ) {
           this.$els.search.focus();
         } else {
           this.$els.search.blur();
           this.typeAheadPointer = 0;
         }
-      });
+      },
+      options() {
+        this.$set('value', this.multiple ? [] : null)
+      },
+      multiple( val ) {
+        this.$set('value', val ? [] : null)
+      }
     },
-    
+
     methods: {
       select(option) {
           if (! this.isOptionSelected(option) ) {
