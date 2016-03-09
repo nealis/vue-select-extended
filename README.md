@@ -31,6 +31,29 @@ export default {
 </script>
 ```
 
+## Parameters
+- `value` Represents the currently selected value(s). Can be `null`, an empty string, or `[]`. If `multiple` is true, the current value will be represented in an array, otherwise it will be a single string or object, depending on what you've passed for `options`.
+	- twoway: true,
+  - required: true
+- `options` Any array of strings or objects to be used as dropdown choices. Supports `['foo','bar']` & `[{label: 'Foo', value: 'foo'}]`. When using the `[{}]` syntax, the objects in the array can have as many properties as you need, as long as the object contains `value` and `label` keys.
+	- type: `Array`
+  - default: `[]`
+- `maxHeight` Limit the height of the dropdown menu.
+	- type: String
+	- default: '400px' 	
+- `searchable` Toggle filtering of options.
+	- type: Boolean
+	- default: true 	
+- `multiple` Equivalent to `multiple` attribute on a `<select>`.
+	- type: Boolean
+	- default: true
+- `placeholder` Equivalent to `placeholder` attribute on an `<input>`.
+	- type: String
+	- default: ' '
+- `transition` Vue `transition` prop applied to the `.dropdown-menu`.
+	- type: Boolean
+	- default: true
+
 ## Todos:
 - fix layout issues with multiple selections
 	- tags overflow outside `.dropdown`
@@ -39,6 +62,7 @@ export default {
 - `simple` prop that disables `search` and keeps a static `placeholder` regardless of current selection (useful for things like icon button dropdowns)
 - less opinionated styles / only include css necessary to acheive layout (no colors, etc)
 - ability to pre-select options when using `[{label: 'Foo', value: 'foo'}]` syntax (already works with `['foo','bar','baz']` syntax
+-
 - more tests!!
 
 

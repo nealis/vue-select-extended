@@ -186,10 +186,6 @@
         type: Array,
         default() { return [] },
       },
-      ajax: {
-        type: String,
-        default: null
-      }
     },
 
     data() {

@@ -136,17 +136,10 @@
 
     <div class="row">
       <div class="col-md-6">
-        <h2 class="page-header">Installing</h2>
+        <h2 class="page-header">Install & Usage</h2>
         <h5>Install from GitHub using NPM</h5>
         <pre><code class="language-c-like">$ npm install sagalbot/vue-select</code></pre>
-
-        <h5>Updating</h5>
-        <p>Some versions of NPM don't properly update packages installed from GitHub. In this case, just use the install line above to update.
-        </p>
-
-      </div>
-      <div class="col-md-6">
-        <h2 class="page-header">Usage</h2>
+      
         <pre v-pre>
   <code class="language-markup">&#x3C;template&#x3E;
       &#x3C;div id=&#x22;myApp&#x22;&#x3E;
@@ -168,6 +161,60 @@
       }</code>
     <code class="language-markup">&#x3C;/script&#x3E;</code>
         </pre>
+      </div>
+      <div class="col-md-6">
+        <h2 class="page-header">Parameters</h2>
+        <ul>
+          <li>
+            <code>value</code> Represents the currently selected value(s)
+            <ul>
+              <li>type: String</li>
+              <li>required: true </li>
+            </ul>
+          </li>
+
+            <li>
+              <code>maxHeight</code> Limit the height of the dropdown menu
+              <ul>
+                <li>type: String</li>
+                <li>default: '400px'</li>
+              </ul>
+            </li>
+
+            <li>
+              <code>searchable</code> Toggle filtering of options
+              <ul>
+                <li>type: Boolean</li>
+                <li>default: true 	</li>
+              </ul>
+            </li>
+
+            <li>
+              <code>multiple</code> Equivalent to <code>multiple</code> attribute on a <code>&#x3C;select&#x3E;</code>
+                <ul>
+                  <li>type: Boolean</li>
+                  <li>default: true</li>
+                </ul>
+              </li>
+
+            <li>
+              <code>placeholder</code> Equivalent to <code>placeholder</code> attribute on an <code>&#x3C;input&#x3E;</code>
+              <ul>
+                <li>type: String</li>
+                <li>default: ''</li>
+              </ul>
+            </li>
+
+            <li>
+              <code>transition</code> Vue <code>transition</code> prop applied to the <code>.dropdown-menu</code>
+              <ul>
+                <li>type: Boolean</li>
+                <li>default: true</li>
+              </ul>
+            </li>
+
+        </ul>
+
       </div>
     </div>
 
