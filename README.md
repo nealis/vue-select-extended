@@ -41,7 +41,7 @@ export default {
 - `maxHeight` Limit the height of the dropdown menu.
 	- type: String
 	- default: '400px' 	
-<!-- - `searchable` Toggle filtering of options.
+<!-- `searchable` Toggle filtering of options.
 	- type: Boolean
 	- default: true 	 -->
 - `multiple` Equivalent to `multiple` attribute on a `<select>`.
