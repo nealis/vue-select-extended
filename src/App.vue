@@ -88,12 +88,12 @@
         <label class="control-label">Options</label><br>
         <div class="radio">
           <label for="advanced">
-            <input id="advanced" type="radio" v-model="optionType" value="advanced"> Advanced
+            <input id="advanced" type="radio" v-model="optionType" value="advanced"> Objects
             <pre><code class="language-javascript">[{value: 'foo', label: 'Foo'}]</code></pre>
           </label>
           <br>
           <label for="simple">
-            <input id="simple" type="radio" v-model="optionType" value="simple"> Simple
+            <input id="simple" type="radio" v-model="optionType" value="simple"> Strings
             <pre><code class="language-javascript">['foo', 'bar']</code></pre>
           </label>
           <span class="help-block">The <code>options</code> property is watched for changes, and the value is reset anytime the options change. This is useful if you have multiple selection boxes that depend on its ancestors values.</span>
@@ -139,7 +139,7 @@
         <h2 class="page-header">Install & Usage</h2>
         <h5>Install from GitHub using NPM</h5>
         <pre><code class="language-c-like">$ npm install sagalbot/vue-select</code></pre>
-      
+
         <pre v-pre>
   <code class="language-markup">&#x3C;template&#x3E;
       &#x3C;div id=&#x22;myApp&#x22;&#x3E;
@@ -170,6 +170,14 @@
             <ul>
               <li>type: String</li>
               <li>required: true </li>
+            </ul>
+          </li>
+
+          <li>
+            <code>options</code> An array of strings or objects to be used as dropdown choices. Supports <code>['foo','bar']</code> &amp; <code>[{label: 'Foo', value: 'foo'}]</code>. When using the <code>[{}]</code> syntax, the objects in the array can have as many properties as you need, as long as the object contains <code>value</code> and <code>label</code> keys.
+            <ul>
+              <li>type: Array</li>
+              <li>default: []</li>
             </ul>
           </li>
 
@@ -212,7 +220,6 @@
                 <li>default: true</li>
               </ul>
             </li>
-
         </ul>
 
       </div>

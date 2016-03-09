@@ -35,7 +35,7 @@ export default {
 - `value` Represents the currently selected value(s). Can be `null`, an empty string, or `[]`. If `multiple` is true, the current value will be represented in an array, otherwise it will be a single string or object, depending on what you've passed for `options`.
 	- twoway: true,
   - required: true
-- `options` Any array of strings or objects to be used as dropdown choices. Supports `['foo','bar']` & `[{label: 'Foo', value: 'foo'}]`. When using the `[{}]` syntax, the objects in the array can have as many properties as you need, as long as the object contains `value` and `label` keys.
+- `options` An array of strings or objects to be used as dropdown choices. Supports `['foo','bar']` & `[{label: 'Foo', value: 'foo'}]`. When using the `[{}]` syntax, the objects in the array can have as many properties as you need, as long as the object contains `value` and `label` keys.
 	- type: `Array`
   - default: `[]`
 - `maxHeight` Limit the height of the dropdown menu.
