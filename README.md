@@ -10,7 +10,7 @@ Rather than bringing in jQuery just to use Select2 or Chosen, this Vue.js compon
 $ npm install sagalbot/vue-select
 ```
 
-```
+```html
 <template>
    <div id="myApp">
       <v-select :value.sync="selected" :options="options"></v-select>
