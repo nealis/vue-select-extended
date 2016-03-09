@@ -17,7 +17,7 @@
   .open .dropdown-toggle:active,
   .open .dropdown-toggle:focus {
     background: none;
-    border-color: #337ab7;
+    /*border-color: #337ab7;*/
   }
 
   .open .dropdown-toggle {
