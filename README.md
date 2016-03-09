@@ -41,9 +41,9 @@ export default {
 - `maxHeight` Limit the height of the dropdown menu.
 	- type: String
 	- default: '400px' 	
-<!-- `searchable` Toggle filtering of options.
+- `searchable` Toggle filtering of options.
 	- type: Boolean
-	- default: true 	 -->
+	- default: true 	
 - `multiple` Equivalent to `multiple` attribute on a `<select>`.
 	- type: Boolean
 	- default: true
@@ -58,7 +58,7 @@ export default {
 - fix layout issues with multiple selections
 	- tags overflow outside `.dropdown`
 	- search input overflows outside `.dropdown`
-<!-- - `searchable` prop  -->
+- fix layout/toggle issues when `searchable` is false
 - `simple` prop that disables `search` and keeps a static `placeholder` regardless of current selection (useful for things like icon button dropdowns)
 - less opinionated styles / only include css necessary to acheive layout (no colors, etc)
 - ability to pre-select options when using `[{label: 'Foo', value: 'foo'}]` syntax (already works with `['foo','bar','baz']` syntax)
