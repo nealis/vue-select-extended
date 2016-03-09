@@ -31,6 +31,17 @@
   #v-select .dropdown-toggle:after {
     color: #404040;
   }
+
+  #v-select .highlight a,
+  #v-select li:hover a {
+    background: #4CC3D9;
+    color: #fff;
+  }
+
+  #v-select.open .dropdown-toggle,
+  #v-select.open .dropdown-menu {
+    border-color: #4CC3D9;
+  }
 </style>
 
 <template>
