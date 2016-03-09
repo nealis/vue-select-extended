@@ -62,7 +62,7 @@ export default {
 - `simple` prop that disables `search` and keeps a static `placeholder` regardless of current selection (useful for things like icon button dropdowns)
 - less opinionated styles / only include css necessary to acheive layout (no colors, etc)
 - ability to pre-select options when using `[{label: 'Foo', value: 'foo'}]` syntax (already works with `['foo','bar','baz']` syntax
--
+- (maybe) load data from an ajax source with vue-resource
 - more tests!!
 
 
