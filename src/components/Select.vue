@@ -3,26 +3,36 @@
     position: relative;
   }
 
+  .open-indicator {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: inline-block;
+    cursor: pointer;
+    pointer-events: all;
+    transition: all 150ms cubic-bezier(1.000, -0.115, 0.975, 0.855);
+    transition-timing-function: cubic-bezier(1.000, -0.115, 0.975, 0.855);
+  }
+
+  .open .open-indicator {
+    transform: rotate(180deg);
+  }
+
   .dropdown-toggle {
     display: block;
     padding: 0;
     background: none;
     border: 1px solid rgba(60,60,60,.26);
+    border-radius: 4px;
+    white-space: normal;
   }
-
-  .dropdown-toggle:hover,
-  .dropdown-toggle:active,
-  .dropdown-toggle:focus,
-  .open .dropdown-toggle:hover,
-  .open .dropdown-toggle:active,
-  .open .dropdown-toggle:focus {
-    background: none;
-    /*border-color: #337ab7;*/
+  .searchable .dropdown-toggle {
+    cursor: text;
   }
 
   .open .dropdown-toggle {
-    background: none;
-    border-color: #337ab7;
+    /*background: none;*/
+    /*border-color: #337ab7;*/
     border-bottom: none;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
@@ -33,15 +43,15 @@
     width: 100%;
     overflow-y: scroll;
     border-top: none;
-    border-color: #337ab7;
+    /*border-color: #337ab7;*/
     border-top-left-radius: 0;
     border-top-right-radius: 0;
   }
 
   .alert {
-    margin: 0;
-    margin-left: 6px;
-    padding: .25em;
+    margin: 3px 1px 0px 3px;
+    padding: .02em .25em;
+    float: left;
   }
 
   .alert .close {
@@ -50,48 +60,23 @@
     font-size: 20px;
   }
 
-  input[type=search] {
+  input[type=search],
+  input[type=search]:focus {
     display: inline-block;
     border: none;
     outline: none;
     margin: 0;
-    width: 100%;
+    width: 10em;
+    max-width: 100%;
     background: none;
     position: relative;
     box-shadow: none;
+    float: left;
+    clear: none;
   }
 
-  input[type=search]:focus {
-    box-shadow: none;
-  }
-
-  input[type=search].inline {
-    width: auto;
-  }
-
-  .dropdown-toggle:after {
-    display: block;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    display: inline-block;
-    font-family: 'Glyphicons Halflings';
-    font-style: normal;
-    font-weight: 400;
-    line-height: 1;
-    -webkit-font-smoothing: antialiased;
-    content: "\e114";
-
-    transition: all 150ms cubic-bezier(1.000, -0.115, 0.975, 0.855);
-    transition-timing-function: cubic-bezier(1.000, -0.115, 0.975, 0.855);
-  }
-
-  .open .dropdown-toggle:after {
-    transform: rotate(180deg);
-  }
-
-  .form-control {
-    border: none;
+  input[type=search]:disabled {
+    cursor: pointer;
   }
 
   li a {
@@ -111,9 +96,9 @@
 </style>
 
 <template>
-  <div class="dropdown" :class="{open: open, }">
-    <div v-el:toggle @click="toggleDropdown" class="btn dropdown-toggle clearfix" type="button">
-        <span class="form-control" v-if="! searchable && placeholder && isValueEmpty">
+  <div class="dropdown" :class="{open: open, searchable: searchable}">
+    <div v-el:toggle @mousedown.prevent="toggleDropdown" class="dropdown-toggle clearfix" type="button">
+        <span class="form-control" v-if="!searchable && isValueEmpty">
           {{ placeholder }}
         </span>
 
@@ -133,15 +118,16 @@
           @keydown.up.prevent="typeAheadUp"
           @keydown.down.prevent="typeAheadDown"
           @keydown.enter.prevent="typeAheadSelect"
-          @focus="open = true"
           @blur="open = false"
           type="search"
           class="form-control"
           :placeholder="searchPlaceholder"
         >
+
+        <i v-el:open-indicator role="presentation" class="open-indicator glyphicon-chevron-down glyphicon"></i>
     </div>
 
-    <ul v-show="open" :transition="transition" :style="{ 'max-height': maxHeight }" class="dropdown-menu animated">
+    <ul v-show="open" v-el:dropdown-menu :transition="transition" :style="{ 'max-height': maxHeight }" class="dropdown-menu animated">
       <li v-for="option in filteredOptions" :class="{ active: isOptionSelected(option), highlight: $index === typeAheadPointer }" @mouseover="typeAheadPointer = $index">
         <a @mousedown.prevent="select(option)">
           {{ getOptionLabel(option) }}
@@ -161,6 +147,10 @@
       value: {
         twoway: true,
         required: true
+      },
+      options: {
+        type: Array,
+        default() { return [] },
       },
       maxHeight: {
         type: String,
@@ -182,10 +172,10 @@
         type: String,
         default: 'expand'
       },
-      options: {
-        type: Array,
-        default() { return [] },
-      },
+      clearSearchOnSelect: {
+        type: Boolean,
+        default: true
+      }
     },
 
     data() {
@@ -197,14 +187,6 @@
     },
 
     watch: {
-      open( open ) {
-        if( open ) {
-          this.$els.search.focus();
-        } else {
-          this.$els.search.blur();
-          this.typeAheadPointer = 0;
-        }
-      },
       options() {
         this.$set('value', this.multiple ? [] : null)
       },
@@ -218,7 +200,6 @@
           if (! this.isOptionSelected(option) ) {
             if (this.multiple) {
 
-              // check if value is currently null/undefined/false
               if( ! this.value ) {
                   this.$set('value', [option])
               } else {
@@ -237,12 +218,21 @@
           if (!this.multiple) {
             this.open = !this.open
           }
+
+          if( this.clearSearchOnSelect ) {
+            this.search = ''
+          }
       },
 
       toggleDropdown( e ) {
-        // if( e.target == this.$els.toggle || e.target == this.$els.search ) {
-          // this.open = !this.open
-        // }
+        if( e.target === this.$els.openIndicator || e.target === this.$els.search || e.target === this.$els.toggle || e.target === this.$el ) {
+          if( this.open ) {
+            this.$els.search.blur() // dropdown will close on blur
+          } else {
+            this.open = true
+            this.$els.search.focus()
+          }
+        }
       },
 
       isOptionSelected( option ) {
@@ -281,7 +271,10 @@
         if( this.filteredOptions[ this.typeAheadPointer ] ) {
           this.select( this.filteredOptions[ this.typeAheadPointer ] );
         }
-        this.search = "";
+
+        if( this.clearSearchOnSelect ) {
+          this.search = "";
+        }
       },
 
       onEscape() {
