@@ -55,9 +55,10 @@ export default {
 	- default: true
 
 ## Todos:
-- fix layout issues with multiple selections
-	- tags overflow outside `.dropdown`
-	- search input overflows outside `.dropdown`
+- ~~fix layout issues with multiple selections~~
+	- ~~tags overflow outside `.dropdown`~~
+	- ~~search input overflows outside `.dropdown`~~
+- ~~use an actual element instead of `:after` to detect clicks on dropdown caret~~
 - fix layout/toggle issues when `searchable` is false
 - `simple` prop that disables `search` and keeps a static `placeholder` regardless of current selection (useful for things like icon button dropdowns)
 - less opinionated styles / only include css necessary to acheive layout (no colors, etc)
