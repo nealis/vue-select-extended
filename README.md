@@ -1,6 +1,6 @@
-# vue-select
+# vue-select [![Build Status](https://travis-ci.org/sagalbot/vue-select.svg?branch=master)](https://travis-ci.org/sagalbot/vue-select)
 
-Rather than bringing in jQuery just to use Select2 or Chosen, this Vue.js component provides similar functionality without the extra overhead of jQuery.
+Rather than bringing in jQuery just to use Select2 or Chosen, this Vue.js component provides similar functionality without the extra overhead of jQuery, while providing the same awesome data-binding features you expect from Vue. Vue-select has no dependencies other than Vue. 
 
 ## Demo
 [http://sagalbot.github.io/vue-select/](http://sagalbot.github.io/vue-select/)
