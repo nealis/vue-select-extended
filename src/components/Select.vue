@@ -49,9 +49,11 @@
   }
 
   .alert {
-    margin: 3px 1px 0px 3px;
-    padding: .02em .25em;
+    height: 26px;
+    margin: 4px 1px 0px 3px;
+    padding: 0 0.25em;
     float: left;
+    line-height: 1.7em;
   }
 
   .alert .close {
