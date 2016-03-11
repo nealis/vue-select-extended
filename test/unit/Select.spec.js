@@ -32,23 +32,34 @@ describe('Select.vue', () => {
     expect(vm.$children[0].value).toEqual(['one'])
   })
 
-  /**
-   * TODO: Right now this only works for arrays of strings.. But the same method
-   * should apply to arrays of objects.
-   */
-  // it('can accept an array of objects and pre-selected values', () => {
-  //   const vm = new Vue({
-  //     template: '<div><v-select :value.sync="value"></v-select></div>',
-  //     components: { vSelect },
-  //     data: {
-  //       value: [{label: 'This is Foo', value: 'foo'}],
-  //       options: [{label: 'This is Foo', value: 'foo'}, {label: 'This is Bar', value: 'bar'}]
-  //     }
-  //   }).$mount()
-  //
-  //   expect(vm.$children[0].$get('value')).toEqual({label: 'This is Foo', value: 'foo'})
-  // })
-  //
+  it('can accept an array of objects and pre-selected value (single)', () => {
+    const vm = new Vue({
+      template: '<div><v-select :value.sync="value"></v-select></div>',
+      components: { vSelect },
+      data: {
+        value: {label: 'This is Foo', value: 'foo'},
+        options: [{label: 'This is Foo', value: 'foo'}, {label: 'This is Bar', value: 'bar'}]
+      }
+    }).$mount()
+
+    expect( vm.$children[0].$get('value').value ).toEqual( 'foo' )
+  })
+
+  it('can accept an array of objects and pre-selected values (multiple)', () => {
+    const vm = new Vue({
+      template: '<div><v-select :value.sync="value" :multiple="true"></v-select></div>',
+      components: { vSelect },
+      data: {
+        value: [{label: 'This is Foo', value: 'foo'}, {label: 'This is Bar', value: 'bar'}],
+        options: [{label: 'This is Foo', value: 'foo'}, {label: 'This is Bar', value: 'bar'}]
+      }
+    }).$mount()
+
+    var values = vm.$children[0].$get('value')
+    values = values.map( value => value.value )
+
+    expect( values ).toEqual( ['foo', 'bar'] )
+  })
 
   it('can determine if the value prop is empty', () => {
     const vm = new Vue({
