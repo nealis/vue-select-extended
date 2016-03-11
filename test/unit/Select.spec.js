@@ -66,6 +66,39 @@ describe('Select.vue', () => {
     expect( labels ).toEqual( ['This is Foo', 'This is Bar'] )
   })
 
+  it('removes the last item in the value array on delete keypress when multiple is true', () => {
+
+    const vm = new Vue({
+      template: '<div><v-select :value.sync="value" :multiple="true"></v-select></div>',
+      components: { vSelect },
+      data: {
+        value: ['one','two'],
+        options: ['one','two','three']
+      }
+    }).$mount()
+
+    vm.$children[0].maybeDeleteValue()
+    Vue.nextTick(() => {
+      expect(vm.$children[0].$get('value')).toEqual(['one'])
+    })
+  })
+
+  it('sets the value to null on delete keypress when multiple is false', () => {
+    const vm = new Vue({
+      template: '<div><v-select :value.sync="value"></v-select></div>',
+      components: { vSelect },
+      data: {
+        value: 'one',
+        options: ['one','two','three']
+      }
+    }).$mount()
+
+    vm.$children[0].maybeDeleteValue()
+    Vue.nextTick(() => {
+      expect(vm.$children[0].$get('value')).toEqual(null)
+    })
+  })
+
   it('can determine if the value prop is empty', () => {
     const vm = new Vue({
       template: '<div><v-select :value.sync="value"></v-select></div>',
