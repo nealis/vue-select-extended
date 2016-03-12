@@ -31,8 +31,6 @@
   }
 
   .open .dropdown-toggle {
-    /*background: none;*/
-    /*border-color: #337ab7;*/
     border-bottom: none;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
@@ -43,7 +41,6 @@
     width: 100%;
     overflow-y: scroll;
     border-top: none;
-    /*border-color: #337ab7;*/
     border-top-left-radius: 0;
     border-top-right-radius: 0;
   }
@@ -85,26 +82,61 @@
     cursor: pointer;
   }
 
-  .active a {
+  /* Default theme */
+  .theme-default .alert {
+    color: #333;
+    background-color: #f0f0f0;
+    border-color: #ccc;
+  }
+
+  .theme-default.dropdown.open .dropdown-toggle,
+  .theme-default.dropdown.open .dropdown-menu {
+    border-color: rgba(60,60,60,.26);
+  }
+
+  .theme-default .active a {
     background: rgba(50,50,50,.1);
     color: #333;
   }
 
-  .highlight a,
-  li:hover a {
-    background: #337ab7;
+  .theme-default .highlight a,
+  .theme-default li:hover a {
+    background: #f0f0f0;
+    color: #333;
+  }
+
+  /* Cyan theme */
+  .theme-cyan .alert {
+    color: #147688;
+    background-color: #d7f3f9;
+    border-color: #91ddec;
+  }
+
+  .theme-cyan.dropdown.open .dropdown-toggle,
+  .theme-cyan.dropdown.open .dropdown-menu {
+    border-color: #4CC3D9;
+  }
+
+  .theme-cyan .active a {
+    background: rgba(50,50,50,.1);
+    color: #333;
+  }
+
+  .theme-cyan.dropdown .highlight a,
+  .theme-cyan.dropdown li:hover a {
+    background: #4CC3D9;
     color: #fff;
   }
 </style>
 
 <template>
-  <div class="dropdown" :class="{open: open, searchable: searchable}">
+  <div class="dropdown" :class="cssClasses">
     <div v-el:toggle @mousedown.prevent="toggleDropdown" class="dropdown-toggle clearfix" type="button">
         <span class="form-control" v-if="!searchable && isValueEmpty">
           {{ placeholder }}
         </span>
 
-        <span class="alert alert-info" v-for="option in valueAsArray">
+        <span class="alert" v-for="option in valueAsArray">
           {{ getOptionLabel(option) }}
           <button v-if="multiple" @click="select(option)" type="button" class="close">
             <span aria-hidden="true">&times;</span>
@@ -144,7 +176,6 @@
 
 <script>
   export default {
-
     props: {
       value: {
         twoway: true,
@@ -153,6 +184,10 @@
       options: {
         type: Array,
         default() { return [] },
+      },
+      theme: {
+        type: String,
+        default: 'default'
       },
       maxHeight: {
         type: String,
@@ -295,6 +330,14 @@
     },
 
     computed: {
+      cssClasses() {
+        return {
+          open: this.open,
+          searchable: this.searchable,
+          [this.theme]: this.theme
+        }
+      },
+
       searchPlaceholder() {
         if( this.isValueEmpty && this.placeholder ) {
           return this.placeholder;
