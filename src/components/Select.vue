@@ -281,7 +281,7 @@
 
       onEscape() {
         if( ! this.search.length ) {
-          this.open = false
+          this.$els.search.blur()
         } else {
           this.$set('search', '')
         }
