@@ -14,7 +14,7 @@ module.exports = function (config) {
       plugin: [require('proxyquireify').plugin]
     },
     // if you want to continuously re-run tests on file-save,
-    // replace the following line with `autoWatch: true`
+    // use `autoWatch: true`, otherwise use `singleRun: true`
     singleRun: true
   })
 }
