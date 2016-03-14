@@ -232,14 +232,6 @@
                 <li>default: true</li>
               </ul>
             </li>
-
-            <li>
-              <code>theme</code> Theme option to style the component. Available options: 'default', 'cyan'.
-              <ul>
-                <li>type: String</li>
-                <li>default: 'default'</li>
-              </ul>
-            </li>
         </ul>
 
       </div>
