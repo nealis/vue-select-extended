@@ -221,9 +221,9 @@
               this.value = option
             }
           } else {
-            // if (this.multiple) {
-            //   this.value.$remove(option)
-            // }
+            if (this.multiple) {
+              this.value.$remove(option)
+            }
           }
 
           if (!this.multiple) {
