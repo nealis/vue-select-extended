@@ -183,6 +183,10 @@
       clearSearchOnSelect: {
         type: Boolean,
         default: true
+      },
+      label: {
+        type: String,
+        default: 'label'
       }
     },
 
@@ -235,6 +239,11 @@
           }
       },
 
+      /**
+       * Toggle the visibility of the dropdown menu.
+       * @param  {Event} e
+       * @return {void}
+       */
       toggleDropdown( e ) {
         if( e.target === this.$els.openIndicator || e.target === this.$els.search || e.target === this.$els.toggle || e.target === this.$el ) {
           if( this.open ) {
@@ -262,22 +271,46 @@
         return option;
       },
 
+      /**
+       * Generate the option label text. If {option}
+       * is an object, return option[this.label].
+       *
+       * @param  {Object || String} option
+       * @return {String}
+       */
       getOptionLabel( option ) {
-        if( typeof option === 'object' && option.label ) {
-          return option.label;
+        if( typeof option === 'object' ) {
+          if( this.label && option[this.label] ) {
+            return option[this.label];
+          } else if( option.label ) {
+            return option.label
+          }
         }
-
         return option;
       },
 
+      /**
+       * Move the typeAheadPointer visually up the list by
+       * subtracting the current index by one.
+       * @return {void}
+       */
       typeAheadUp() {
         if (this.typeAheadPointer > 0) this.typeAheadPointer--
       },
 
+      /**
+       * Move the typeAheadPointer visually down the list by
+       * adding the current index by one.
+       * @return {void}
+       */
       typeAheadDown() {
         if (this.typeAheadPointer < this.filteredOptions.length - 1) this.typeAheadPointer++
       },
 
+      /**
+       * Select the option at the current typeAheadPointer position.
+       * @return {void}
+       */
       typeAheadSelect() {
         if( this.filteredOptions[ this.typeAheadPointer ] ) {
           this.select( this.filteredOptions[ this.typeAheadPointer ] );
