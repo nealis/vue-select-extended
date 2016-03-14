@@ -3,6 +3,11 @@
     position: relative;
   }
 
+  .open .dropdown-toggle,
+  .open .dropdown-menu {
+    border-color: rgba(60,60,60,.26);
+  }
+
   .open-indicator {
     position: absolute;
     top: 10px;
@@ -45,7 +50,11 @@
     border-top-right-radius: 0;
   }
 
-  .alert {
+  .selected-tag {
+    color: #333;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
     height: 26px;
     margin: 4px 1px 0px 3px;
     padding: 0 0.25em;
@@ -53,7 +62,7 @@
     line-height: 1.7em;
   }
 
-  .alert .close {
+  .selected-tag .close {
     float: none;
     margin-right: 0;
     font-size: 20px;
@@ -82,50 +91,15 @@
     cursor: pointer;
   }
 
-  /* Default theme */
-  .theme-default .alert {
-    color: #333;
-    background-color: #f0f0f0;
-    border-color: #ccc;
-  }
-
-  .theme-default.dropdown.open .dropdown-toggle,
-  .theme-default.dropdown.open .dropdown-menu {
-    border-color: rgba(60,60,60,.26);
-  }
-
-  .theme-default .active a {
+  .active a {
     background: rgba(50,50,50,.1);
     color: #333;
   }
 
-  .theme-default .highlight a,
-  .theme-default li:hover a {
+  .highlight a,
+  li:hover a {
     background: #f0f0f0;
     color: #333;
-  }
-
-  /* Cyan theme */
-  .theme-cyan .alert {
-    color: #147688;
-    background-color: #d7f3f9;
-    border-color: #91ddec;
-  }
-
-  .theme-cyan.dropdown.open .dropdown-toggle,
-  .theme-cyan.dropdown.open .dropdown-menu {
-    border-color: #4CC3D9;
-  }
-
-  .theme-cyan .active a {
-    background: rgba(50,50,50,.1);
-    color: #333;
-  }
-
-  .theme-cyan.dropdown .highlight a,
-  .theme-cyan.dropdown li:hover a {
-    background: #4CC3D9;
-    color: #fff;
   }
 </style>
 
@@ -136,7 +110,7 @@
           {{ placeholder }}
         </span>
 
-        <span class="alert" v-for="option in valueAsArray">
+        <span class="selected-tag" v-for="option in valueAsArray">
           {{ getOptionLabel(option) }}
           <button v-if="multiple" @click="select(option)" type="button" class="close">
             <span aria-hidden="true">&times;</span>
@@ -184,10 +158,6 @@
       options: {
         type: Array,
         default() { return [] },
-      },
-      theme: {
-        type: String,
-        default: 'default'
       },
       maxHeight: {
         type: String,
@@ -333,8 +303,7 @@
       cssClasses() {
         return {
           open: this.open,
-          searchable: this.searchable,
-          [this.theme]: this.theme
+          searchable: this.searchable
         }
       },
 
