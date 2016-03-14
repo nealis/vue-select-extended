@@ -3,6 +3,11 @@
     position: relative;
   }
 
+  .open .dropdown-toggle,
+  .open .dropdown-menu {
+    border-color: rgba(60,60,60,.26);
+  }
+
   .open-indicator {
     position: absolute;
     top: 10px;
@@ -31,8 +36,6 @@
   }
 
   .open .dropdown-toggle {
-    /*background: none;*/
-    /*border-color: #337ab7;*/
     border-bottom: none;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
@@ -43,12 +46,15 @@
     width: 100%;
     overflow-y: scroll;
     border-top: none;
-    /*border-color: #337ab7;*/
     border-top-left-radius: 0;
     border-top-right-radius: 0;
   }
 
-  .alert {
+  .selected-tag {
+    color: #333;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
     height: 26px;
     margin: 4px 1px 0px 3px;
     padding: 0 0.25em;
@@ -56,7 +62,7 @@
     line-height: 1.7em;
   }
 
-  .alert .close {
+  .selected-tag .close {
     float: none;
     margin-right: 0;
     font-size: 20px;
@@ -92,19 +98,19 @@
 
   .highlight a,
   li:hover a {
-    background: #337ab7;
-    color: #fff;
+    background: #f0f0f0;
+    color: #333;
   }
 </style>
 
 <template>
-  <div class="dropdown" :class="{open: open, searchable: searchable}">
+  <div class="dropdown" :class="cssClasses">
     <div v-el:toggle @mousedown.prevent="toggleDropdown" class="dropdown-toggle clearfix" type="button">
         <span class="form-control" v-if="!searchable && isValueEmpty">
           {{ placeholder }}
         </span>
 
-        <span class="alert alert-info" v-for="option in valueAsArray">
+        <span class="selected-tag" v-for="option in valueAsArray">
           {{ getOptionLabel(option) }}
           <button v-if="multiple" @click="select(option)" type="button" class="close">
             <span aria-hidden="true">&times;</span>
@@ -145,7 +151,6 @@
 
 <script>
   export default {
-
     props: {
       value: {
         twoway: true,
@@ -299,6 +304,13 @@
     },
 
     computed: {
+      cssClasses() {
+        return {
+          open: this.open,
+          searchable: this.searchable
+        }
+      },
+
       searchPlaceholder() {
         if( this.isValueEmpty && this.placeholder ) {
           return this.placeholder;

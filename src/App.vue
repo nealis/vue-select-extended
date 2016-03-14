@@ -32,15 +32,27 @@
     color: #404040;
   }
 
-  #v-select .highlight a,
-  #v-select li:hover a {
-    background: #4CC3D9;
-    color: #fff;
+  /* Cyan theme */
+  #v-select .selected-tag {
+    color: #147688;
+    background-color: #d7f3f9;
+    border-color: #91ddec;
   }
 
-  #v-select.open .dropdown-toggle,
-  #v-select.open .dropdown-menu {
+  #v-select.dropdown.open .dropdown-toggle,
+  #v-select.dropdown.open .dropdown-menu {
     border-color: #4CC3D9;
+  }
+
+  #v-select .active a {
+    background: rgba(50,50,50,.1);
+    color: #333;
+  }
+
+  #v-select.dropdown .highlight a,
+  #v-select.dropdown li:hover a {
+    background: #4CC3D9;
+    color: #fff;
   }
 
   #output {
@@ -193,7 +205,7 @@
               <code>searchable</code> Toggle filtering of options
               <ul>
                 <li>type: Boolean</li>
-                <li>default: true 	</li>
+                <li>default: true</li>
               </ul>
             </li>
 
@@ -258,7 +270,6 @@ export default {
         advanced: require('./countries.js'),
         simple: require('./simpleCountries.js'),
         simpler: [{label: 'This is Foo', value: 'foo'}, {label: 'This is Bar', value: 'bar'}, {label: 'This is Baz', value: 'baz'}]
-
       },
       optionType: 'advanced'
     }
