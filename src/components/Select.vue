@@ -121,6 +121,7 @@
           @keydown.down.prevent="typeAheadDown"
           @keydown.enter.prevent="typeAheadSelect"
           @blur="open = false"
+          @focus="open = true"
           type="search"
           class="form-control"
           :placeholder="searchPlaceholder"
@@ -194,6 +195,9 @@
       },
       multiple( val ) {
         this.$set('value', val ? [] : null)
+      },
+      filteredOptions() {
+        this.typeAheadPointer = 0;
       }
     },
 
@@ -212,9 +216,9 @@
               this.value = option
             }
           } else {
-            if (this.multiple) {
-              this.value.$remove(option)
-            }
+            // if (this.multiple) {
+            //   this.value.$remove(option)
+            // }
           }
 
           if (!this.multiple) {
