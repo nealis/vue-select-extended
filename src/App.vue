@@ -71,26 +71,7 @@
     </div>
   </div>
 
-    <div class="jumbotron jumbotron-green">
-      <div class="container">
-      <div class="row">
-        <div class="col-md-6 col-md-offset-1">
-          <v-select
-            id="v-select"
-            :placeholder="placeholder"
-            :value.sync="select"
-            :options="options[optionType]"
-            :multiple="multiple">
-          </v-select>
-        </div>
-
-        <div class="col-md-4">
-          <!-- <h4>Output</h4> -->
-          <pre id="output">{{ select | json }}</pre>
-        </div>
-      </div>
-    </div>
-    </div>
+    <jumbotron></jumbotron>
 
     <div id="app" class="container">
     <h2 class="page-header">Live Edit <small>play around with the above vue-select</small></h2>
@@ -137,14 +118,6 @@
         </div>
       </div>
     </div>
-
-    <!-- <h3>Todos:</h3>
-    <ul>
-      <li>Fix layout issue where selected tags & text input overflow outside <code>.dropdown</code>.</li>
-      <li>Clicking the 'caret' icon should toggle the dropdown.</li>
-      <li>Add boolean prop to disable search.</li>
-      <li>Add a 'simple' prop that disables search, and the selected 'tags'. Uses an active class on the selected item(s) while keeping the placeholder constant.</li>
-    </ul> -->
 
     <div class="row">
       <div class="col-md-6">
@@ -237,42 +210,13 @@
       </div>
     </div>
 
-
-
-
-    <!-- <h2 class="page-header">Contributing</h2>
-    <h4>Build Setup <small>built using the <a href="https://github.com/vuejs-templates/webpack">vue-cli webpack template</a></small></h4>
-    <p>install dependencies <br/><code>npm install</code></p>
-    <p>serve with hot reload at localhost:8080 <br><code>npm run dev</code></p>
-    <p>build for production with minification <br><code>npm run build</code></p>
-    <p>lint all *.js and *.vue files <br><code>npm run lint</code></p>
-    <p>run unit tests <br><code>npm test</code></p> -->
-
   </div>
 </template>
 
 <script>
-import Vue from 'vue'
-import vSelect from './components/Select.vue'
-
-Vue.config.debug = true
+import Jumbotron from './components/Jumbotron.vue'
 
 export default {
-  components: {vSelect},
-
-  data() {
-    return {
-      select: null,
-      placeholder: 'Choose a Country',
-      multiple: true,
-      maxHeight: '400px',
-      options: {
-        advanced: require('./countries.js'),
-        simple: require('./simpleCountries.js'),
-        simpler: [{label: 'This is Foo', value: 'foo'}, {label: 'This is Bar', value: 'bar'}, {label: 'This is Baz', value: 'baz'}]
-      },
-      optionType: 'advanced'
-    }
-  }
+  components: {Jumbotron},
 }
 </script>

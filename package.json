@@ -23,7 +23,8 @@
     "url": "https://github.com/sagalbot/vue-select.git"
   },
   "dependencies": {
-    "vue": "^1.0.0"
+    "vue": "^1.0.0",
+    "vuex": "^0.6.2"
   },
   "devDependencies": {
     "babel-core": "^6.0.0",
