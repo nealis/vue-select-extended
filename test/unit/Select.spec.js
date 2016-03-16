@@ -103,16 +103,24 @@ describe('Select.vue', () => {
         options: ['one','two','three']
       }
     }).$mount()
-
     var select = vm.$children[0]
     expect(select.isValueEmpty).toEqual(true)
+
     select.$set('value', ['one'])
     expect(select.isValueEmpty).toEqual(false)
-    select.$set('value', 'one')
-    select.$set('multiple', false)
+
+    select.$set('value', [{l:'f'}])
     expect(select.isValueEmpty).toEqual(false)
+
+    select.$set('value', 'one')
+    expect(select.isValueEmpty).toEqual(false)
+
+    select.$set('value', {label: 'foo', value: 'foo'})
+    expect(select.isValueEmpty).toEqual(false)
+
     select.$set('value', '')
     expect(select.isValueEmpty).toEqual(true)
+
     select.$set('value', null)
     expect(select.isValueEmpty).toEqual(true)
   })
@@ -168,6 +176,33 @@ describe('Select.vue', () => {
       }
     }).$mount()
     expect(vm.$children[0].$els.toggle.querySelector('.selected-tag').textContent).toContain('Baz')
+  })
+
+  it('can run a callback when the selection changes', (done) => {
+    const vm = new Vue({
+      template: '<div><v-select :on-change="foo" value="bar" :options="options"></v-select></div>',
+      components: { vSelect },
+      data: {
+        val: null,
+        options: ['foo','bar','baz']
+      },
+      methods: {
+        foo(value) {
+          this.val = value
+        }
+      }
+    }).$mount()
+
+    vm.$children[0].select('foo')
+    Vue.nextTick(function() {
+      expect(vm.$get('val')).toEqual('foo')
+
+      vm.$children[0].$set('value', 'baz')
+      Vue.nextTick(function() {
+        expect(vm.$get('val')).toEqual('baz')
+        done()
+      })
+    })
   })
 })
 
