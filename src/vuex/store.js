@@ -5,15 +5,40 @@ Vue.use(Vuex)
 Vue.config.debug = true
 
 const state = {
-  count: 0
+  selected: null,
+  placeholder: 'Select a Country',
+  multiple: true,
+  maxHeight: '400px',
+  options: {
+    advanced: require('../countries/advanced.js'),
+    simple: require('../countries/simple.js'),
+  },
+  optionType: 'advanced'
 }
 
 const mutations = {
-  INCREMENT (state) {
-    state.count++
+  SET_SELECTED (state, selected) {
+    state.selected = selected
   },
-  DECREMENT (state) {
-    state.count--
+
+  TOGGLE_OPTION_TYPE (state) {
+    if( state.optionType === 'advanced' ) {
+      state.optionType = 'simple'
+    } else {
+      state.optionType = 'advanced'
+    }
+  },
+
+  SET_PLACEHOLDER (state, placeholder) {
+    state.placeholder = placeholder
+  },
+
+  TOGGLE_MULTIPLE (state) {
+    state.multiple = ! state.multiple
+  },
+
+  SET_MAX_HEIGHT (state, maxHeight) {
+    state.maxHeight = maxHeight
   }
 }
 

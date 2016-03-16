@@ -34,30 +34,95 @@ export default {
 ```
 
 ## Parameters
-- `value` Represents the currently selected value(s). Can be `null`, an empty string, or `[]`. If `multiple` is true, the current value will be represented in an array, otherwise it will be a single string or object, depending on what you've passed for `options`.
-	- twoway: true,
-  - required: true
-- `options` An array of strings or objects to be used as dropdown choices. Supports `['foo','bar']` & `[{label: 'Foo', value: 'foo'}]`. When using the `[{}]` syntax, the objects in the array can have as many properties as you need, as long as the object contains a `label` key. If you are working with options where you are unable to add this key, you can also set a custom key using the `label` prop.
-	- type: `Array`
-  - default: `[]`
-- `label` This is the key that will be used when generating labels for options. ex) If your dataset is `[{name: 'John Doe', age: 35}]` and you want the name to be used as the label, you would set the label prop as `name`.
-  - type: `String`
-  - default: `'label'`
-- `maxHeight` Limit the height of the dropdown menu.
-	- type: String
-	- default: `'400px'` 	
-- `searchable` Toggle filtering of options.
-	- type: Boolean
-	- default: true 	
-- `multiple` Equivalent to `multiple` attribute on a `<select>`.
-	- type: Boolean
-	- default: true
-- `placeholder` Equivalent to `placeholder` attribute on an `<input>`.
-	- type: String
-	- default: ''
-- `transition` Vue `transition` prop applied to the `.dropdown-menu`. The component itself does not include any CSS for transitions, they must be implemented yourself.
-	- type: String
-	- default: ''
+```javascript
+  /**
+   * Contains the currently selected value. Very similar to a
+   * `value` attribute on an &amp;lt;input&amp;gt;. In most cases, you'll want
+   * to set this as a two-way binding, using :value.sync. However,
+   * this will not work with Vuex, in which case you'll need to use
+   * the onChange callback property.
+   * @type {Object||String||null}
+   */
+  value: {
+    default: null
+  },
+
+  /**
+   * An array of strings or objects to be used as dropdown choices.
+   * If you are using an array of objects, vue-select will look for
+   * a `label` key (ex. [{label: 'This is Foo', value: 'foo'}]). A
+   * custom label key can be set with the `label` prop.
+   * @type {Array}
+   */
+  options: {
+    type: Array,
+    default() { return [] },
+  },
+
+  /**
+   * Enable/disable filtering the options.
+   * @type {Boolean}
+   */
+  searchable: {
+    type: Boolean,
+    default: true
+  },
+
+  /**
+   * Equivalent to the `multiple` attribute on a `&lt;select&gt;` input.
+   * @type {Object}
+   */
+  multiple: {
+    type: Boolean,
+    default: false
+  },
+
+  /**
+   * Equivalent to the `placeholder` attribute on an `&lt;input&gt;`.
+   * @type {Object}
+   */
+  placeholder: {
+    type: String,
+    default: ''
+  },
+
+  /**
+   * Sets a Vue transition property on the `.dropdown-menu`. vue-select
+   * does not include CSS for transitions, you'll need to add them yourself.
+   * @type {String}
+   */
+  transition: {
+    type: String,
+    default: 'expand'
+  },
+
+  /**
+   * Enables/disables clearing the search text when an option is selected.
+   * @type {Boolean}
+   */
+  clearSearchOnSelect: {
+    type: Boolean,
+    default: true
+  },
+
+  /**
+   * Tells vue-select what key to use when generating option labels when
+   * `option` is an object.
+   * @type {Object}
+   */
+  label: {
+    type: String,
+    default: 'label'
+  },
+
+  /**
+   * An optional callback function that is called each time the selected
+   * value(s) change. When integrating with Vuex, use this callback to trigger
+   * an action, rather than using :value.sync to retreive the selected value.
+   * @type {[type]}
+   */
+  onChange: Function
+```
 
 ## Todos:
 - load data from an ajax source with vue-resource
@@ -85,7 +150,7 @@ npm run dev
 # run unit tests
 npm test
 
-# watch files and run unit tests on save
+# run unit tests on save
 npm run test-watch
 ```
 

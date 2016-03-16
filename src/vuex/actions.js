@@ -1,14 +1,15 @@
-export const increment = ({ dispatch }) => dispatch('INCREMENT')
-export const decrement = ({ dispatch }) => dispatch('DECREMENT')
-
-export const incrementIfOdd = ({ dispatch, state }) => {
-  if ((state.count + 1) % 2 === 0) {
-    dispatch('INCREMENT')
-  }
+export const setSelected = ({ dispatch }, selected) => {
+  dispatch('SET_SELECTED', selected)
 }
 
-export const incrementAsync = ({ dispatch }) => {
-  setTimeout(() => {
-    dispatch('INCREMENT')
-  }, 1000)
+export const toggleOptionType = ({ dispatch }) => {
+  dispatch('TOGGLE_OPTION_TYPE')
+}
+
+export const setPlaceholder = ({ dispatch }, placeholder) => {
+  dispatch('SET_PLACEHOLDER', placeholder)
+}
+
+export const toggleMultiple = ({ dispatch }) => {
+  dispatch('TOGGLE_MULTIPLE')
 }
