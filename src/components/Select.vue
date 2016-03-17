@@ -97,7 +97,7 @@
   }
 
   .highlight a,
-  li:hover a {
+  li:hover > a {
     background: #f0f0f0;
     color: #333;
   }
