@@ -251,7 +251,34 @@
        * @type {Function}
        * @default {null}
        */
-      onChange: Function
+      onChange: Function,
+
+      /**
+       * Enable/disable creating options from searchInput.
+       * @type {Boolean}
+       */
+      tagable: {
+        type: Boolean,
+        default: false
+      },
+
+      /**
+       * User defined function for adding Options
+       * @type {Function}
+       */
+      createOption: {
+        type: Function,
+        default: function (value) {
+          let firstOption = this.options[0]
+          if (firstOption && typeof firstOption === 'object' ) {
+            value = {
+              value
+            }
+            value[this.label] = value
+          }
+          return value
+        }
+      }
     },
 
     data() {
@@ -267,13 +294,15 @@
         this.onChange && val !== old ? this.onChange(val) : null
       },
       options() {
-        this.$set('value', this.multiple ? [] : null)
+        if (!this.optionAdded) {
+          this.$set('value', this.multiple ? [] : null)
+        }
       },
       multiple( val ) {
         this.$set('value', val ? [] : null)
       },
       filteredOptions() {
-        this.typeAheadPointer = 0;
+        this.typeAheadPointer = 0
       },
     },
 
@@ -351,7 +380,7 @@
           return this.value.indexOf(option) !== -1
         }
 
-        return this.value === option;
+        return this.value === option
       },
 
       /**
@@ -378,7 +407,7 @@
       getOptionLabel( option ) {
         if( typeof option === 'object' ) {
           if( this.label && option[this.label] ) {
-            return option[this.label];
+            return option[this.label]
           } else if( option.label ) {
             return option.label
           }
@@ -412,6 +441,14 @@
       typeAheadSelect() {
         if( this.filteredOptions[ this.typeAheadPointer ] ) {
           this.select( this.filteredOptions[ this.typeAheadPointer ] );
+        } else if (this.tagable && this.search.length){
+          let option = this.createOption(this.search)
+          this.optionAdded = true
+          this.options.unshift(option)
+          this.$nextTick(() => {
+            this.optionAdded = false
+            this.select(option)
+          })
         }
 
         if( this.clearSearchOnSelect ) {
