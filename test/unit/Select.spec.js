@@ -3,6 +3,14 @@
 import Vue from 'vue'
 import vSelect from '../../src/components/Select.vue'
 
+function trigger (target, event, process) {
+  var e = document.createEvent('HTMLEvents')
+  e.initEvent(event, true, true)
+  if (process) process(e)
+  target.dispatchEvent(e)
+  return e
+}
+
 describe('Select.vue', () => {
 
   it('can accept an array with pre-selected values', () => {
@@ -202,6 +210,44 @@ describe('Select.vue', () => {
         expect(vm.$get('val')).toEqual('baz')
         done()
       })
+    })
+  })
+
+  it('can adding option if tagable enabled and search is not empty', () => {
+    const vm = new Vue({
+      template: '<div><v-select :options="options" :value.sync="value" :multiple="true" :tagable="true"></v-select></div>',
+      components: { vSelect },
+      data: {
+        value: ['one'],
+        options: ['one','two','three']
+      }
+    }).$mount()
+    vm.$children[0].search = 'four'
+
+    trigger(vm.$children[0].$els.search, 'keyup', function (e) {
+      e.keyCode = 13
+    })
+
+    expect(vm.$children[0].options[0]).toEqual('four')
+  })
+
+  it('should select added option if tagable enabled and search is not empty', (done) => {
+    const vm = new Vue({
+      template: '<div><v-select :options="options" :value.sync="value" :multiple="true" :tagable="true"></v-select></div>',
+      components: { vSelect },
+      data: {
+        value: ['one'],
+        options: ['one','two','three']
+      }
+    }).$mount()
+    vm.$children[0].search = 'four'
+
+    trigger(vm.$children[0].$els.search, 'keyup', function (e) {
+      e.keyCode = 13
+    })
+    Vue.nextTick(() => {
+      expect(vm.$children[0].$get('value')).toEqual(['one', 'four'])
+      done()
     })
   })
 })
