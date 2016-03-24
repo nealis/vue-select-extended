@@ -294,7 +294,7 @@
         this.onChange && val !== old ? this.onChange(val) : null
       },
       options() {
-        if (!this.optionAdded) {
+        if (!this.isAdding) {
           this.$set('value', this.multiple ? [] : null)
         }
       },
@@ -443,11 +443,11 @@
           this.select( this.filteredOptions[ this.typeAheadPointer ] );
         } else if (this.tagable && this.search.length){
           let option = this.createOption(this.search)
-          this.optionAdded = true
-          this.options.unshift(option)
+          this.isAdding = true
+          this.$set('options', [option, ...this.options])
           this.$nextTick(() => {
-            this.optionAdded = false
             this.select(option)
+            this.isAdding = false
           })
         }
 
