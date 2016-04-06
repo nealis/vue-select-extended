@@ -24,10 +24,10 @@
     "url": "https://github.com/sagalbot/vue-select.git"
   },
   "dependencies": {
-    "vue": "^1.0.16",
-    "vuex": "^0.6.2"
+    "vue": "^1.0.16"
   },
   "devDependencies": {
+    "vuex": "^0.6.2",
     "babel-core": "^6.0.0",
     "babel-plugin-transform-runtime": "^6.0.0",
     "babel-preset-es2015": "^6.0.0",
