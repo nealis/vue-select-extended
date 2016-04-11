@@ -213,9 +213,9 @@ describe('Select.vue', () => {
     })
   })
 
-  it('can adding option if tagable enabled and search is not empty', () => {
+  it('can adding option if taggable enabled and search is not empty', () => {
     const vm = new Vue({
-      template: '<div><v-select :options="options" :value.sync="value" :multiple="true" :tagable="true"></v-select></div>',
+      template: '<div><v-select :options="options" :value.sync="value" :multiple="true" :taggable="true"></v-select></div>',
       components: { vSelect },
       data: {
         value: ['one'],
@@ -231,9 +231,9 @@ describe('Select.vue', () => {
     expect(vm.$children[0].options[0]).toEqual('four')
   })
 
-  it('should select added option if tagable enabled and search is not empty', (done) => {
+  it('should select added option if taggable enabled and search is not empty', (done) => {
     const vm = new Vue({
-      template: '<div><v-select :options="options" :value.sync="value" :multiple="true" :tagable="true"></v-select></div>',
+      template: '<div><v-select :options="options" :value.sync="value" :multiple="true" :taggable="true"></v-select></div>',
       components: { vSelect },
       data: {
         value: ['one'],
@@ -251,7 +251,6 @@ describe('Select.vue', () => {
     })
   })
 })
-
 
 // also see example testing a component with mocks at
 // https://github.com/vuejs/vueify-example/blob/master/test/unit/a.spec.js#L22-L43

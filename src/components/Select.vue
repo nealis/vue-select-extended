@@ -257,7 +257,7 @@
        * Enable/disable creating options from searchInput.
        * @type {Boolean}
        */
-      tagable: {
+      taggable: {
         type: Boolean,
         default: false
       },
@@ -442,7 +442,7 @@
       typeAheadSelect() {
         if( this.filteredOptions[ this.typeAheadPointer ] ) {
           this.select( this.filteredOptions[ this.typeAheadPointer ] );
-        } else if (this.tagable && this.search.length){
+        } else if (this.taggable && this.search.length){
           let option = this.createOption(this.search)
           this.isAdding = true
           this.$set('options', [option, ...this.options])
