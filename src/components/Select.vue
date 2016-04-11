@@ -44,7 +44,7 @@
   .dropdown-menu {
     margin: 0;
     width: 100%;
-    overflow-y: scroll;
+    overflow-y: auto;
     border-top: none;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
@@ -343,6 +343,7 @@
       onAfterSelect(option) {
           if (!this.multiple) {
             this.open = !this.open
+            this.$els.search.blur()
           }
 
           if( this.clearSearchOnSelect ) {
