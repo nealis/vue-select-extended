@@ -268,13 +268,14 @@
        */
       createOption: {
         type: Function,
-        default: function (value) {
-          let firstOption = this.options[0]
+        default: function (newOption) {
+          let value = newOption
+          let firstOption = this.options ? this.options[0] : null
           if (firstOption && typeof firstOption === 'object' ) {
             value = {
               value
             }
-            value[this.label] = value
+            value[this.label] = newOption
           }
           return value
         }
@@ -294,7 +295,7 @@
         this.onChange && val !== old ? this.onChange(val) : null
       },
       options() {
-        if (!this.isAdding) {
+        if (!this.taggable) {
           this.$set('value', this.multiple ? [] : null)
         }
       },
@@ -444,11 +445,9 @@
           this.select( this.filteredOptions[ this.typeAheadPointer ] );
         } else if (this.taggable && this.search.length){
           let option = this.createOption(this.search)
-          this.isAdding = true
           this.$set('options', [option, ...this.options])
           this.$nextTick(() => {
             this.select(option)
-            this.isAdding = false
           })
         }
 
