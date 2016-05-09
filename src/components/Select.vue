@@ -1,14 +1,9 @@
-<style scoped>
-  .dropdown {
+<style>
+  .v-select.dropdown {
     position: relative;
   }
 
-  .open .dropdown-toggle,
-  .open .dropdown-menu {
-    border-color: rgba(60,60,60,.26);
-  }
-
-  .open-indicator {
+  .v-select .open-indicator {
     position: absolute;
     top: 10px;
     right: 10px;
@@ -19,11 +14,29 @@
     transition-timing-function: cubic-bezier(1.000, -0.115, 0.975, 0.855);
   }
 
-  .open .open-indicator {
-    transform: rotate(180deg);
+  .v-select .open-indicator:before {
+    border-color:  rgba(60,60,60,.5);
+    border-style: solid;
+    border-width: 0.25em 0.25em 0 0;
+    content: '';
+    display: inline-block;
+    height: 10px;
+    width: 10px;
+    vertical-align: top;
+    transform: rotate(133deg);
+    transition: all 150ms cubic-bezier(1.000, -0.115, 0.975, 0.855);
+    transition-timing-function: cubic-bezier(1.000, -0.115, 0.975, 0.855);
   }
 
-  .dropdown-toggle {
+  .v-select.open .open-indicator {
+    top: 15px;
+  }
+
+  .v-select.open .open-indicator:before {
+    transform: rotate(315deg);
+  }
+
+  .v-select .dropdown-toggle {
     display: block;
     padding: 0;
     background: none;
@@ -31,17 +44,18 @@
     border-radius: 4px;
     white-space: normal;
   }
-  .searchable .dropdown-toggle {
+
+  .v-select.searchable .dropdown-toggle {
     cursor: text;
   }
 
-  .open .dropdown-toggle {
+  .v-select.open .dropdown-toggle {
     border-bottom: none;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
   }
 
-  .dropdown-menu {
+  .v-select > .dropdown-menu {
     margin: 0;
     width: 100%;
     overflow-y: auto;
@@ -50,7 +64,7 @@
     border-top-right-radius: 0;
   }
 
-  .selected-tag {
+  .v-select .selected-tag {
     color: #333;
     background-color: #f0f0f0;
     border: 1px solid #ccc;
@@ -62,14 +76,14 @@
     line-height: 1.7em;
   }
 
-  .selected-tag .close {
+  .v-select .selected-tag .close {
     float: none;
     margin-right: 0;
     font-size: 20px;
   }
 
-  input[type=search],
-  input[type=search]:focus {
+  .v-select input[type=search],
+  .v-select input[type=search]:focus {
     display: inline-block;
     border: none;
     outline: none;
@@ -84,28 +98,28 @@
     clear: none;
   }
 
-  input[type=search]:disabled {
+  .v-select input[type=search]:disabled {
     cursor: pointer;
   }
 
-  li a {
+  .v-select li a {
     cursor: pointer;
   }
 
-  .active a {
+  .v-select .active a {
     background: rgba(50,50,50,.1);
     color: #333;
   }
 
-  .highlight a,
-  li:hover > a {
+  .v-select .highlight a,
+  .v-select li:hover > a {
     background: #f0f0f0;
     color: #333;
   }
 </style>
 
 <template>
-  <div class="dropdown" :class="dropdownClasses">
+  <div class="dropdown v-select" :class="dropdownClasses">
     <div v-el:toggle @mousedown.prevent="toggleDropdown" class="dropdown-toggle clearfix" type="button">
         <span class="form-control" v-if="!searchable && isValueEmpty">
           {{ placeholder }}
@@ -135,7 +149,7 @@
           :style="{ width: isValueEmpty ? '100%' : 'auto' }"
         >
 
-        <i v-el:open-indicator role="presentation" class="open-indicator glyphicon-chevron-down glyphicon"></i>
+        <i v-el:open-indicator role="presentation" class="open-indicator"></i>
     </div>
 
     <ul v-show="open" v-el:dropdown-menu :transition="transition" :style="{ 'max-height': maxHeight }" class="dropdown-menu animated">
