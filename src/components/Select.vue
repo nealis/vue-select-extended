@@ -5,7 +5,7 @@
 
   .v-select .open-indicator {
     position: absolute;
-    top: 10px;
+    bottom: 6px;
     right: 10px;
     display: inline-block;
     cursor: pointer;
@@ -29,7 +29,7 @@
   }
 
   .v-select.open .open-indicator {
-    top: 15px;
+    bottom: 1px;
   }
 
   .v-select.open .open-indicator:before {
