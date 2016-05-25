@@ -1,5 +1,5 @@
 <template>
-<h2 class="page-header">Install &amp; and Usage</h2>
+<h2 class="page-header" id="install">Install &amp; and Usage</h2>
 <p>Install from GitHub via NPM</p>
 <pre><code class="language-bash">npm install sagalbot/vue-select</code></pre>
 
