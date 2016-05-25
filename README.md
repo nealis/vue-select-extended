@@ -1,8 +1,20 @@
 # vue-select [![Build Status](https://travis-ci.org/sagalbot/vue-select.svg?branch=master)](https://travis-ci.org/sagalbot/vue-select)
 
-Rather than bringing in jQuery just to use Select2 or Chosen, this Vue.js component provides similar functionality without the extra overhead of jQuery, while providing the same awesome data-binding features you expect from Vue. Vue-select has no JavaScript dependencies other than Vue.
+> Rather than bringing in jQuery just to use Select2 or Chosen, this Vue.js component provides similar functionality without the extra overhead of jQuery, while providing the same awesome data-binding features you expect from Vue. Vue-select has no JavaScript dependencies other than Vue, and is designed to mimic [Select2](https://github.com/select2/select2).
 
-Currently the `vue-select` component includes bootstrap classes in the markup, that provide some default layout styles. If you're not using bootstrap in your project, you'll need to add some CSS yourself. This will likely be updated in the future so that the bootstrap classes are optional, and if they're not included, some sensible default layout-related CSS will be used.
+#### Features
+
+- No Dependencies
+- List Filtering/Searching
+- Supports Vuex
+- Select Single/Multiple Options
+- Bootstrap Friendly Classes
+- Excellent Test Coverage
+
+#### Upcoming/In Progress
+
+- Tagging (adding options not present in list, see `taggable` branch)
+- Asyncronous Option Loading
 
 ## Demo
 [http://sagalbot.github.io/vue-select/](http://sagalbot.github.io/vue-select/)
@@ -124,17 +136,6 @@ export default {
   onChange: Function
 ```
 
-## Todos:
-- load data from an ajax source with vue-resource
-- rich option formatting with slots/partials
-- fix layout/toggle issues when `searchable` is false
-- `simple` prop that disables `search` and keeps a static `placeholder` regardless of current selection (useful for things like icon button dropdowns)
-- less opinionated styles / only include css necessary to acheive layout (no colors, etc)
-- ~~ability to pre-select options when using `[{label: 'Foo', value: 'foo'}]` syntax (already works with `['foo','bar','baz']` syntax)~~
-- ~~fix layout issues with multiple selections~~
-	- ~~tags overflow outside `.dropdown`~~
-	- ~~search input overflows outside `.dropdown`~~
-- ~~use an actual element instead of `:after` to detect clicks on dropdown caret~~
 
 ## Build Setup for Contributing
 
