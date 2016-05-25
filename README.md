@@ -14,6 +14,7 @@
 #### Upcoming/In Progress
 
 - Tagging (adding options not present in list, see `taggable` branch)
+- Rich Option Templating
 - Asyncronous Option Loading
 
 ## Demo
