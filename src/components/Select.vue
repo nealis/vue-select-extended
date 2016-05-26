@@ -159,7 +159,9 @@
         </a>
       </li>
       <li transition="fade" v-if="!filteredOptions.length" class="divider"></li>
-      <li transition="fade" v-if="!filteredOptions.length" class="text-center">Sorry, no matching options.</li>
+      <li transition="fade" v-if="!filteredOptions.length" class="text-center">
+        <slot name="no-options">Sorry, no matching options.</slot>
+      </li>
     </ul>
   </div>
 </template>
