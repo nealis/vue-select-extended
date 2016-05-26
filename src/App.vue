@@ -156,7 +156,6 @@
         <a class="btn btn-primary btn-outline" href="https://github.com/sagalbot/vue-select"><span class="octicon octicon-mark-github"></span> View on GitHub</a>
       </div>
     </div>
-
     <a href="#install" class="down-arrow">
       Install &amp; Documentation
       <i role="presentation" class="glyphicon glyphicon-chevron-down"></i>

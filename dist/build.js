@@ -1,10 +1,12 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+module.exports = { "default": require("core-js/library/fn/json/stringify"), __esModule: true };
+},{"core-js/library/fn/json/stringify":6}],2:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/keys"), __esModule: true };
-},{"core-js/library/fn/object/keys":5}],2:[function(require,module,exports){
+},{"core-js/library/fn/object/keys":7}],3:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/symbol"), __esModule: true };
-},{"core-js/library/fn/symbol":6}],3:[function(require,module,exports){
+},{"core-js/library/fn/symbol":8}],4:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/symbol/iterator"), __esModule: true };
-},{"core-js/library/fn/symbol/iterator":7}],4:[function(require,module,exports){
+},{"core-js/library/fn/symbol/iterator":9}],5:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -26,33 +28,39 @@ exports.default = typeof _symbol2.default === "function" && _typeof(_iterator2.d
 } : function (obj) {
   return obj && typeof _symbol2.default === "function" && obj.constructor === _symbol2.default ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof(obj);
 };
-},{"babel-runtime/core-js/symbol":2,"babel-runtime/core-js/symbol/iterator":3}],5:[function(require,module,exports){
+},{"babel-runtime/core-js/symbol":3,"babel-runtime/core-js/symbol/iterator":4}],6:[function(require,module,exports){
+var core  = require('../../modules/_core')
+  , $JSON = core.JSON || (core.JSON = {stringify: JSON.stringify});
+module.exports = function stringify(it){ // eslint-disable-line no-unused-vars
+  return $JSON.stringify.apply($JSON, arguments);
+};
+},{"../../modules/_core":15}],7:[function(require,module,exports){
 require('../../modules/es6.object.keys');
 module.exports = require('../../modules/_core').Object.keys;
-},{"../../modules/_core":13,"../../modules/es6.object.keys":66}],6:[function(require,module,exports){
+},{"../../modules/_core":15,"../../modules/es6.object.keys":68}],8:[function(require,module,exports){
 require('../../modules/es6.symbol');
 require('../../modules/es6.object.to-string');
 require('../../modules/es7.symbol.async-iterator');
 require('../../modules/es7.symbol.observable');
 module.exports = require('../../modules/_core').Symbol;
-},{"../../modules/_core":13,"../../modules/es6.object.to-string":67,"../../modules/es6.symbol":69,"../../modules/es7.symbol.async-iterator":70,"../../modules/es7.symbol.observable":71}],7:[function(require,module,exports){
+},{"../../modules/_core":15,"../../modules/es6.object.to-string":69,"../../modules/es6.symbol":71,"../../modules/es7.symbol.async-iterator":72,"../../modules/es7.symbol.observable":73}],9:[function(require,module,exports){
 require('../../modules/es6.string.iterator');
 require('../../modules/web.dom.iterable');
 module.exports = require('../../modules/_wks-ext').f('iterator');
-},{"../../modules/_wks-ext":63,"../../modules/es6.string.iterator":68,"../../modules/web.dom.iterable":72}],8:[function(require,module,exports){
+},{"../../modules/_wks-ext":65,"../../modules/es6.string.iterator":70,"../../modules/web.dom.iterable":74}],10:[function(require,module,exports){
 module.exports = function(it){
   if(typeof it != 'function')throw TypeError(it + ' is not a function!');
   return it;
 };
-},{}],9:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 module.exports = function(){ /* empty */ };
-},{}],10:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 var isObject = require('./_is-object');
 module.exports = function(it){
   if(!isObject(it))throw TypeError(it + ' is not an object!');
   return it;
 };
-},{"./_is-object":29}],11:[function(require,module,exports){
+},{"./_is-object":31}],13:[function(require,module,exports){
 // false -> Array#indexOf
 // true  -> Array#includes
 var toIObject = require('./_to-iobject')
@@ -74,16 +82,16 @@ module.exports = function(IS_INCLUDES){
     } return !IS_INCLUDES && -1;
   };
 };
-},{"./_to-index":55,"./_to-iobject":57,"./_to-length":58}],12:[function(require,module,exports){
+},{"./_to-index":57,"./_to-iobject":59,"./_to-length":60}],14:[function(require,module,exports){
 var toString = {}.toString;
 
 module.exports = function(it){
   return toString.call(it).slice(8, -1);
 };
-},{}],13:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 var core = module.exports = {version: '2.4.0'};
 if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
-},{}],14:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 // optional / simple context binding
 var aFunction = require('./_a-function');
 module.exports = function(fn, that, length){
@@ -104,18 +112,18 @@ module.exports = function(fn, that, length){
     return fn.apply(that, arguments);
   };
 };
-},{"./_a-function":8}],15:[function(require,module,exports){
+},{"./_a-function":10}],17:[function(require,module,exports){
 // 7.2.1 RequireObjectCoercible(argument)
 module.exports = function(it){
   if(it == undefined)throw TypeError("Can't call method on  " + it);
   return it;
 };
-},{}],16:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 // Thank's IE8 for his funny defineProperty
 module.exports = !require('./_fails')(function(){
   return Object.defineProperty({}, 'a', {get: function(){ return 7; }}).a != 7;
 });
-},{"./_fails":21}],17:[function(require,module,exports){
+},{"./_fails":23}],19:[function(require,module,exports){
 var isObject = require('./_is-object')
   , document = require('./_global').document
   // in old IE typeof document.createElement is 'object'
@@ -123,12 +131,12 @@ var isObject = require('./_is-object')
 module.exports = function(it){
   return is ? document.createElement(it) : {};
 };
-},{"./_global":22,"./_is-object":29}],18:[function(require,module,exports){
+},{"./_global":24,"./_is-object":31}],20:[function(require,module,exports){
 // IE 8- don't enum bug keys
 module.exports = (
   'constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf'
 ).split(',');
-},{}],19:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 // all enumerable object keys, includes symbols
 var getKeys = require('./_object-keys')
   , gOPS    = require('./_object-gops')
@@ -144,7 +152,7 @@ module.exports = function(it){
     while(symbols.length > i)if(isEnum.call(it, key = symbols[i++]))result.push(key);
   } return result;
 };
-},{"./_object-gops":43,"./_object-keys":46,"./_object-pie":47}],20:[function(require,module,exports){
+},{"./_object-gops":45,"./_object-keys":48,"./_object-pie":49}],22:[function(require,module,exports){
 var global    = require('./_global')
   , core      = require('./_core')
   , ctx       = require('./_ctx')
@@ -206,7 +214,7 @@ $export.W = 32;  // wrap
 $export.U = 64;  // safe
 $export.R = 128; // real proto method for `library` 
 module.exports = $export;
-},{"./_core":13,"./_ctx":14,"./_global":22,"./_hide":24}],21:[function(require,module,exports){
+},{"./_core":15,"./_ctx":16,"./_global":24,"./_hide":26}],23:[function(require,module,exports){
 module.exports = function(exec){
   try {
     return !!exec();
@@ -214,17 +222,17 @@ module.exports = function(exec){
     return true;
   }
 };
-},{}],22:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
 var global = module.exports = typeof window != 'undefined' && window.Math == Math
   ? window : typeof self != 'undefined' && self.Math == Math ? self : Function('return this')();
 if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
-},{}],23:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 var hasOwnProperty = {}.hasOwnProperty;
 module.exports = function(it, key){
   return hasOwnProperty.call(it, key);
 };
-},{}],24:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 var dP         = require('./_object-dp')
   , createDesc = require('./_property-desc');
 module.exports = require('./_descriptors') ? function(object, key, value){
@@ -233,29 +241,29 @@ module.exports = require('./_descriptors') ? function(object, key, value){
   object[key] = value;
   return object;
 };
-},{"./_descriptors":16,"./_object-dp":38,"./_property-desc":49}],25:[function(require,module,exports){
+},{"./_descriptors":18,"./_object-dp":40,"./_property-desc":51}],27:[function(require,module,exports){
 module.exports = require('./_global').document && document.documentElement;
-},{"./_global":22}],26:[function(require,module,exports){
+},{"./_global":24}],28:[function(require,module,exports){
 module.exports = !require('./_descriptors') && !require('./_fails')(function(){
   return Object.defineProperty(require('./_dom-create')('div'), 'a', {get: function(){ return 7; }}).a != 7;
 });
-},{"./_descriptors":16,"./_dom-create":17,"./_fails":21}],27:[function(require,module,exports){
+},{"./_descriptors":18,"./_dom-create":19,"./_fails":23}],29:[function(require,module,exports){
 // fallback for non-array-like ES3 and non-enumerable old V8 strings
 var cof = require('./_cof');
 module.exports = Object('z').propertyIsEnumerable(0) ? Object : function(it){
   return cof(it) == 'String' ? it.split('') : Object(it);
 };
-},{"./_cof":12}],28:[function(require,module,exports){
+},{"./_cof":14}],30:[function(require,module,exports){
 // 7.2.2 IsArray(argument)
 var cof = require('./_cof');
 module.exports = Array.isArray || function isArray(arg){
   return cof(arg) == 'Array';
 };
-},{"./_cof":12}],29:[function(require,module,exports){
+},{"./_cof":14}],31:[function(require,module,exports){
 module.exports = function(it){
   return typeof it === 'object' ? it !== null : typeof it === 'function';
 };
-},{}],30:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 'use strict';
 var create         = require('./_object-create')
   , descriptor     = require('./_property-desc')
@@ -269,7 +277,7 @@ module.exports = function(Constructor, NAME, next){
   Constructor.prototype = create(IteratorPrototype, {next: descriptor(1, next)});
   setToStringTag(Constructor, NAME + ' Iterator');
 };
-},{"./_hide":24,"./_object-create":37,"./_property-desc":49,"./_set-to-string-tag":51,"./_wks":64}],31:[function(require,module,exports){
+},{"./_hide":26,"./_object-create":39,"./_property-desc":51,"./_set-to-string-tag":53,"./_wks":66}],33:[function(require,module,exports){
 'use strict';
 var LIBRARY        = require('./_library')
   , $export        = require('./_export')
@@ -340,13 +348,13 @@ module.exports = function(Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCED
   }
   return methods;
 };
-},{"./_export":20,"./_has":23,"./_hide":24,"./_iter-create":30,"./_iterators":33,"./_library":35,"./_object-gpo":44,"./_redefine":50,"./_set-to-string-tag":51,"./_wks":64}],32:[function(require,module,exports){
+},{"./_export":22,"./_has":25,"./_hide":26,"./_iter-create":32,"./_iterators":35,"./_library":37,"./_object-gpo":46,"./_redefine":52,"./_set-to-string-tag":53,"./_wks":66}],34:[function(require,module,exports){
 module.exports = function(done, value){
   return {value: value, done: !!done};
 };
-},{}],33:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 module.exports = {};
-},{}],34:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 var getKeys   = require('./_object-keys')
   , toIObject = require('./_to-iobject');
 module.exports = function(object, el){
@@ -357,9 +365,9 @@ module.exports = function(object, el){
     , key;
   while(length > index)if(O[key = keys[index++]] === el)return key;
 };
-},{"./_object-keys":46,"./_to-iobject":57}],35:[function(require,module,exports){
+},{"./_object-keys":48,"./_to-iobject":59}],37:[function(require,module,exports){
 module.exports = true;
-},{}],36:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 var META     = require('./_uid')('meta')
   , isObject = require('./_is-object')
   , has      = require('./_has')
@@ -413,7 +421,7 @@ var meta = module.exports = {
   getWeak:  getWeak,
   onFreeze: onFreeze
 };
-},{"./_fails":21,"./_has":23,"./_is-object":29,"./_object-dp":38,"./_uid":61}],37:[function(require,module,exports){
+},{"./_fails":23,"./_has":25,"./_is-object":31,"./_object-dp":40,"./_uid":63}],39:[function(require,module,exports){
 // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
 var anObject    = require('./_an-object')
   , dPs         = require('./_object-dps')
@@ -454,7 +462,7 @@ module.exports = Object.create || function create(O, Properties){
   } else result = createDict();
   return Properties === undefined ? result : dPs(result, Properties);
 };
-},{"./_an-object":10,"./_dom-create":17,"./_enum-bug-keys":18,"./_html":25,"./_object-dps":39,"./_shared-key":52}],38:[function(require,module,exports){
+},{"./_an-object":12,"./_dom-create":19,"./_enum-bug-keys":20,"./_html":27,"./_object-dps":41,"./_shared-key":54}],40:[function(require,module,exports){
 var anObject       = require('./_an-object')
   , IE8_DOM_DEFINE = require('./_ie8-dom-define')
   , toPrimitive    = require('./_to-primitive')
@@ -471,7 +479,7 @@ exports.f = require('./_descriptors') ? Object.defineProperty : function defineP
   if('value' in Attributes)O[P] = Attributes.value;
   return O;
 };
-},{"./_an-object":10,"./_descriptors":16,"./_ie8-dom-define":26,"./_to-primitive":60}],39:[function(require,module,exports){
+},{"./_an-object":12,"./_descriptors":18,"./_ie8-dom-define":28,"./_to-primitive":62}],41:[function(require,module,exports){
 var dP       = require('./_object-dp')
   , anObject = require('./_an-object')
   , getKeys  = require('./_object-keys');
@@ -485,7 +493,7 @@ module.exports = require('./_descriptors') ? Object.defineProperties : function 
   while(length > i)dP.f(O, P = keys[i++], Properties[P]);
   return O;
 };
-},{"./_an-object":10,"./_descriptors":16,"./_object-dp":38,"./_object-keys":46}],40:[function(require,module,exports){
+},{"./_an-object":12,"./_descriptors":18,"./_object-dp":40,"./_object-keys":48}],42:[function(require,module,exports){
 var pIE            = require('./_object-pie')
   , createDesc     = require('./_property-desc')
   , toIObject      = require('./_to-iobject')
@@ -502,7 +510,7 @@ exports.f = require('./_descriptors') ? gOPD : function getOwnPropertyDescriptor
   } catch(e){ /* empty */ }
   if(has(O, P))return createDesc(!pIE.f.call(O, P), O[P]);
 };
-},{"./_descriptors":16,"./_has":23,"./_ie8-dom-define":26,"./_object-pie":47,"./_property-desc":49,"./_to-iobject":57,"./_to-primitive":60}],41:[function(require,module,exports){
+},{"./_descriptors":18,"./_has":25,"./_ie8-dom-define":28,"./_object-pie":49,"./_property-desc":51,"./_to-iobject":59,"./_to-primitive":62}],43:[function(require,module,exports){
 // fallback for IE11 buggy Object.getOwnPropertyNames with iframe and window
 var toIObject = require('./_to-iobject')
   , gOPN      = require('./_object-gopn').f
@@ -523,7 +531,7 @@ module.exports.f = function getOwnPropertyNames(it){
   return windowNames && toString.call(it) == '[object Window]' ? getWindowNames(it) : gOPN(toIObject(it));
 };
 
-},{"./_object-gopn":42,"./_to-iobject":57}],42:[function(require,module,exports){
+},{"./_object-gopn":44,"./_to-iobject":59}],44:[function(require,module,exports){
 // 19.1.2.7 / 15.2.3.4 Object.getOwnPropertyNames(O)
 var $keys      = require('./_object-keys-internal')
   , hiddenKeys = require('./_enum-bug-keys').concat('length', 'prototype');
@@ -531,9 +539,9 @@ var $keys      = require('./_object-keys-internal')
 exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O){
   return $keys(O, hiddenKeys);
 };
-},{"./_enum-bug-keys":18,"./_object-keys-internal":45}],43:[function(require,module,exports){
+},{"./_enum-bug-keys":20,"./_object-keys-internal":47}],45:[function(require,module,exports){
 exports.f = Object.getOwnPropertySymbols;
-},{}],44:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 // 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
 var has         = require('./_has')
   , toObject    = require('./_to-object')
@@ -547,7 +555,7 @@ module.exports = Object.getPrototypeOf || function(O){
     return O.constructor.prototype;
   } return O instanceof Object ? ObjectProto : null;
 };
-},{"./_has":23,"./_shared-key":52,"./_to-object":59}],45:[function(require,module,exports){
+},{"./_has":25,"./_shared-key":54,"./_to-object":61}],47:[function(require,module,exports){
 var has          = require('./_has')
   , toIObject    = require('./_to-iobject')
   , arrayIndexOf = require('./_array-includes')(false)
@@ -565,7 +573,7 @@ module.exports = function(object, names){
   }
   return result;
 };
-},{"./_array-includes":11,"./_has":23,"./_shared-key":52,"./_to-iobject":57}],46:[function(require,module,exports){
+},{"./_array-includes":13,"./_has":25,"./_shared-key":54,"./_to-iobject":59}],48:[function(require,module,exports){
 // 19.1.2.14 / 15.2.3.14 Object.keys(O)
 var $keys       = require('./_object-keys-internal')
   , enumBugKeys = require('./_enum-bug-keys');
@@ -573,9 +581,9 @@ var $keys       = require('./_object-keys-internal')
 module.exports = Object.keys || function keys(O){
   return $keys(O, enumBugKeys);
 };
-},{"./_enum-bug-keys":18,"./_object-keys-internal":45}],47:[function(require,module,exports){
+},{"./_enum-bug-keys":20,"./_object-keys-internal":47}],49:[function(require,module,exports){
 exports.f = {}.propertyIsEnumerable;
-},{}],48:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 // most Object methods by ES6 should accept primitives
 var $export = require('./_export')
   , core    = require('./_core')
@@ -586,7 +594,7 @@ module.exports = function(KEY, exec){
   exp[KEY] = exec(fn);
   $export($export.S + $export.F * fails(function(){ fn(1); }), 'Object', exp);
 };
-},{"./_core":13,"./_export":20,"./_fails":21}],49:[function(require,module,exports){
+},{"./_core":15,"./_export":22,"./_fails":23}],51:[function(require,module,exports){
 module.exports = function(bitmap, value){
   return {
     enumerable  : !(bitmap & 1),
@@ -595,9 +603,9 @@ module.exports = function(bitmap, value){
     value       : value
   };
 };
-},{}],50:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 module.exports = require('./_hide');
-},{"./_hide":24}],51:[function(require,module,exports){
+},{"./_hide":26}],53:[function(require,module,exports){
 var def = require('./_object-dp').f
   , has = require('./_has')
   , TAG = require('./_wks')('toStringTag');
@@ -605,20 +613,20 @@ var def = require('./_object-dp').f
 module.exports = function(it, tag, stat){
   if(it && !has(it = stat ? it : it.prototype, TAG))def(it, TAG, {configurable: true, value: tag});
 };
-},{"./_has":23,"./_object-dp":38,"./_wks":64}],52:[function(require,module,exports){
+},{"./_has":25,"./_object-dp":40,"./_wks":66}],54:[function(require,module,exports){
 var shared = require('./_shared')('keys')
   , uid    = require('./_uid');
 module.exports = function(key){
   return shared[key] || (shared[key] = uid(key));
 };
-},{"./_shared":53,"./_uid":61}],53:[function(require,module,exports){
+},{"./_shared":55,"./_uid":63}],55:[function(require,module,exports){
 var global = require('./_global')
   , SHARED = '__core-js_shared__'
   , store  = global[SHARED] || (global[SHARED] = {});
 module.exports = function(key){
   return store[key] || (store[key] = {});
 };
-},{"./_global":22}],54:[function(require,module,exports){
+},{"./_global":24}],56:[function(require,module,exports){
 var toInteger = require('./_to-integer')
   , defined   = require('./_defined');
 // true  -> String#at
@@ -636,7 +644,7 @@ module.exports = function(TO_STRING){
       : TO_STRING ? s.slice(i, i + 2) : (a - 0xd800 << 10) + (b - 0xdc00) + 0x10000;
   };
 };
-},{"./_defined":15,"./_to-integer":56}],55:[function(require,module,exports){
+},{"./_defined":17,"./_to-integer":58}],57:[function(require,module,exports){
 var toInteger = require('./_to-integer')
   , max       = Math.max
   , min       = Math.min;
@@ -644,34 +652,34 @@ module.exports = function(index, length){
   index = toInteger(index);
   return index < 0 ? max(index + length, 0) : min(index, length);
 };
-},{"./_to-integer":56}],56:[function(require,module,exports){
+},{"./_to-integer":58}],58:[function(require,module,exports){
 // 7.1.4 ToInteger
 var ceil  = Math.ceil
   , floor = Math.floor;
 module.exports = function(it){
   return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
 };
-},{}],57:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 // to indexed object, toObject with fallback for non-array-like ES3 strings
 var IObject = require('./_iobject')
   , defined = require('./_defined');
 module.exports = function(it){
   return IObject(defined(it));
 };
-},{"./_defined":15,"./_iobject":27}],58:[function(require,module,exports){
+},{"./_defined":17,"./_iobject":29}],60:[function(require,module,exports){
 // 7.1.15 ToLength
 var toInteger = require('./_to-integer')
   , min       = Math.min;
 module.exports = function(it){
   return it > 0 ? min(toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
 };
-},{"./_to-integer":56}],59:[function(require,module,exports){
+},{"./_to-integer":58}],61:[function(require,module,exports){
 // 7.1.13 ToObject(argument)
 var defined = require('./_defined');
 module.exports = function(it){
   return Object(defined(it));
 };
-},{"./_defined":15}],60:[function(require,module,exports){
+},{"./_defined":17}],62:[function(require,module,exports){
 // 7.1.1 ToPrimitive(input [, PreferredType])
 var isObject = require('./_is-object');
 // instead of the ES6 spec version, we didn't implement @@toPrimitive case
@@ -684,13 +692,13 @@ module.exports = function(it, S){
   if(!S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it)))return val;
   throw TypeError("Can't convert object to primitive value");
 };
-},{"./_is-object":29}],61:[function(require,module,exports){
+},{"./_is-object":31}],63:[function(require,module,exports){
 var id = 0
   , px = Math.random();
 module.exports = function(key){
   return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
 };
-},{}],62:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 var global         = require('./_global')
   , core           = require('./_core')
   , LIBRARY        = require('./_library')
@@ -700,9 +708,9 @@ module.exports = function(name){
   var $Symbol = core.Symbol || (core.Symbol = LIBRARY ? {} : global.Symbol || {});
   if(name.charAt(0) != '_' && !(name in $Symbol))defineProperty($Symbol, name, {value: wksExt.f(name)});
 };
-},{"./_core":13,"./_global":22,"./_library":35,"./_object-dp":38,"./_wks-ext":63}],63:[function(require,module,exports){
+},{"./_core":15,"./_global":24,"./_library":37,"./_object-dp":40,"./_wks-ext":65}],65:[function(require,module,exports){
 exports.f = require('./_wks');
-},{"./_wks":64}],64:[function(require,module,exports){
+},{"./_wks":66}],66:[function(require,module,exports){
 var store      = require('./_shared')('wks')
   , uid        = require('./_uid')
   , Symbol     = require('./_global').Symbol
@@ -714,7 +722,7 @@ var $exports = module.exports = function(name){
 };
 
 $exports.store = store;
-},{"./_global":22,"./_shared":53,"./_uid":61}],65:[function(require,module,exports){
+},{"./_global":24,"./_shared":55,"./_uid":63}],67:[function(require,module,exports){
 'use strict';
 var addToUnscopables = require('./_add-to-unscopables')
   , step             = require('./_iter-step')
@@ -749,7 +757,7 @@ Iterators.Arguments = Iterators.Array;
 addToUnscopables('keys');
 addToUnscopables('values');
 addToUnscopables('entries');
-},{"./_add-to-unscopables":9,"./_iter-define":31,"./_iter-step":32,"./_iterators":33,"./_to-iobject":57}],66:[function(require,module,exports){
+},{"./_add-to-unscopables":11,"./_iter-define":33,"./_iter-step":34,"./_iterators":35,"./_to-iobject":59}],68:[function(require,module,exports){
 // 19.1.2.14 Object.keys(O)
 var toObject = require('./_to-object')
   , $keys    = require('./_object-keys');
@@ -759,9 +767,9 @@ require('./_object-sap')('keys', function(){
     return $keys(toObject(it));
   };
 });
-},{"./_object-keys":46,"./_object-sap":48,"./_to-object":59}],67:[function(require,module,exports){
+},{"./_object-keys":48,"./_object-sap":50,"./_to-object":61}],69:[function(require,module,exports){
 
-},{}],68:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 'use strict';
 var $at  = require('./_string-at')(true);
 
@@ -779,7 +787,7 @@ require('./_iter-define')(String, 'String', function(iterated){
   this._i += point.length;
   return {value: point, done: false};
 });
-},{"./_iter-define":31,"./_string-at":54}],69:[function(require,module,exports){
+},{"./_iter-define":33,"./_string-at":56}],71:[function(require,module,exports){
 'use strict';
 // ECMAScript 6 symbols shim
 var global         = require('./_global')
@@ -1015,11 +1023,11 @@ setToStringTag($Symbol, 'Symbol');
 setToStringTag(Math, 'Math', true);
 // 24.3.3 JSON[@@toStringTag]
 setToStringTag(global.JSON, 'JSON', true);
-},{"./_an-object":10,"./_descriptors":16,"./_enum-keys":19,"./_export":20,"./_fails":21,"./_global":22,"./_has":23,"./_hide":24,"./_is-array":28,"./_keyof":34,"./_library":35,"./_meta":36,"./_object-create":37,"./_object-dp":38,"./_object-gopd":40,"./_object-gopn":42,"./_object-gopn-ext":41,"./_object-gops":43,"./_object-keys":46,"./_object-pie":47,"./_property-desc":49,"./_redefine":50,"./_set-to-string-tag":51,"./_shared":53,"./_to-iobject":57,"./_to-primitive":60,"./_uid":61,"./_wks":64,"./_wks-define":62,"./_wks-ext":63}],70:[function(require,module,exports){
+},{"./_an-object":12,"./_descriptors":18,"./_enum-keys":21,"./_export":22,"./_fails":23,"./_global":24,"./_has":25,"./_hide":26,"./_is-array":30,"./_keyof":36,"./_library":37,"./_meta":38,"./_object-create":39,"./_object-dp":40,"./_object-gopd":42,"./_object-gopn":44,"./_object-gopn-ext":43,"./_object-gops":45,"./_object-keys":48,"./_object-pie":49,"./_property-desc":51,"./_redefine":52,"./_set-to-string-tag":53,"./_shared":55,"./_to-iobject":59,"./_to-primitive":62,"./_uid":63,"./_wks":66,"./_wks-define":64,"./_wks-ext":65}],72:[function(require,module,exports){
 require('./_wks-define')('asyncIterator');
-},{"./_wks-define":62}],71:[function(require,module,exports){
+},{"./_wks-define":64}],73:[function(require,module,exports){
 require('./_wks-define')('observable');
-},{"./_wks-define":62}],72:[function(require,module,exports){
+},{"./_wks-define":64}],74:[function(require,module,exports){
 require('./es6.array.iterator');
 var global        = require('./_global')
   , hide          = require('./_hide')
@@ -1033,7 +1041,7 @@ for(var collections = ['NodeList', 'DOMTokenList', 'MediaList', 'StyleSheetList'
   if(proto && !proto[TO_STRING_TAG])hide(proto, TO_STRING_TAG, NAME);
   Iterators[NAME] = Iterators.Array;
 }
-},{"./_global":22,"./_hide":24,"./_iterators":33,"./_wks":64,"./es6.array.iterator":65}],73:[function(require,module,exports){
+},{"./_global":24,"./_hide":26,"./_iterators":35,"./_wks":66,"./es6.array.iterator":67}],75:[function(require,module,exports){
 (function (global){
 /*!
  * Vue.js v1.0.22
@@ -11057,7 +11065,7 @@ setTimeout(function () {
 
 module.exports = Vue;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],74:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
 var inserted = exports.cache = {}
 
 exports.insert = function (css) {
@@ -11077,7 +11085,7 @@ exports.insert = function (css) {
   return elem
 }
 
-},{}],75:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
 /*!
  * Vuex v0.6.3
  * (c) 2016 Evan You
@@ -11712,7 +11720,7 @@ exports.insert = function (css) {
   return index;
 
 }));
-},{}],76:[function(require,module,exports){
+},{}],78:[function(require,module,exports){
 var __vueify_style__ = require("vueify-insert-css").insert("body{font-family:Source Sans Pro,Helvetica Neue,Arial,sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.jumbotron-top{background:#4cc3d9;background:-webkit-linear-gradient(45deg,rgba(76,195,217,0),#98e3ea);background:linear-gradient(45deg,rgba(76,195,217,0),#98e3ea);margin-bottom:0;min-height:100vh;position:relative}.jumbotron-top .container{position:absolute;height:600px;left:0;right:0;top:50%;-webkit-transform:translateY(-50%);transform:translateY(-50%);text-align:center}h1{display:inline-block;font-family:Dosis,Source Sans Pro,Helvetica Neue,Arial,sans-serif;font-weight:300;line-height:1;padding-right:80px;background-position:100%;background-repeat:no-repeat;background-size:55px auto;background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAYAAACtWK6eAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyNpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMDE0IDc5LjE1Njc5NywgMjAxNC8wOC8yMC0wOTo1MzowMiAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OTk2QkI4RkE3NjE2MTFFNUE4NEU4RkIxNjQ5MTYyRDgiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OTk2QkI4Rjk3NjE2MTFFNUE4NEU4RkIxNjQ5MTYyRDgiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChNYWNpbnRvc2gpIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6NjU2QTEyNzk3NjkyMTFFMzkxODk4RDkwQkY4Q0U0NzYiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6NjU2QTEyN0E3NjkyMTFFMzkxODk4RDkwQkY4Q0U0NzYiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz5WHowqAAAXNElEQVR42uxda4xd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)}.list-vue{text-align:left;margin:20px auto;padding:0}p.lead{font-size:1.8em;margin:1em 0}.btn-outline{background:none;padding:10px 16px;font-size:18px;line-height:1.3333333;border-radius:6px;border:3px solid #91ddec;color:#147688}.btn-outline:hover{border-color:#41b883;background-color:rgba(65,184,131,.67)}.btn-outline:active,.btn-outline:focus{border-color:#41b883;background-color:#41b883}.down-arrow{position:absolute;bottom:10px;width:100%;text-align:center;color:rgba(0,0,0,.5);font-size:1.6em}.down-arrow i{font-size:.7em;opacity:.4}#v-select{max-width:500px;margin:0 auto}#v-select .dropdown-toggle{background:#fff;border-color:rgba(82,166,183,.39)}#v-select .selected-tag{color:#147688;background-color:#d7f3f9;border-color:#91ddec}#v-select .selected-tag .close{font-family:Helvetica Neue,Helvetica;font-weight:400;color:#147688;opacity:.5}#v-select.dropdown.open .dropdown-menu,#v-select.dropdown.open .dropdown-toggle,#v-select.dropdown.open .open-indicator:before{border-color:#4cc3d9}#v-select .active a{background:rgba(50,50,50,.1);color:#333}#v-select.dropdown .highlight a,#v-select.dropdown li:hover a{background:#4cc3d9;color:#fff}")
 'use strict';
 
@@ -11768,17 +11776,93 @@ exports.default = {
 if (module.exports.__esModule) module.exports = module.exports.default
 ;(typeof module.exports === "function"? module.exports.options: module.exports).template = "<div class=\"jumbotron jumbotron-top\"><div class=container><div class=\"col-md-8 col-md-offset-2\"><h1>Vue Select</h1><p class=lead>A well-tested, native Vue.js component that provides similar functionality to Select2/Chosen without the overhead of jQuery.</p><v-select id=v-select :placeholder=placeholder :value=selected :options=options :multiple=multiple :on-change=setSelected></v-select><div class=row><div class=\"col-md-3 col-md-offset-3\"><ul class=list-vue><li>Fully Reactive<li>Works with Vuex<li><strong>No JS dependencies</strong></ul></div><div class=col-md-3><ul class=list-vue><li>Select Single/Multiple<li>Excellent Test Coverage<li>Bootstrap Friendly Classes</ul></div></div><a class=\"btn btn-primary btn-outline\" href=https://github.com/sagalbot/vue-select><span class=\"octicon octicon-mark-github\"></span> View on GitHub</a></div></div><a href=#install class=down-arrow>Install &amp; Documentation <i role=presentation class=\"glyphicon glyphicon-chevron-down\"></i></a></div><div class=container><div class=\"col-md-10 col-md-offset-1\"><install></install><params></params></div></div>"
 
-},{"./components/Install.vue":77,"./components/Params.vue":78,"./components/Select.vue":79,"./vuex/actions":83,"vueify-insert-css":74}],77:[function(require,module,exports){
-"use strict";
+},{"./components/Install.vue":80,"./components/Params.vue":81,"./components/Select.vue":82,"./vuex/actions":87,"vueify-insert-css":76}],79:[function(require,module,exports){
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = {};
+exports.default = {
+  props: ['lang'],
+  computed: {
+    class: function _class() {
+      return 'language-' + this.lang;
+    }
+  }
+};
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "<h2 class=page-header id=install>Install &amp; and Usage</h2><p>Install from GitHub via NPM<pre><code class=language-bash>npm install sagalbot/vue-select</code></pre><pre v-pre=\"\"><code class=language-markup>&lt;template&gt;\n  &lt;div id=\"myApp\"&gt;\n    &lt;v-select :value.sync=\"selected\" :options=\"options\"&gt;&lt;/v-select&gt;\n  &lt;/div&gt;\n&lt;/template&gt;</code>\n\n<code class=language-markup>&lt;script&gt;</code>\n  <code class=language-javascript>import vSelect from 'vue-select'\n  export default {\n    components: {vSelect},\n\n    data() {\n      return {\n        selected: null,\n        options: ['foo','bar','baz']\n      }\n    }\n  }</code><code class=language-markup>\n&lt;/script&gt;</code>\n</pre>"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "<code :class=class><slot></slot></code>"
 
-},{}],78:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _stringify = require('babel-runtime/core-js/json/stringify');
+
+var _stringify2 = _interopRequireDefault(_stringify);
+
+var _advanced = require('../countries/advanced');
+
+var _advanced2 = _interopRequireDefault(_advanced);
+
+var _simple = require('../countries/simple');
+
+var _simple2 = _interopRequireDefault(_simple);
+
+var _Select = require('./Select.vue');
+
+var _Select2 = _interopRequireDefault(_Select);
+
+var _Code = require('./Code.vue');
+
+var _Code2 = _interopRequireDefault(_Code);
+
+var _InstallSnippet = require('./snippets/InstallSnippet.vue');
+
+var _InstallSnippet2 = _interopRequireDefault(_InstallSnippet);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+  components: { vSelect: _Select2.default, vCode: _Code2.default, InstallSnippet: _InstallSnippet2.default },
+  data: function data() {
+    return {
+      countries: _advanced2.default,
+      simple: _simple2.default,
+      callback: 'console',
+      reactive: null,
+      install: null,
+      syncedVal: 'Canada'
+    };
+  },
+
+
+  methods: {
+    consoleCallback: function consoleCallback(val) {
+      console.dir((0, _stringify2.default)(val));
+    },
+    alertCallback: function alertCallback(val) {
+      alert((0, _stringify2.default)(val));
+    }
+  },
+
+  computed: {
+    getCallback: function getCallback() {
+      if (this.callback === 'alert') {
+        return this.alertCallback;
+      }
+
+      return this.consoleCallback;
+    }
+  }
+};
+if (module.exports.__esModule) module.exports = module.exports.default
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "<section><h2 class=page-header id=install>Install &amp; and Usage</h2><div class=\"row row-col-vh\"><div class=col-md-7><install-snippet></install-snippet></div><div class=col-md-5><p>The resulting vue-select, and it's value:<v-code lang=json>{{ install | json }}</v-code></p><v-select :value.sync=install :options=\"['foo','bar','baz']\"></v-select></div></div><h2 class=page-header id=examples>Examples</h2><h3 class=page-header>Single/Multiple Selection</h3><div class=row><div class=col-md-6><h4>Single Option Select</h4><pre><v-code lang=markup>&lt;v-select :options=\"countries\"&gt;&lt;/v-select&gt;</v-code></pre><v-select :options=countries></v-select></div><div class=col-md-6><h4>Multiple Option Select</h4><pre><v-code lang=markup>&lt;v-select multiple :options=\"countries\"&gt;&lt;/v-select&gt;</v-code></pre><v-select multiple :options=countries></v-select></div></div><h3 class=page-header>Reactive Options</h3><div class=row><div class=col-md-6><p>When the list of options provided by the parent changes, vue-select will react as you'd expect.<div style=margin-top:0 class=radio><label><input type=radio name=reactive-options v-model=reactive :value=countries><v-code lang=markup>&lt;v-select :options=\"countries\"&gt;&lt;/v-select&gt;</v-code></label></div><div class=radio><label><input type=radio name=reactive-options v-model=reactive :value=\"['foo','bar','baz']\"><v-code lang=markup>&lt;v-select options=\"['foo','bar','baz']\"&gt;&lt;/v-select&gt;</v-code></label></div></div><div class=col-md-6><v-select :options=reactive></v-select></div></div><h3 class=page-header>Two-Way Value Syncing</h3><div class=row><div class=col-md-6><p>The most common use case for vue-select is being able to sync the components value with a parent component. The <code>value</code> property supports two-way data binding to accomplish this.<p>The <code>.sync</code> data-binding modifier is completely optional. You may use <code>value</code> without a two-way binding to preselect options.<p>Here we have preselected 'Canada' by setting <code>syncedVal: 'Canada'</code> on the parent component. The buttons below demonstrate how you can set the <code>value</code> from the parent.<p>Current value:<v-code>{{ syncedVal | json }}</v-code></div><div class=col-md-6><div class=form-group><pre><v-code lang=markup>&lt;v-select :value.sync=\"syncedVal\" :options=\"countries\"&gt;&lt;/v-select&gt;</v-code></pre></div><div class=form-group><v-select :options=simple :value.sync=syncedVal></v-select></div><div class=form-group><button @click=\"syncedVal = 'United States'\" class=\"btn btn-default\">Set to United States</button> <button @click=\"syncedVal = 'Canada'\" class=\"btn btn-default\">Set to Canada</button></div></div></div><h3 class=page-header>Custom Labels</h3><div class=row><div class=col-md-6><p>By default when the <code>options</code> array contains objects, <code>vue-select</code> looks for the <code>label</code> key for display. If your data source doesn't contain that key, you can set your own using the <code>label</code> prop.<p>On this page, the list of countries used in the examples contains <code>value</code> and <code>label</code> properties:<v-code lang=json>{value: \"CA\", label: \"Canada\"}</v-code>. In this example, we'll display the country code instead of the label.</div><div class=col-md-6><pre><v-code lang=markup>&lt;v-select label=\"value\" :options=\"countries\"&gt;&lt;/v-select&gt;</v-code></pre><v-select :options=countries label=value></v-select></div></div><h3 class=page-header>On-Change Callback <small>Vuex Compatibility</small></h3><div class=row><div class=col-md-6><p>vue-select provides an <code>onChange</code> property that accepts a callback function. This function is passed the currently selected value(s) as it's only parameter.<p>This is very useful when integrating with Vuex, as it will allow your to trigger an action to update your vuex state object. Choose a callback and see it in action.<div class=form-inline><div class=radio><label><input type=radio v-model=callback value=console> <code>console.log(val)</code></label></div><div class=radio><label><input type=radio v-model=callback value=alert> <code>alert(val)</code></label></div></div></div><div class=col-md-6><pre><v-code lang=markup>&lt;v-select on-change=\"consoleCallback\" :options=\"countries\"&gt;&lt;/v-select&gt;</v-code></pre><pre><v-code lang=javascript>methods: {\n  consoleCallback(val) {\n    console.dir(JSON.stringify(val))\n  },\n\n  alertCallback(val) {\n    alert(JSON.stringify(val))\n  }\n}</v-code></pre><v-select :options=countries :on-change=getCallback></v-select></div></div></section>"
+
+},{"../countries/advanced":84,"../countries/simple":85,"./Code.vue":79,"./Select.vue":82,"./snippets/InstallSnippet.vue":83,"babel-runtime/core-js/json/stringify":1}],81:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11788,7 +11872,7 @@ exports.default = {};
 if (module.exports.__esModule) module.exports = module.exports.default
 ;(typeof module.exports === "function"? module.exports.options: module.exports).template = "<h2 class=page-header>Parameters</h2><pre v-pre=\"\"><code class=language-javascript>props: {\n\n  /**\n   * Contains the currently selected value. Very similar to a\n   * `value` attribute on an &amp;lt;input&amp;gt;. In most cases, you'll want\n   * to set this as a two-way binding, using :value.sync. However,\n   * this will not work with Vuex, in which case you'll need to use\n   * the onChange callback property.\n   * @type {Object||String||null}\n   */\n  value: {\n    default: null\n  },\n\n  /**\n   * An array of strings or objects to be used as dropdown choices.\n   * If you are using an array of objects, vue-select will look for\n   * a `label` key (ex. [{label: 'This is Foo', value: 'foo'}]). A\n   * custom label key can be set with the `label` prop.\n   * @type {Array}\n   */\n  options: {\n    type: Array,\n    default() { return [] },\n  },\n\n  /**\n   * Enable/disable filtering the options.\n   * @type {Boolean}\n   */\n  searchable: {\n    type: Boolean,\n    default: true\n  },\n\n  /**\n   * Equivalent to the `multiple` attribute on a `&lt;select&gt;` input.\n   * @type {Boolean}\n   */\n  multiple: {\n    type: Boolean,\n    default: false\n  },\n\n  /**\n   * Equivalent to the `placeholder` attribute on an `&lt;input&gt;`.\n   * @type {String}\n   */\n  placeholder: {\n    type: String,\n    default: ''\n  },\n\n  /**\n   * Sets a Vue transition property on the `.dropdown-menu`. vue-select\n   * does not include CSS for transitions, you'll need to add them yourself.\n   * @type {String}\n   */\n  transition: {\n    type: String,\n    default: 'expand'\n  },\n\n  /**\n   * Enables/disables clearing the search text when an option is selected.\n   * @type {Boolean}\n   */\n  clearSearchOnSelect: {\n    type: Boolean,\n    default: true\n  },\n\n  /**\n   * Tells vue-select what key to use when generating option labels when\n   * `option` is an object.\n   * @type {String}\n   */\n  label: {\n    type: String,\n    default: 'label'\n  },\n\n  /**\n   * An optional callback function that is called each time the selected\n   * value(s) change. When integrating with Vuex, use this callback to trigger\n   * an action, rather than using :value.sync to retreive the selected value.\n   * @type {Function}\n   * @default {null}\n   */\n  onChange: Function\n}\n  </code></pre>"
 
-},{}],79:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 var __vueify_style__ = require("vueify-insert-css").insert(".v-select.dropdown{position:relative}.v-select .open-indicator{position:absolute;bottom:6px;right:10px;cursor:pointer;pointer-events:all}.v-select .open-indicator,.v-select .open-indicator:before{display:inline-block;-webkit-transition:all .15s cubic-bezier(1,-.115,.975,.855);transition:all .15s cubic-bezier(1,-.115,.975,.855);-webkit-transition-timing-function:cubic-bezier(1,-.115,.975,.855);transition-timing-function:cubic-bezier(1,-.115,.975,.855)}.v-select .open-indicator:before{border-color:rgba(60,60,60,.5);border-style:solid;border-width:.25em .25em 0 0;content:'';height:10px;width:10px;vertical-align:top;-webkit-transform:rotate(133deg);transform:rotate(133deg)}.v-select.open .open-indicator{bottom:1px}.v-select.open .open-indicator:before{-webkit-transform:rotate(315deg);transform:rotate(315deg)}.v-select .dropdown-toggle{display:block;padding:0;background:none;border:1px solid rgba(60,60,60,.26);border-radius:4px;white-space:normal}.v-select.searchable .dropdown-toggle{cursor:text}.v-select.open .dropdown-toggle{border-bottom:none;border-bottom-left-radius:0;border-bottom-right-radius:0}.v-select>.dropdown-menu{margin:0;width:100%;overflow-y:auto;border-top:none;border-top-left-radius:0;border-top-right-radius:0}.v-select .selected-tag{color:#333;background-color:#f0f0f0;border:1px solid #ccc;border-radius:4px;height:26px;margin:4px 1px 0 3px;padding:0 .25em;float:left;line-height:1.7em}.v-select .selected-tag .close{float:none;margin-right:0;font-size:20px}.v-select input[type=search],.v-select input[type=search]:focus{display:inline-block;border:none;outline:none;margin:0;padding:0 .5em;width:10em;max-width:100%;background:none;position:relative;box-shadow:none;float:left;clear:none}.v-select input[type=search]:disabled,.v-select li a{cursor:pointer}.v-select .active a{background:rgba(50,50,50,.1);color:#333}.v-select .highlight a,.v-select li:hover>a{background:#f0f0f0;color:#333}")
 'use strict';
 
@@ -12182,19 +12266,38 @@ exports.default = {
 
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "<div class=\"dropdown v-select\" :class=dropdownClasses><div v-el:toggle=\"\" @mousedown.prevent=toggleDropdown class=\"dropdown-toggle clearfix\" type=button><span class=form-control v-if=\"!searchable &amp;&amp; isValueEmpty\">{{ placeholder }} </span><span class=selected-tag v-for=\"option in valueAsArray\">{{ getOptionLabel(option) }} <button v-if=multiple @click=select(option) type=button class=close><span aria-hidden=true>×</span></button> </span><input v-el:search=\"\" v-show=searchable v-model=search @keyup.delete=maybeDeleteValue @keyup.esc=onEscape @keyup.up.prevent=typeAheadUp @keyup.down.prevent=typeAheadDown @keyup.enter.prevent=typeAheadSelect @blur=\"open = false\" @focus=\"open = true\" type=search class=form-control :placeholder=searchPlaceholder :style=\"{ width: isValueEmpty ? '100%' : 'auto' }\"> <i v-el:open-indicator=\"\" role=presentation class=open-indicator></i></div><ul v-show=open v-el:dropdown-menu=\"\" :transition=transition :style=\"{ 'max-height': maxHeight }\" class=\"dropdown-menu animated\"><li v-for=\"option in filteredOptions\" :class=\"{ active: isOptionSelected(option), highlight: $index === typeAheadPointer }\" @mouseover=\"typeAheadPointer = $index\"><a @mousedown.prevent=select(option)>{{ getOptionLabel(option) }}</a><li transition=fade v-if=!filteredOptions.length class=divider><li transition=fade v-if=!filteredOptions.length class=text-center>Sorry, no matching options.</ul></div>"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "<div class=\"dropdown v-select\" :class=dropdownClasses><div v-el:toggle=\"\" @mousedown.prevent=toggleDropdown class=\"dropdown-toggle clearfix\" type=button><span class=form-control v-if=\"!searchable &amp;&amp; isValueEmpty\">{{ placeholder }} </span><span class=selected-tag v-for=\"option in valueAsArray\">{{ getOptionLabel(option) }} <button v-if=multiple @click=select(option) type=button class=close><span aria-hidden=true>×</span></button> </span><input v-el:search=\"\" v-show=searchable v-model=search @keydown.delete=maybeDeleteValue @keyup.esc=onEscape @keyup.up.prevent=typeAheadUp @keyup.down.prevent=typeAheadDown @keyup.enter.prevent=typeAheadSelect @blur=\"open = false\" @focus=\"open = true\" type=search class=form-control :placeholder=searchPlaceholder :style=\"{ width: isValueEmpty ? '100%' : 'auto' }\"> <i v-el:open-indicator=\"\" role=presentation class=open-indicator></i></div><ul v-show=open v-el:dropdown-menu=\"\" :transition=transition :style=\"{ 'max-height': maxHeight }\" class=\"dropdown-menu animated\"><li v-for=\"option in filteredOptions\" :class=\"{ active: isOptionSelected(option), highlight: $index === typeAheadPointer }\" @mouseover=\"typeAheadPointer = $index\"><a @mousedown.prevent=select(option)>{{ getOptionLabel(option) }}</a><li transition=fade v-if=!filteredOptions.length class=divider><li transition=fade v-if=!filteredOptions.length class=text-center><slot name=no-options>Sorry, no matching options.</slot></ul></div>"
 
-},{"babel-runtime/core-js/object/keys":1,"babel-runtime/helpers/typeof":4,"vueify-insert-css":74}],80:[function(require,module,exports){
+},{"babel-runtime/core-js/object/keys":2,"babel-runtime/helpers/typeof":5,"vueify-insert-css":76}],83:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _Code = require('../Code.vue');
+
+var _Code2 = _interopRequireDefault(_Code);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+  components: { vCode: _Code2.default }
+};
+if (module.exports.__esModule) module.exports = module.exports.default
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "<p>Install from GitHub via NPM<pre><v-code lang=bash>npm install sagalbot/vue-select</v-code></pre><p>To use the vue-select component in your templates, simply import it, and register it with your component.<pre><v-code lang=markup>&lt;template&gt;\n  &lt;div id=\"myApp\"&gt;\n    &lt;v-select :value.sync=\"selected\" :options=\"options\"&gt;&lt;/v-select&gt;\n  &lt;/div&gt;\n&lt;/template&gt;\n&lt;script&gt;</v-code>\n<v-code lang=javascript>import vSelect from \"vue-select\"\n  export default {\n    components: {vSelect},\n\n    data() {\n      return {\n        selected: null,\n        options: ['foo','bar','baz']\n      }\n    }\n  }\n&lt;/script&gt;</v-code>\n</pre>"
+
+},{"../Code.vue":79}],84:[function(require,module,exports){
 "use strict";
 
 module.exports = [{ value: "AF", label: "Afghanistan" }, { value: "AX", label: "Åland Islands" }, { value: "AL", label: "Albania" }, { value: "DZ", label: "Algeria" }, { value: "AS", label: "American Samoa" }, { value: "AD", label: "Andorra" }, { value: "AO", label: "Angola" }, { value: "AI", label: "Anguilla" }, { value: "AQ", label: "Antarctica" }, { value: "AG", label: "Antigua and Barbuda" }, { value: "AR", label: "Argentina" }, { value: "AM", label: "Armenia" }, { value: "AW", label: "Aruba" }, { value: "AU", label: "Australia" }, { value: "AT", label: "Austria" }, { value: "AZ", label: "Azerbaijan" }, { value: "BS", label: "Bahamas" }, { value: "BH", label: "Bahrain" }, { value: "BD", label: "Bangladesh" }, { value: "BB", label: "Barbados" }, { value: "BY", label: "Belarus" }, { value: "BE", label: "Belgium" }, { value: "BZ", label: "Belize" }, { value: "BJ", label: "Benin" }, { value: "BM", label: "Bermuda" }, { value: "BT", label: "Bhutan" }, { value: "BO", label: "Bolivia" }, { value: "BA", label: "Bosnia and Herzegovina" }, { value: "BW", label: "Botswana" }, { value: "BV", label: "Bouvet Island" }, { value: "BR", label: "Brazil" }, { value: "IO", label: "British Indian Ocean Territory" }, { value: "BN", label: "Brunei Darussalam" }, { value: "BG", label: "Bulgaria" }, { value: "BF", label: "Burkina Faso" }, { value: "BI", label: "Burundi" }, { value: "KH", label: "Cambodia" }, { value: "CM", label: "Cameroon" }, { value: "CA", label: "Canada" }, { value: "CV", label: "Cape Verde" }, { value: "KY", label: "Cayman Islands" }, { value: "CF", label: "Central African Republic" }, { value: "TD", label: "Chad" }, { value: "CL", label: "Chile" }, { value: "CN", label: "China" }, { value: "CX", label: "Christmas Island" }, { value: "CC", label: "Cocos (Keeling) Islands" }, { value: "CO", label: "Colombia" }, { value: "KM", label: "Comoros" }, { value: "CG", label: "Congo" }, { value: "CD", label: "Congo, The Democratic Republic of The" }, { value: "CK", label: "Cook Islands" }, { value: "CR", label: "Costa Rica" }, { value: "CI", label: "Cote D'ivoire" }, { value: "HR", label: "Croatia" }, { value: "CU", label: "Cuba" }, { value: "CY", label: "Cyprus" }, { value: "CZ", label: "Czech Republic" }, { value: "DK", label: "Denmark" }, { value: "DJ", label: "Djibouti" }, { value: "DM", label: "Dominica" }, { value: "DO", label: "Dominican Republic" }, { value: "EC", label: "Ecuador" }, { value: "EG", label: "Egypt" }, { value: "SV", label: "El Salvador" }, { value: "GQ", label: "Equatorial Guinea" }, { value: "ER", label: "Eritrea" }, { value: "EE", label: "Estonia" }, { value: "ET", label: "Ethiopia" }, { value: "FK", label: "Falkland Islands (Malvinas)" }, { value: "FO", label: "Faroe Islands" }, { value: "FJ", label: "Fiji" }, { value: "FI", label: "Finland" }, { value: "FR", label: "France" }, { value: "GF", label: "French Guiana" }, { value: "PF", label: "French Polynesia" }, { value: "TF", label: "French Southern Territories" }, { value: "GA", label: "Gabon" }, { value: "GM", label: "Gambia" }, { value: "GE", label: "Georgia" }, { value: "DE", label: "Germany" }, { value: "GH", label: "Ghana" }, { value: "GI", label: "Gibraltar" }, { value: "GR", label: "Greece" }, { value: "GL", label: "Greenland" }, { value: "GD", label: "Grenada" }, { value: "GP", label: "Guadeloupe" }, { value: "GU", label: "Guam" }, { value: "GT", label: "Guatemala" }, { value: "GG", label: "Guernsey" }, { value: "GN", label: "Guinea" }, { value: "GW", label: "Guinea-bissau" }, { value: "GY", label: "Guyana" }, { value: "HT", label: "Haiti" }, { value: "HM", label: "Heard Island and Mcdonald Islands" }, { value: "VA", label: "Holy See (Vatican City State)" }, { value: "HN", label: "Honduras" }, { value: "HK", label: "Hong Kong" }, { value: "HU", label: "Hungary" }, { value: "IS", label: "Iceland" }, { value: "IN", label: "India" }, { value: "ID", label: "Indonesia" }, { value: "IR", label: "Iran, Islamic Republic of" }, { value: "IQ", label: "Iraq" }, { value: "IE", label: "Ireland" }, { value: "IM", label: "Isle of Man" }, { value: "IL", label: "Israel" }, { value: "IT", label: "Italy" }, { value: "JM", label: "Jamaica" }, { value: "JP", label: "Japan" }, { value: "JE", label: "Jersey" }, { value: "JO", label: "Jordan" }, { value: "KZ", label: "Kazakhstan" }, { value: "KE", label: "Kenya" }, { value: "KI", label: "Kiribati" }, { value: "KP", label: "Korea, Democratic People's Republic of" }, { value: "KR", label: "Korea, Republic of" }, { value: "KW", label: "Kuwait" }, { value: "KG", label: "Kyrgyzstan" }, { value: "LA", label: "Lao People's Democratic Republic" }, { value: "LV", label: "Latvia" }, { value: "LB", label: "Lebanon" }, { value: "LS", label: "Lesotho" }, { value: "LR", label: "Liberia" }, { value: "LY", label: "Libyan Arab Jamahiriya" }, { value: "LI", label: "Liechtenstein" }, { value: "LT", label: "Lithuania" }, { value: "LU", label: "Luxembourg" }, { value: "MO", label: "Macao" }, { value: "MK", label: "Macedonia, The Former Yugoslav Republic of" }, { value: "MG", label: "Madagascar" }, { value: "MW", label: "Malawi" }, { value: "MY", label: "Malaysia" }, { value: "MV", label: "Maldives" }, { value: "ML", label: "Mali" }, { value: "MT", label: "Malta" }, { value: "MH", label: "Marshall Islands" }, { value: "MQ", label: "Martinique" }, { value: "MR", label: "Mauritania" }, { value: "MU", label: "Mauritius" }, { value: "YT", label: "Mayotte" }, { value: "MX", label: "Mexico" }, { value: "FM", label: "Micronesia, Federated States of" }, { value: "MD", label: "Moldova, Republic of" }, { value: "MC", label: "Monaco" }, { value: "MN", label: "Mongolia" }, { value: "ME", label: "Montenegro" }, { value: "MS", label: "Montserrat" }, { value: "MA", label: "Morocco" }, { value: "MZ", label: "Mozambique" }, { value: "MM", label: "Myanmar" }, { value: "NA", label: "Namibia" }, { value: "NR", label: "Nauru" }, { value: "NP", label: "Nepal" }, { value: "NL", label: "Netherlands" }, { value: "AN", label: "Netherlands Antilles" }, { value: "NC", label: "New Caledonia" }, { value: "NZ", label: "New Zealand" }, { value: "NI", label: "Nicaragua" }, { value: "NE", label: "Niger" }, { value: "NG", label: "Nigeria" }, { value: "NU", label: "Niue" }, { value: "NF", label: "Norfolk Island" }, { value: "MP", label: "Northern Mariana Islands" }, { value: "NO", label: "Norway" }, { value: "OM", label: "Oman" }, { value: "PK", label: "Pakistan" }, { value: "PW", label: "Palau" }, { value: "PS", label: "Palestinian Territory, Occupied" }, { value: "PA", label: "Panama" }, { value: "PG", label: "Papua New Guinea" }, { value: "PY", label: "Paraguay" }, { value: "PE", label: "Peru" }, { value: "PH", label: "Philippines" }, { value: "PN", label: "Pitcairn" }, { value: "PL", label: "Poland" }, { value: "PT", label: "Portugal" }, { value: "PR", label: "Puerto Rico" }, { value: "QA", label: "Qatar" }, { value: "RE", label: "Reunion" }, { value: "RO", label: "Romania" }, { value: "RU", label: "Russian Federation" }, { value: "RW", label: "Rwanda" }, { value: "SH", label: "Saint Helena" }, { value: "KN", label: "Saint Kitts and Nevis" }, { value: "LC", label: "Saint Lucia" }, { value: "PM", label: "Saint Pierre and Miquelon" }, { value: "VC", label: "Saint Vincent and The Grenadines" }, { value: "WS", label: "Samoa" }, { value: "SM", label: "San Marino" }, { value: "ST", label: "Sao Tome and Principe" }, { value: "SA", label: "Saudi Arabia" }, { value: "SN", label: "Senegal" }, { value: "RS", label: "Serbia" }, { value: "SC", label: "Seychelles" }, { value: "SL", label: "Sierra Leone" }, { value: "SG", label: "Singapore" }, { value: "SK", label: "Slovakia" }, { value: "SI", label: "Slovenia" }, { value: "SB", label: "Solomon Islands" }, { value: "SO", label: "Somalia" }, { value: "ZA", label: "South Africa" }, { value: "GS", label: "South Georgia and The South Sandwich Islands" }, { value: "ES", label: "Spain" }, { value: "LK", label: "Sri Lanka" }, { value: "SD", label: "Sudan" }, { value: "SR", label: "Suriname" }, { value: "SJ", label: "Svalbard and Jan Mayen" }, { value: "SZ", label: "Swaziland" }, { value: "SE", label: "Sweden" }, { value: "CH", label: "Switzerland" }, { value: "SY", label: "Syrian Arab Republic" }, { value: "TW", label: "Taiwan, Province of China" }, { value: "TJ", label: "Tajikistan" }, { value: "TZ", label: "Tanzania, United Republic of" }, { value: "TH", label: "Thailand" }, { value: "TL", label: "Timor-leste" }, { value: "TG", label: "Togo" }, { value: "TK", label: "Tokelau" }, { value: "TO", label: "Tonga" }, { value: "TT", label: "Trinidad and Tobago" }, { value: "TN", label: "Tunisia" }, { value: "TR", label: "Turkey" }, { value: "TM", label: "Turkmenistan" }, { value: "TC", label: "Turks and Caicos Islands" }, { value: "TV", label: "Tuvalu" }, { value: "UG", label: "Uganda" }, { value: "UA", label: "Ukraine" }, { value: "AE", label: "United Arab Emirates" }, { value: "GB", label: "United Kingdom" }, { value: "US", label: "United States" }, { value: "UM", label: "United States Minor Outlying Islands" }, { value: "UY", label: "Uruguay" }, { value: "UZ", label: "Uzbekistan" }, { value: "VU", label: "Vanuatu" }, { value: "VE", label: "Venezuela" }, { value: "VN", label: "Viet Nam" }, { value: "VG", label: "Virgin Islands, British" }, { value: "VI", label: "Virgin Islands, U.S." }, { value: "WF", label: "Wallis and Futuna" }, { value: "EH", label: "Western Sahara" }, { value: "YE", label: "Yemen" }, { value: "ZM", label: "Zambia" }, { value: "ZW", label: "Zimbabwe" }];
 
-},{}],81:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 "use strict";
 
 module.exports = ["Afghanistan", "Åland Islands", "Albania", "Algeria", "American Samoa", "Andorra", "Angola", "Anguilla", "Antarctica", "Antigua and Barbuda", "Argentina", "Armenia", "Aruba", "Australia", "Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bermuda", "Bhutan", "Bolivia", "Bosnia and Herzegovina", "Botswana", "Bouvet Island", "Brazil", "British Indian Ocean Territory", "Brunei Darussalam", "Bulgaria", "Burkina Faso", "Burundi", "Cambodia", "Cameroon", "Canada", "Cape Verde", "Cayman Islands", "Central African Republic", "Chad", "Chile", "China", "Christmas Island", "Cocos (Keeling) Islands", "Colombia", "Comoros", "Congo", "Congo, The Democratic Republic of The", "Cook Islands", "Costa Rica", "Cote D'ivoire", "Croatia", "Cuba", "Cyprus", "Czech Republic", "Denmark", "Djibouti", "Dominica", "Dominican Republic", "Ecuador", "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Ethiopia", "Falkland Islands (Malvinas)", "Faroe Islands", "Fiji", "Finland", "France", "French Guiana", "French Polynesia", "French Southern Territories", "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Gibraltar", "Greece", "Greenland", "Grenada", "Guadeloupe", "Guam", "Guatemala", "Guernsey", "Guinea", "Guinea-bissau", "Guyana", "Haiti", "Heard Island and Mcdonald Islands", "Holy See (Vatican City State)", "Honduras", "Hong Kong", "Hungary", "Iceland", "India", "Indonesia", "Iran, Islamic Republic of", "Iraq", "Ireland", "Isle of Man", "Israel", "Italy", "Jamaica", "Japan", "Jersey", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Korea, Democratic People's Republic of", "Korea, Republic of", "Kuwait", "Kyrgyzstan", "Lao People's Democratic Republic", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libyan Arab Jamahiriya", "Liechtenstein", "Lithuania", "Luxembourg", "Macao", "Macedonia, The Former Yugoslav Republic of", "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands", "Martinique", "Mauritania", "Mauritius", "Mayotte", "Mexico", "Micronesia, Federated States of", "Moldova, Republic of", "Monaco", "Mongolia", "Montenegro", "Montserrat", "Morocco", "Mozambique", "Myanmar", "Namibia", "Nauru", "Nepal", "Netherlands", "Netherlands Antilles", "New Caledonia", "New Zealand", "Nicaragua", "Niger", "Nigeria", "Niue", "Norfolk Island", "Northern Mariana Islands", "Norway", "Oman", "Pakistan", "Palau", "Palestinian Territory, Occupied", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Pitcairn", "Poland", "Portugal", "Puerto Rico", "Qatar", "Reunion", "Romania", "Russian Federation", "Rwanda", "Saint Helena", "Saint Kitts and Nevis", "Saint Lucia", "Saint Pierre and Miquelon", "Saint Vincent and The Grenadines", "Samoa", "San Marino", "Sao Tome and Principe", "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Georgia and The South Sandwich Islands", "Spain", "Sri Lanka", "Sudan", "Suriname", "Svalbard and Jan Mayen", "Swaziland", "Sweden", "Switzerland", "Syrian Arab Republic", "Taiwan, Province of China", "Tajikistan", "Tanzania, United Republic of", "Thailand", "Timor-leste", "Togo", "Tokelau", "Tonga", "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan", "Turks and Caicos Islands", "Tuvalu", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States", "United States Minor Outlying Islands", "Uruguay", "Uzbekistan", "Vanuatu", "Venezuela", "Viet Nam", "Virgin Islands, British", "Virgin Islands, U.S.", "Wallis and Futuna", "Western Sahara", "Yemen", "Zambia", "Zimbabwe"];
 
-},{}],82:[function(require,module,exports){
+},{}],86:[function(require,module,exports){
 'use strict';
 
 var _vue = require('vue');
@@ -12220,7 +12323,7 @@ new _vue2.default({
   components: { App: _App2.default }
 });
 
-},{"./App.vue":76,"./vuex/store":84,"vue":73}],83:[function(require,module,exports){
+},{"./App.vue":78,"./vuex/store":88,"vue":75}],87:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -12250,7 +12353,7 @@ var toggleMultiple = exports.toggleMultiple = function toggleMultiple(_ref4) {
   dispatch('TOGGLE_MULTIPLE');
 };
 
-},{}],84:[function(require,module,exports){
+},{}],88:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -12309,4 +12412,4 @@ exports.default = new _vuex2.default.Store({
   mutations: mutations
 });
 
-},{"../countries/advanced.js":80,"../countries/simple.js":81,"vue":73,"vuex":75}]},{},[82]);
+},{"../countries/advanced.js":84,"../countries/simple.js":85,"vue":75,"vuex":77}]},{},[86]);
