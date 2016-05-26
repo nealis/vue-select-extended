@@ -136,7 +136,7 @@
           v-el:search
           v-show="searchable"
           v-model="search"
-          @keyup.delete="maybeDeleteValue"
+          @keydown.delete="maybeDeleteValue"
           @keyup.esc="onEscape"
           @keyup.up.prevent="typeAheadUp"
           @keyup.down.prevent="typeAheadDown"
