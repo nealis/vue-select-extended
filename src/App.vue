@@ -157,7 +157,7 @@
       </div>
     </div>
     <a href="#install" class="down-arrow">
-      Install &amp; Documentation
+      Install &amp; Examples/Documentation
       <i role="presentation" class="glyphicon glyphicon-chevron-down"></i>
     </a>
   </div>
