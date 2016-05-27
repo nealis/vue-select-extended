@@ -128,6 +128,7 @@
 
         <v-select
           id="v-select"
+          taggable
           :placeholder="placeholder"
           :value="selected"
           :options="options"
@@ -170,7 +171,7 @@
   </div>
 </template>
 
-<script>
+<script type="text/babel">
 import Install from './components/Install.vue'
 import Params from './components/Params.vue'
 import vSelect from './components/Select.vue'
