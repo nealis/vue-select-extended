@@ -3,6 +3,13 @@
 import Vue from 'vue'
 import vSelect from '../../src/components/Select.vue'
 
+/**
+ * Simulate a DOM event.
+ * @param target
+ * @param event
+ * @param process
+ * @returns {Event}
+ */
 function trigger(target, event, process) {
   var e = document.createEvent('HTMLEvents')
   e.initEvent(event, true, true)
@@ -11,7 +18,16 @@ function trigger(target, event, process) {
   return e
 }
 
-function searchSubmit(vm) {
+/**
+ * Optionally set the search term, then simulate a return keypress.
+ * @param vm
+ * @param search
+ */
+function searchSubmit(vm, search = false) {
+  if( search ) {
+    vm.$children[0].search = search
+  }
+
   trigger(vm.$children[0].$els.search, 'keyup', function (e) {
     e.keyCode = 13
   })
@@ -228,7 +244,7 @@ describe('Select.vue', () => {
   describe('When Tagging Is Enabled', () => {
     it('can determine if a given option string already exists', () => {
       const vm = new Vue({
-        template: '<div><v-select v-ref:select :options="options" :taggable="true"></v-select></div>',
+        template: '<div><v-select v-ref:select :options="options" taggable></v-select></div>',
         components: {vSelect},
         data: {
           options: ['one', 'two']
@@ -241,7 +257,7 @@ describe('Select.vue', () => {
 
     it('can determine if a given option object already exists', () => {
       const vm = new Vue({
-        template: '<div><v-select v-ref:select :options="options" :taggable="true"></v-select></div>',
+        template: '<div><v-select v-ref:select :options="options" taggable></v-select></div>',
         components: {vSelect},
         data: {
           options: [{label: 'one'}, {label: 'two'}]
@@ -254,7 +270,7 @@ describe('Select.vue', () => {
 
     it('can determine if a given option object already exists when using custom labels', () => {
       const vm = new Vue({
-        template: '<div><v-select v-ref:select :options="options" label="foo" :taggable="true"></v-select></div>',
+        template: '<div><v-select v-ref:select :options="options" label="foo" taggable></v-select></div>',
         components: {vSelect},
         data: {
           options: [{foo: 'one'}, {foo: 'two'}]
@@ -267,7 +283,7 @@ describe('Select.vue', () => {
 
     it('can add the current search text as the first item in the options list', () => {
       const vm = new Vue({
-        template: '<div><v-select :options="options" :value.sync="value" :multiple="true" :taggable="true"></v-select></div>',
+        template: '<div><v-select :options="options" :value.sync="value" :multiple="true" taggable></v-select></div>',
         components: {vSelect},
         data: {
           value: ['one'],
@@ -281,7 +297,7 @@ describe('Select.vue', () => {
 
     it('can select the current search text', (done) => {
       const vm = new Vue({
-        template: '<div><v-select :options="options" :value.sync="value" :multiple="true" :taggable="true"></v-select></div>',
+        template: '<div><v-select :options="options" :value.sync="value" :multiple="true" taggable></v-select></div>',
         components: {vSelect},
         data: {
           value: ['one'],
@@ -289,10 +305,7 @@ describe('Select.vue', () => {
         }
       }).$mount()
 
-      vm.$children[0].search = 'three'
-
-      searchSubmit(vm)
-
+      searchSubmit(vm, 'three')
       Vue.nextTick(() => {
         expect(vm.$children[0].$get('value')).toEqual(['one', 'three'])
         done()
@@ -301,7 +314,7 @@ describe('Select.vue', () => {
 
     it('will add a freshly created option/tag to the options list when pushTags is true', () => {
       const vm = new Vue({
-        template: '<div><v-select :options="options" pushTags :value.sync="value" :multiple="true" :taggable="true"></v-select></div>',
+        template: '<div><v-select :options="options" push-tags :value.sync="value" :multiple="true" taggable></v-select></div>',
         components: {vSelect},
         data: {
           value: ['one'],
@@ -309,17 +322,28 @@ describe('Select.vue', () => {
         }
       }).$mount()
 
-      vm.$children[0].search = 'three'
-
-      searchSubmit(vm)
-      
+      searchSubmit(vm, 'three')
       expect(vm.$children[0].options).toEqual(['one', 'two', 'three'])
+    })
+
+    it('wont add a freshly created option/tag to the options list when pushTags is false', () => {
+      const vm = new Vue({
+        template: '<div><v-select :options="options" :value.sync="value" :multiple="true" :taggable="true"></v-select></div>',
+        components: {vSelect},
+        data: {
+          value: ['one'],
+          options: ['one', 'two']
+        }
+      }).$mount()
+
+      searchSubmit(vm, 'three')
+      expect(vm.$children[0].options).toEqual(['one', 'two'])
     })
 
     it('will select an existing option if the search string matches a string from options', (done) => {
       let two = 'two'
       const vm = new Vue({
-        template: '<div><v-select :options="options" :value.sync="value" :multiple="true" :taggable="true"></v-select></div>',
+        template: '<div><v-select :options="options" :value.sync="value" :multiple="true" taggable></v-select></div>',
         components: {vSelect},
         data: {
           value: null,
@@ -337,24 +361,26 @@ describe('Select.vue', () => {
     })
 
     it('will select an existing option if the search string matches an objects label from options', (done) => {
+      let two = {label: 'two'}
       const vm = new Vue({
-        template: '<div><v-select :options="options" :value.sync="value" multiple :taggable="true"></v-select></div>',
+        template: '<div><v-select :options="options" taggable></v-select></div>',
         components: {vSelect},
         data: {
-          value: null,
-          options: [{label: 'one'}, {label: 'two'}]
+          options: [{label: 'one'}, two]
         }
       }).$mount()
 
       vm.$children[0].search = 'two'
 
-      searchSubmit(vm)
-
       Vue.nextTick(() => {
-        console.dir(JSON.stringify(vm.$children[0].options))
-        console.dir(JSON.stringify(vm.$children[0].value))
-        expect(vm.$children[0].value).toEqual({label: 'two'})
-        done()
+        searchSubmit(vm)
+
+        //  This needs to be wrapped in nextTick() twice so that filteredOptions can
+        //  calculate after setting the search text, and move the typeAheadPointer index to 0.
+        Vue.nextTick(() => {
+          expect(vm.$children[0].value.label).toBe(two.label)
+          done()
+        })
       })
     })
   })

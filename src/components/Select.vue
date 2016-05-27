@@ -278,9 +278,14 @@
         default: false
       },
 
+      /**
+       * When true, newly created tags will be added to
+       * the options list.
+       * @type {Boolean}
+       */
       pushTags: {
         type: Boolean,
-        default: true
+        default: false
       },
 
       /**
@@ -473,7 +478,7 @@
         if( this.filteredOptions[ this.typeAheadPointer ] ) {
           this.select( this.filteredOptions[ this.typeAheadPointer ] );
         } else if (this.taggable && this.search.length){
-            this.select(this.search)
+          this.select(this.search)
         }
 
         if( this.clearSearchOnSelect ) {
@@ -505,7 +510,13 @@
         }
       },
 
-
+      /**
+       * Determine if an option exists
+       * within this.options array.
+       *
+       * @param  {Object || String} option
+       * @return {boolean}
+       */
       optionExists(option) {
         let exists = false
 
@@ -546,9 +557,12 @@
       },
 
       /**
-       * The currently available options, filtered
-       * by the search elements value.
-       * @return {[type]} [description]
+       * The currently displayed options, filtered
+       * by the search elements value. If tagging
+       * true, the search text will be prepended
+       * if it doesn't already exist.
+       *
+       * @return {array}
        */
       filteredOptions() {
         let options = this.$options.filters.filterBy(this.options, this.search)
