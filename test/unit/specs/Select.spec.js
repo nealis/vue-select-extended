@@ -1,7 +1,7 @@
 /* global describe, it, expect */
 
 import Vue from 'vue'
-import vSelect from '../../src/components/Select.vue'
+import vSelect from 'src/components/Select.vue'
 
 /**
  * Simulate a DOM event.
