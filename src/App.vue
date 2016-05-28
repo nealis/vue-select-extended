@@ -95,8 +95,6 @@
       background-color: #d7f3f9;
       border-color: #91ddec;
       .close {
-        font-family: "Helvetica Neue", "Helvetica";
-        font-weight: 400;
         color: #147688;
         opacity: .5;
       }
@@ -115,6 +113,11 @@
       background: #4CC3D9;
       color: #fff;
     }
+  }
+
+  .selected-tag .close {
+    font-family: "Helvetica Neue", "Helvetica";
+    font-weight: 400;
   }
 </style>
 
