@@ -127,7 +127,15 @@
       <div class="col-md-8 col-md-offset-2">
 
         <h1>Vue Select</h1>
-        <p class="lead">A well-tested, native Vue.js component that provides similar functionality to Select2/Chosen without the overhead of jQuery.</p>
+
+        <p class="accolades lead">
+          <img src="https://img.shields.io/travis/sagalbot/vue-select.svg?style=flat-square" alt="Build Status">
+          <img src="https://img.shields.io/badge/dependencies-none-brightgreen.svg?style=flat-square" alt="No Dependencies">
+          <img src="https://img.shields.io/github/license/sagalbot/vue-select.svg?style=flat-square" alt="MIT License">
+          <img src="https://img.shields.io/github/release/sagalbot/vue-select.svg?style=flat-square" alt="Current Release">
+        </p>
+
+        <p class="lead">A well-tested, native Vue.js select component that provides similar functionality to Select2/Chosen without the overhead of jQuery.</p>
 
         <v-select
           id="v-select"
@@ -144,15 +152,17 @@
           <div class="col-md-3 col-md-offset-3">
             <ul class="list-vue">
               <li>Fully Reactive</li>
+              <li>Tagging Support <small>v1.1.0</small></li>
               <li>Works with Vuex</li>
-              <li><strong>No JS dependencies</strong></li>
+              <li>Zero dependencies</li>
             </ul>
           </div>
           <div class="col-md-3">
             <ul class="list-vue">
+              <li>+90% Test Coverage</li>
               <li>Select Single/Multiple</li>
-              <li>Excellent Test Coverage</li>
-              <li>Bootstrap Friendly Classes</li>
+              <li>Typeahead Suggestions</li>
+              <li>Bootstrap Friendly Markup</li>
             </ul>
           </div>
         </div>
@@ -161,7 +171,7 @@
       </div>
     </div>
     <a href="#install" class="down-arrow">
-      Install &amp; Examples/Documentation
+      Install, Examples &amp; Documentation
       <i role="presentation" class="glyphicon glyphicon-chevron-down"></i>
     </a>
   </div>
