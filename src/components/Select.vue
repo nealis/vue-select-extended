@@ -132,24 +132,24 @@
           </button>
         </span>
 
-        <input
-          v-el:search
-          v-show="searchable"
-          v-model="search"
-          @keydown.delete="maybeDeleteValue"
-          @keyup.esc="onEscape"
-          @keyup.up.prevent="typeAheadUp"
-          @keyup.down.prevent="typeAheadDown"
-          @keyup.enter.prevent="typeAheadSelect"
-          @blur="open = false"
-          @focus="open = true"
-          type="search"
-          class="form-control"
-          :placeholder="searchPlaceholder"
-          :style="{ width: isValueEmpty ? '100%' : 'auto' }"
-        >
+      <input
+              v-el:search
+              v-show="searchable"
+              v-model="search"
+              @keydown.delete="maybeDeleteValue"
+              @keyup.esc="onEscape"
+              @keyup.up.prevent="typeAheadUp"
+              @keyup.down.prevent="typeAheadDown"
+              @keyup.enter.prevent="typeAheadSelect"
+              @blur="open = false"
+              @focus="open = true"
+              type="search"
+              class="form-control"
+              :placeholder="searchPlaceholder"
+              :style="{ width: isValueEmpty ? '100%' : 'auto' }"
+      >
 
-        <i v-el:open-indicator role="presentation" class="open-indicator"></i>
+      <i v-el:open-indicator role="presentation" class="open-indicator"></i>
     </div>
 
     <ul v-show="open" v-el:dropdown-menu :transition="transition" :style="{ 'max-height': maxHeight }" class="dropdown-menu animated">
@@ -338,8 +338,7 @@
       select(option) {
         if (!this.isOptionSelected(option)) {
           if (this.taggable && !this.optionExists(option)) {
-            newOption = this.createOption(option)
-            option = typeof newOption === 'undefined' ? option : newOption
+            option = this.createOption(option)
 
             if( this.pushTags ) {
               this.options.push(option)
@@ -372,14 +371,14 @@
        * @return {void}
        */
       onAfterSelect(option) {
-          if (!this.multiple) {
-            this.open = !this.open
-            this.$els.search.blur()
-          }
+        if (!this.multiple) {
+          this.open = !this.open
+          this.$els.search.blur()
+        }
 
-          if( this.clearSearchOnSelect ) {
-            this.search = ''
-          }
+        if( this.clearSearchOnSelect ) {
+          this.search = ''
+        }
       },
 
       /**
@@ -424,14 +423,15 @@
        * Otherwise, return the entire option.
        * @param  {Object||String} option
        * @return {Object||String}
+       * @deprecated will be removed in 1.0.8
        */
-      getOptionValue( option ) {
-        if( typeof option === 'object' && option.value ) {
-          return option.value;
-        }
+       getOptionValue( option ) {
+         if( typeof option === 'object' && option.value ) {
+           return option.value;
+         }
 
-        return option;
-      },
+         return option;
+       },
 
       /**
        * Generate the option label text. If {option}
@@ -444,8 +444,6 @@
         if( typeof option === 'object' ) {
           if( this.label && option[this.label] ) {
             return option[this.label]
-          } else if( option.label ) {
-            return option.label
           }
         }
         return option;
@@ -495,7 +493,7 @@
         if( ! this.search.length ) {
           this.$els.search.blur()
         } else {
-          this.$set('search', '')
+          this.search = ''
         }
       },
 
@@ -595,7 +593,7 @@
         if( this.multiple ) {
           return this.value
         } else if (this.value) {
-            return [this.value]
+          return [this.value]
         }
 
         return []
