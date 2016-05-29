@@ -130,6 +130,7 @@
 
         <p class="accolades lead">
           <img src="https://img.shields.io/travis/sagalbot/vue-select.svg?style=flat-square" alt="Build Status">
+          <img src="https://img.shields.io/codeclimate/github/sagalbot/vue-select.svg?style=flat-square" alt="Code Climate Rating">
           <img src="https://img.shields.io/badge/dependencies-none-brightgreen.svg?style=flat-square" alt="No Dependencies">
           <img src="https://img.shields.io/github/license/sagalbot/vue-select.svg?style=flat-square" alt="MIT License">
           <img src="https://img.shields.io/github/release/sagalbot/vue-select.svg?style=flat-square" alt="Current Release">
