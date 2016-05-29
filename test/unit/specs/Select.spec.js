@@ -119,7 +119,7 @@ describe('Select.vue', () => {
       expect(select.isValueEmpty).toEqual(true)
     })
 
-    it('resets the selected values when the options property changes', (done) => {
+    it('should reset the selected values when the options property changes', (done) => {
       const vm = new Vue({
         template: '<div><v-select :options="options" :value.sync="value" :multiple="true"></v-select></div>',
         components: {vSelect},
@@ -135,7 +135,7 @@ describe('Select.vue', () => {
       })
     })
 
-    it('resets the selected values when the multiple property changes', (done) => {
+    it('should reset the selected values when the multiple property changes', (done) => {
       const vm = new Vue({
         template: '<div><v-select :options="options" :value.sync="value" :multiple="multiple"></v-select></div>',
         components: {vSelect},
@@ -213,7 +213,7 @@ describe('Select.vue', () => {
   })
 
   describe('Toggling Dropdown', () => {
-    it('can open the dropdown when the el is clicked', (done) => {
+    it('should open the dropdown when the el is clicked', (done) => {
       const vm = new Vue({
         template: '<div><v-select :options="options" :value.sync="value"></v-select></div>',
         components: {vSelect},
@@ -241,9 +241,7 @@ describe('Select.vue', () => {
     //       options: [{label: 'one'}]
     //     }
     //   }).$mount()
-
     //   vm.$children[0].open = true
-
     //   Vue.nextTick(() => {
     //     vm.$children[0].toggleDropdown({ target: vm.$children[0].$el })
     //     Vue.nextTick( () => {
@@ -253,7 +251,7 @@ describe('Select.vue', () => {
     //   })
     // })
 
-    it('will close the dropdown on search blur', () => {
+    it('should close the dropdown on search blur', () => {
       const vm = new Vue({
         template: '<div><v-select :options="options" multiple :value.sync="value"></v-select></div>',
         components: {vSelect},
@@ -277,10 +275,8 @@ describe('Select.vue', () => {
     //       options: [{label: 'one'}]
     //     }
     //   }).$mount()
-
     //   vm.$children[0].open = true
     //   vm.$children[0].onEscape()
-
     //   Vue.nextTick(() => {
     //     Vue.nextTick(() => {
     //       expect(vm.$children[0].open).toEqual(false)
@@ -289,7 +285,7 @@ describe('Select.vue', () => {
     //   })
     // })
 
-    it('will remove existing search text on escape keyup', () => {
+    it('should remove existing search text on escape keyup', () => {
       const vm = new Vue({
         template: '<div><v-select :options="options" multiple :value.sync="value"></v-select></div>',
         components: {vSelect},
@@ -303,10 +299,19 @@ describe('Select.vue', () => {
       vm.$children[0].onEscape()
       expect(vm.$children[0].search).toEqual('')
     })
+
+    it('should have an open class when dropdown is active', () => {
+      const vm = new Vue({
+        template: '<div><v-select></v-select></div>',
+        components: {vSelect}
+      }).$mount()
+
+      expect(vm.$children[0].dropdownClasses.open).toEqual(false)
+    })
   })
 
   describe('Moving the Typeahead Pointer', () => {
-    it('will set the pointer to zero when the filteredOptions change', (done) => {
+    it('should set the pointer to zero when the filteredOptions change', (done) => {
       const vm = new Vue({
         template: '<div><v-select :options="options"></v-select></div>',
         components: {vSelect},
@@ -322,7 +327,7 @@ describe('Select.vue', () => {
       })
     })
 
-    it('will move the pointer visually up the list on up arrow keyup', () => {
+    it('should move the pointer visually up the list on up arrow keyup', () => {
       const vm = new Vue({
         template: '<div><v-select :options="options"></v-select></div>',
         components: {vSelect},
@@ -337,7 +342,7 @@ describe('Select.vue', () => {
       expect(vm.$children[0].typeAheadPointer).toEqual(0)
     })
 
-    it('will move the pointer visually down the list on down arrow keyup', () => {
+    it('should move the pointer visually down the list on down arrow keyup', () => {
       const vm = new Vue({
         template: '<div><v-select :options="options"></v-select></div>',
         components: {vSelect},
@@ -351,7 +356,7 @@ describe('Select.vue', () => {
       expect(vm.$children[0].typeAheadPointer).toEqual(2)
     })
 
-    it('will not move the pointer past the end of the list', () => {
+    it('should not move the pointer past the end of the list', () => {
       const vm = new Vue({
         template: '<div><v-select :options="options"></v-select></div>',
         components: {vSelect},
@@ -367,7 +372,7 @@ describe('Select.vue', () => {
   })
 
   describe('Removing values', () => {
-    it('removes the given tag when its close icon is clicked', (done) => {
+    it('can remove the given tag when its close icon is clicked', (done) => {
       const vm = new Vue({
         template: '<div><v-select :options="options" :value.sync="value" :multiple="true"></v-select></div>',
         components: {vSelect},
@@ -383,7 +388,7 @@ describe('Select.vue', () => {
       })
     })
 
-    it('removes the last item in the value array on delete keypress when multiple is true', () => {
+    it('should remove the last item in the value array on delete keypress when multiple is true', () => {
 
       const vm = new Vue({
         template: '<div><v-select :options="options" :value.sync="value" :multiple="true"></v-select></div>',
@@ -399,7 +404,7 @@ describe('Select.vue', () => {
       })
     })
 
-    it('sets the value to null on delete keypress when multiple is false', () => {
+    it('should set value to null on delete keypress when multiple is false', () => {
       const vm = new Vue({
         template: '<div><v-select :options="options" :value.sync="value"></v-select></div>',
         components: {vSelect},
@@ -428,7 +433,7 @@ describe('Select.vue', () => {
       expect(vm.$children[0].$els.toggle.querySelector('.selected-tag').textContent).toContain('Baz')
     })
 
-    it('will display a placeholder if the value is empty', (done) => {
+    it('should display a placeholder if the value is empty', (done) => {
       const vm = new Vue({
         template: '<div><v-select :options="options" placeholder="foo"></v-select></div>',
         components: {vSelect},
@@ -536,7 +541,7 @@ describe('Select.vue', () => {
       })
     })
 
-    it('will add a freshly created option/tag to the options list when pushTags is true', () => {
+    it('should add a freshly created option/tag to the options list when pushTags is true', () => {
       const vm = new Vue({
         template: '<div><v-select :options="options" push-tags :value.sync="value" :multiple="true" taggable></v-select></div>',
         components: {vSelect},
@@ -564,7 +569,7 @@ describe('Select.vue', () => {
       expect(vm.$children[0].options).toEqual(['one', 'two'])
     })
 
-    it('will select an existing option if the search string matches a string from options', (done) => {
+    it('should select an existing option if the search string matches a string from options', (done) => {
       let two = 'two'
       const vm = new Vue({
         template: '<div><v-select :options="options" :value.sync="value" :multiple="true" taggable></v-select></div>',
@@ -584,7 +589,7 @@ describe('Select.vue', () => {
       })
     })
 
-    it('will select an existing option if the search string matches an objects label from options', (done) => {
+    it('should select an existing option if the search string matches an objects label from options', (done) => {
       let two = {label: 'two'}
       const vm = new Vue({
         template: '<div><v-select :options="options" taggable></v-select></div>',
