@@ -7,4 +7,4 @@ node_js:
   - "4.1"
   - "4.0"
 after_success:
-  - codeclimate < ./test/unit/coverage/lcov.info
+  - codeclimate-test-reporter < ./test/unit/coverage/lcov.info
