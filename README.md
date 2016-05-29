@@ -200,5 +200,3 @@ npm test
 # run unit tests on save
 npm run test-watch
 ```
-
-For more information see the [docs for vueify](https://github.com/vuejs/vueify).
