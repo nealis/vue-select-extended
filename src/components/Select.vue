@@ -58,7 +58,7 @@
   .v-select > .dropdown-menu {
     margin: 0;
     width: 100%;
-    overflow-y: auto;
+    overflow-y: scroll;
     border-top: none;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
@@ -152,17 +152,19 @@
       <i v-el:open-indicator role="presentation" class="open-indicator"></i>
     </div>
 
-    <ul v-show="open" v-el:dropdown-menu :transition="transition" :style="{ 'max-height': maxHeight }" class="dropdown-menu animated">
-      <li v-for="option in filteredOptions" track-by="$index" :class="{ active: isOptionSelected(option), highlight: $index === typeAheadPointer }" @mouseover="typeAheadPointer = $index">
-        <a @mousedown.prevent="select(option)">
-          {{ getOptionLabel(option) }}
-        </a>
-      </li>
-      <li transition="fade" v-if="!filteredOptions.length" class="divider"></li>
-      <li transition="fade" v-if="!filteredOptions.length" class="text-center">
-        <slot name="no-options">Sorry, no matching options.</slot>
-      </li>
-    </ul>
+    <div v-show="open" :transition="transition" class="dropdown-menu" :style="{ 'max-height': maxHeight }">
+      <ul class="options" v-el:dropdown-menu>
+        <li v-for="option in filteredOptions" track-by="$index" :class="{ active: isOptionSelected(option), highlight: $index === typeAheadPointer }" @mouseover="typeAheadPointer = $index">
+          <a @mousedown.prevent="select(option)">
+            {{ getOptionLabel(option) }}
+          </a>
+        </li>
+        <li transition="fade" v-if="!filteredOptions.length" class="divider"></li>
+        <li transition="fade" v-if="!filteredOptions.length" class="text-center">
+          <slot name="no-options">Sorry, no matching options.</slot>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -440,7 +442,10 @@
        * @return {void}
        */
       typeAheadUp() {
-        if (this.typeAheadPointer > 0) this.typeAheadPointer--
+        if (this.typeAheadPointer > 0) {
+          this.typeAheadPointer--
+          this.maybeAdjustScrollPosition()
+        }
       },
 
       /**
@@ -449,7 +454,10 @@
        * @return {void}
        */
       typeAheadDown() {
-        if (this.typeAheadPointer < this.filteredOptions.length - 1) this.typeAheadPointer++
+        if (this.typeAheadPointer < this.filteredOptions.length - 1) {
+          this.typeAheadPointer++
+          this.maybeAdjustScrollPosition()
+        }
       },
 
       /**
@@ -467,6 +475,26 @@
         if( this.clearSearchOnSelect ) {
           this.search = "";
         }
+      },
+
+      maybeAdjustScrollPosition() {
+        let offset = this.$els.dropdownMenu.children[0].offsetHeight * ( this.typeAheadPointer + 1 )
+        let bounds = this.$els.dropdownMenu.offsetHeight
+
+
+        let scrollTo = this.$els.dropdownMenu.children[this.typeAheadPointer]
+
+        console.dir(this.$els.dropdownMenu)
+
+//        if( offset > listHeight ) {
+//          console.log('scroll')
+//        }
+
+//        console.log(offset, listHeight)
+      },
+
+      test(e) {
+        console.dir(e)
       },
 
       /**
@@ -516,6 +544,10 @@
     },
 
     computed: {
+
+      scrollTop() {
+        return [this.$els.dropdownMenu.scrollTop,this.$el.scrollTop]
+      },
 
       /**
        * Classes to be output on .dropdown
