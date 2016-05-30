@@ -152,7 +152,7 @@
       <i v-el:open-indicator role="presentation" class="open-indicator"></i>
     </div>
 
-    <div v-show="open" :transition="transition" class="dropdown-menu" :style="{ 'max-height': maxHeight }">
+    <div v-el:dropdown-wrapper v-show="open" :transition="transition" class="dropdown-menu" :style="{ 'max-height': maxHeight }">
       <ul class="options" v-el:dropdown-menu>
         <li v-for="option in filteredOptions" track-by="$index" :class="{ active: isOptionSelected(option), highlight: $index === typeAheadPointer }" @mouseover="typeAheadPointer = $index">
           <a @mousedown.prevent="select(option)">
@@ -478,23 +478,25 @@
       },
 
       maybeAdjustScrollPosition() {
-        let offset = this.$els.dropdownMenu.children[0].offsetHeight * ( this.typeAheadPointer + 1 )
-        let bounds = this.$els.dropdownMenu.offsetHeight
+        let pointerHeight = this.$els.dropdownMenu.children[this.typeAheadPointer].offsetHeight
+        let pixelsToPointerTop = 0
 
+        for ( let i = 0; i < this.typeAheadPointer; i++ ) {
+          pixelsToPointerTop += this.$els.dropdownMenu.children[i].offsetHeight
+        }
 
-        let scrollTo = this.$els.dropdownMenu.children[this.typeAheadPointer]
+        let pixelsToPointerBottom = pixelsToPointerTop + pointerHeight
 
-        console.dir(this.$els.dropdownMenu)
+        let bounds = {
+          top: this.$els.dropdownWrapper.scrollTop,
+          bottom: this.$els.dropdownWrapper.offsetHeight + this.$els.dropdownWrapper.scrollTop
+        }
 
-//        if( offset > listHeight ) {
-//          console.log('scroll')
-//        }
-
-//        console.log(offset, listHeight)
-      },
-
-      test(e) {
-        console.dir(e)
+        if( pixelsToPointerTop <= bounds.top ) {
+          this.$els.dropdownWrapper.scrollTop = pixelsToPointerTop
+        } else if ( pixelsToPointerBottom >= bounds.bottom) {
+          this.$els.dropdownWrapper.scrollTop =  ( pixelsToPointerBottom - this.$els.dropdownWrapper.offsetHeight ) + pointerHeight
+        }
       },
 
       /**
