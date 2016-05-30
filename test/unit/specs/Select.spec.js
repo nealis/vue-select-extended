@@ -232,24 +232,22 @@ describe('Select.vue', () => {
       })
     })
 
-    // it('can close the dropdown when the el is clicked', (done) => {
-    //   const vm = new Vue({
-    //     template: '<div><v-select :options="options" :value.sync="value"></v-select></div>',
-    //     components: {vSelect},
-    //     data: {
-    //       value: [{label: 'one'}],
-    //       options: [{label: 'one'}]
-    //     }
-    //   }).$mount()
-    //   vm.$children[0].open = true
-    //   Vue.nextTick(() => {
-    //     vm.$children[0].toggleDropdown({ target: vm.$children[0].$el })
-    //     Vue.nextTick( () => {
-    //        expect(vm.$children[0].open).toEqual(false)
-    //        done()
-    //     })
-    //   })
-    // })
+    it('can close the dropdown when the el is clicked', (done) => {
+      const vm = new Vue({
+        template: '<div><v-select></v-select></div>',
+        components: {vSelect},
+      }).$mount()
+
+      spyOn(vm.$children[0].$els.search, 'blur')
+
+      vm.$children[0].open = true
+      vm.$children[0].toggleDropdown({target: vm.$children[0].$el})
+
+      Vue.nextTick(() => {
+        expect(vm.$children[0].$els.search.blur).toHaveBeenCalled()
+        done()
+      })
+    })
 
     it('should close the dropdown on search blur', () => {
       const vm = new Vue({
@@ -266,24 +264,22 @@ describe('Select.vue', () => {
       expect(vm.$children[0].open).toEqual(true)
     })
 
-    // it('will close the dropdown on escape, if search is empty', (done) => {
-    //   const vm = new Vue({
-    //     template: '<div><v-select :options="options" multiple :value.sync="value"></v-select></div>',
-    //     components: {vSelect},
-    //     data: {
-    //       value: [{label: 'one'}],
-    //       options: [{label: 'one'}]
-    //     }
-    //   }).$mount()
-    //   vm.$children[0].open = true
-    //   vm.$children[0].onEscape()
-    //   Vue.nextTick(() => {
-    //     Vue.nextTick(() => {
-    //       expect(vm.$children[0].open).toEqual(false)
-    //       done()
-    //     })
-    //   })
-    // })
+    it('will close the dropdown on escape, if search is empty', (done) => {
+      const vm = new Vue({
+        template: '<div><v-select></v-select></div>',
+        components: {vSelect},
+      }).$mount()
+
+      spyOn(vm.$children[0].$els.search, 'blur')
+
+      vm.$children[0].open = true
+      vm.$children[0].onEscape()
+
+      Vue.nextTick(() => {
+        expect(vm.$children[0].$els.search.blur).toHaveBeenCalled()
+        done()
+      })
+    })
 
     it('should remove existing search text on escape keyup', () => {
       const vm = new Vue({
