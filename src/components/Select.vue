@@ -419,21 +419,6 @@
       },
 
       /**
-       * If the selected option has option['value'] return it.
-       * Otherwise, return the entire option.
-       * @param  {Object||String} option
-       * @return {Object||String}
-       * @deprecated will be removed in 1.0.8
-       */
-       getOptionValue( option ) {
-         if( typeof option === 'object' && option.value ) {
-           return option.value;
-         }
-
-         return option;
-       },
-
-      /**
        * Generate the option label text. If {option}
        * is an object, return option[this.label].
        *
