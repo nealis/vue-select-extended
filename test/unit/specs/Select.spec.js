@@ -365,6 +365,79 @@ describe('Select.vue', () => {
       vm.$children[0].typeAheadDown()
       expect(vm.$children[0].typeAheadPointer).toEqual(2)
     })
+
+    it('should check if the scroll position needs to be adjusted on up arrow keyup', () => {
+      const vm = new Vue({
+        template: '<div><v-select :options="options"></v-select></div>',
+        components: {vSelect},
+        data: {
+          options: ['one', 'two', 'three']
+        }
+      }).$mount()
+
+      vm.$children[0].typeAheadPointer = 1
+      spyOn(vm.$children[0], 'maybeAdjustScrollPosition')
+      trigger(vm.$children[0].$els.search, 'keyup', (e) => e.keyCode = 38)
+      expect(vm.$children[0].maybeAdjustScrollPosition).toHaveBeenCalled()
+    })
+
+    it('should check if the scroll position needs to be adjusted on down arrow keyup', () => {
+      const vm = new Vue({
+        template: '<div><v-select :options="options" max-height="10"></v-select></div>',
+        components: {vSelect},
+        data: {
+          options: ['one', 'two', 'three']
+        }
+      }).$mount()
+
+      spyOn(vm.$children[0], 'maybeAdjustScrollPosition')
+
+      vm.$children[0].$els.search.focus()
+
+      trigger(vm.$children[0].$els.search, 'keyup', (e) => e.keyCode = 40)
+      expect(vm.$children[0].maybeAdjustScrollPosition).toHaveBeenCalled()
+    })
+
+    it('should scroll up if the new pointer is above the current viewport bounds', () => {
+
+
+    })
+
+    describe('Measuring pixel distances', () => {
+      it('should calculate pixelsToPointerTop as the sum of the height all options above the pointer', () => {
+        const vm = new Vue({
+          template: '<div><v-select :options="options"></v-select></div>',
+          components: {vSelect},
+          data: {
+            options: ['one', 'two', 'three']
+          }
+        }).$mount()
+
+        vm.$children[0].typeAheadPointer = 1
+        let lineHeight = vm.$children[0].$els.dropdownMenu.children[0].offsetHeight
+        expect(vm.$children[0].pixelsToPointerTop()).toEqual( lineHeight * 2 )
+      })
+      it('should calculate pixelsToPointerBottom as the sum of the height all options above the pointer plus the height of the pointer', () => {
+        const vm = new Vue({
+          template: '<div><v-select :options="options"></v-select></div>',
+          components: {vSelect},
+          data: {
+            options: ['one', 'two', 'three']
+          }
+        }).$mount()
+
+        vm.$children[0].typeAheadPointer = 1
+        let lineHeight = vm.$children[0].$els.dropdownMenu.children[0].offsetHeight
+        console.log(lineHeight)
+        expect(vm.$children[0].pixelsToPointerTop()).toEqual( lineHeight * 10 + lineHeight)
+      })
+      it('should calculate pixelsToPointerCenter', () => {
+
+      })
+      it('should calculate pointerHeight', () => {
+
+      })
+    })
   })
 
   describe('Removing values', () => {
@@ -611,4 +684,4 @@ describe('Select.vue', () => {
 })
 
 // also see example testing a component with mocks at
-// https://github.com/vuejs/vueify-example/blob/master/test/unit/a.spec.js#L22-L43
+// http://vue-loader.vuejs.org/en/workflow/testing-with-mocks.html

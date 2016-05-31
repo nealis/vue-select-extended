@@ -119,8 +119,8 @@
 </style>
 
 <template>
-  <div class="dropdown v-select" :class="dropdownClasses">
-    <div v-el:toggle @mousedown.prevent="toggleDropdown" class="dropdown-toggle clearfix" type="button">
+    <div class="dropdown v-select" :class="dropdownClasses">
+        <div v-el:toggle @mousedown.prevent="toggleDropdown" class="dropdown-toggle clearfix" type="button">
         <span class="form-control" v-if="!searchable && isValueEmpty">
           {{ placeholder }}
         </span>
@@ -132,40 +132,38 @@
           </button>
         </span>
 
-      <input
-              v-el:search
-              v-show="searchable"
-              v-model="search"
-              @keydown.delete="maybeDeleteValue"
-              @keyup.esc="onEscape"
-              @keyup.up.prevent="typeAheadUp"
-              @keyup.down.prevent="typeAheadDown"
-              @keyup.enter.prevent="typeAheadSelect"
-              @blur="open = false"
-              @focus="open = true"
-              type="search"
-              class="form-control"
-              :placeholder="searchPlaceholder"
-              :style="{ width: isValueEmpty ? '100%' : 'auto' }"
-      >
+            <input
+                v-el:search
+                v-show="searchable"
+                v-model="search"
+                @keydown.delete="maybeDeleteValue"
+                @keyup.esc="onEscape"
+                @keyup.up.prevent="typeAheadUp"
+                @keyup.down.prevent="typeAheadDown"
+                @keyup.enter.prevent="typeAheadSelect"
+                @blur="open = false"
+                @focus="open = true"
+                type="search"
+                class="form-control"
+                :placeholder="searchPlaceholder"
+                :style="{ width: isValueEmpty ? '100%' : 'auto' }"
+            >
 
-      <i v-el:open-indicator role="presentation" class="open-indicator"></i>
-    </div>
+            <i v-el:open-indicator role="presentation" class="open-indicator"></i>
+        </div>
 
-    <div v-el:dropdown-wrapper v-show="open" :transition="transition" class="dropdown-menu" :style="{ 'max-height': maxHeight }">
-      <ul class="options" v-el:dropdown-menu>
-        <li v-for="option in filteredOptions" track-by="$index" :class="{ active: isOptionSelected(option), highlight: $index === typeAheadPointer }" @mouseover="typeAheadPointer = $index">
-          <a @mousedown.prevent="select(option)">
-            {{ getOptionLabel(option) }}
-          </a>
-        </li>
-        <li transition="fade" v-if="!filteredOptions.length" class="divider"></li>
-        <li transition="fade" v-if="!filteredOptions.length" class="text-center">
-          <slot name="no-options">Sorry, no matching options.</slot>
-        </li>
-      </ul>
+        <ul v-el:dropdown-menu v-show="open" :transition="transition" class="dropdown-menu" :style="{ 'max-height': maxHeight }">
+            <li v-for="option in filteredOptions" track-by="$index" :class="{ active: isOptionSelected(option), highlight: $index === typeAheadPointer }" @mouseover="typeAheadPointer = $index">
+                <a @mousedown.prevent="select(option)">
+                    {{ getOptionLabel(option) }}
+                </a>
+            </li>
+            <li transition="fade" v-if="!filteredOptions.length" class="divider"></li>
+            <li transition="fade" v-if="!filteredOptions.length" class="text-center">
+                <slot name="no-options">Sorry, no matching options.</slot>
+            </li>
+        </ul>
     </div>
-  </div>
 </template>
 
 
@@ -478,25 +476,52 @@
       },
 
       maybeAdjustScrollPosition() {
-        let pointerHeight = this.$els.dropdownMenu.children[this.typeAheadPointer].offsetHeight
-        let pixelsToPointerTop = 0
+        let bounds = this.viewport()
+        let pixelsToPointerTop = this.pixelsToPointerTop()
+        let pixelsToPointerBottom = this.pixelsToPointerBottom()
+        let pointerHeight = this.pointerHeight()
 
-        for ( let i = 0; i < this.typeAheadPointer; i++ ) {
+        if (pixelsToPointerTop <= bounds.top) {
+          return this.scrollTo(pixelsToPointerTop)
+        } else if (pixelsToPointerBottom >= bounds.bottom) {
+//          return this.scrollTo(( this.pixelsToPointerCenter() - this.$els.dropdownMenu.offsetHeight ) + ( pointerHeight / 2))
+          return this.scrollTo(( this.pixelsToPointerCenter() - this.$els.dropdownMenu.offsetHeight ) + pointerHeight)
+        }
+      },
+
+      pixelsToPointerTop() {
+        let pixelsToPointerTop = 0
+        for (let i = 0; i < this.typeAheadPointer; i++) {
           pixelsToPointerTop += this.$els.dropdownMenu.children[i].offsetHeight
         }
+        return pixelsToPointerTop
+      },
 
-        let pixelsToPointerBottom = pixelsToPointerTop + pointerHeight
+      pixelsToPointerBottom() {
+        return this.pixelsToPointerTop() + this.pointerHeight()
+      },
 
-        let bounds = {
-          top: this.$els.dropdownWrapper.scrollTop,
-          bottom: this.$els.dropdownWrapper.offsetHeight + this.$els.dropdownWrapper.scrollTop
+      pixelsToPointerCenter() {
+        return this.pixelsToPointerTop() + ( this.pointerHeight() / 2 )
+      },
+
+      pointerHeight() {
+        return this.$els.dropdownMenu.children[this.typeAheadPointer].offsetHeight
+      },
+
+      /**
+       * The viewport is the currently viewable
+       * portion of the dropdown menu
+       */
+      viewport() {
+        return {
+          top: this.$els.dropdownMenu.scrollTop,
+          bottom: this.$els.dropdownMenu.offsetHeight + this.$els.dropdownMenu.scrollTop
         }
+      },
 
-        if( pixelsToPointerTop <= bounds.top ) {
-          this.$els.dropdownWrapper.scrollTop = pixelsToPointerTop
-        } else if ( pixelsToPointerBottom >= bounds.bottom) {
-          this.$els.dropdownWrapper.scrollTop =  ( pixelsToPointerBottom - this.$els.dropdownWrapper.offsetHeight ) + pointerHeight
-        }
+      scrollTo(position) {
+        return this.$els.dropdownMenu.scrollTop = position
       },
 
       /**
@@ -546,10 +571,6 @@
     },
 
     computed: {
-
-      scrollTop() {
-        return [this.$els.dropdownMenu.scrollTop,this.$el.scrollTop]
-      },
 
       /**
        * Classes to be output on .dropdown
