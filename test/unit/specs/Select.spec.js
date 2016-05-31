@@ -2,6 +2,10 @@
 
 import Vue from 'vue'
 import vSelect from 'src/components/Select.vue'
+import pointerScroll from 'src/mixins/pointerScroll.js'
+
+//  http://vue-loader.vuejs.org/en/workflow/testing-with-mocks.html
+const Mock = require('!!vue?inject!src/components/Select.vue')
 
 /**
  * Simulate a DOM event.
@@ -323,7 +327,7 @@ describe('Select.vue', () => {
       })
     })
 
-    it('should move the pointer visually up the list on up arrow keyup', () => {
+    it('should move the pointer visually up the list on up arrow keyUp', () => {
       const vm = new Vue({
         template: '<div><v-select :options="options"></v-select></div>',
         components: {vSelect},
@@ -338,7 +342,7 @@ describe('Select.vue', () => {
       expect(vm.$children[0].typeAheadPointer).toEqual(0)
     })
 
-    it('should move the pointer visually down the list on down arrow keyup', () => {
+    it('should move the pointer visually down the list on down arrow keyUp', () => {
       const vm = new Vue({
         template: '<div><v-select :options="options"></v-select></div>',
         components: {vSelect},
@@ -366,76 +370,117 @@ describe('Select.vue', () => {
       expect(vm.$children[0].typeAheadPointer).toEqual(2)
     })
 
-    it('should check if the scroll position needs to be adjusted on up arrow keyup', () => {
-      const vm = new Vue({
-        template: '<div><v-select :options="options"></v-select></div>',
-        components: {vSelect},
-        data: {
-          options: ['one', 'two', 'three']
-        }
-      }).$mount()
+    describe('Automatic Scrolling', () => {
+      it('should check if the scroll position needs to be adjusted on up arrow keyUp', () => {
+        const vm = new Vue({
+          template: '<div><v-select :options="options"></v-select></div>',
+          components: {vSelect},
+          data: {
+            options: ['one', 'two', 'three']
+          }
+        }).$mount()
 
-      vm.$children[0].typeAheadPointer = 1
-      spyOn(vm.$children[0], 'maybeAdjustScrollPosition')
-      trigger(vm.$children[0].$els.search, 'keyup', (e) => e.keyCode = 38)
-      expect(vm.$children[0].maybeAdjustScrollPosition).toHaveBeenCalled()
-    })
+        vm.$children[0].typeAheadPointer = 1
+        spyOn(vm.$children[0], 'maybeAdjustScroll')
+        trigger(vm.$children[0].$els.search, 'keyup', (e) => e.keyCode = 38)
+        expect(vm.$children[0].maybeAdjustScroll).toHaveBeenCalled()
+      })
 
-    it('should check if the scroll position needs to be adjusted on down arrow keyup', () => {
-      const vm = new Vue({
-        template: '<div><v-select :options="options" max-height="10"></v-select></div>',
-        components: {vSelect},
-        data: {
-          options: ['one', 'two', 'three']
-        }
-      }).$mount()
+      it('should check if the scroll position needs to be adjusted on down arrow keyUp', () => {
+        const vm = new Vue({
+          template: '<div><v-select :options="options"></v-select></div>',
+          components: {vSelect},
+          data: {
+            options: ['one', 'two', 'three']
+          }
+        }).$mount()
 
-      spyOn(vm.$children[0], 'maybeAdjustScrollPosition')
+        spyOn(vm.$children[0], 'maybeAdjustScroll')
+        trigger(vm.$children[0].$els.search, 'keyup', (e) => e.keyCode = 40)
+        expect(vm.$children[0].maybeAdjustScroll).toHaveBeenCalled()
+      })
 
-      vm.$children[0].$els.search.focus()
+      it('should check if the scroll position needs to be adjusted when filtered options changes', (done) => {
+        const vm = new Vue({
+          template: '<div><v-select :options="options"></v-select></div>',
+          components: {vSelect},
+          data: {
+            options: ['one', 'two', 'three']
+          }
+        }).$mount()
 
-      trigger(vm.$children[0].$els.search, 'keyup', (e) => e.keyCode = 40)
-      expect(vm.$children[0].maybeAdjustScrollPosition).toHaveBeenCalled()
-    })
+        spyOn(vm.$children[0], 'maybeAdjustScroll')
+        vm.$children[0].search = 'two'
 
-    it('should scroll up if the new pointer is above the current viewport bounds', () => {
+        Vue.nextTick(() => {
+          expect(vm.$children[0].maybeAdjustScroll).toHaveBeenCalled()
+          done()
+        })
+      })
 
+      it('should scroll up if the pointer is above the current viewport bounds', () => {
+        let methods = Object.assign(pointerScroll.methods, {
+          pixelsToPointerTop() {
+            return 1
+          },
+          viewport() {
+            return { top: 2, bottom: 0 }
+          }
+        })
+        const vm = new Vue({
+          template: '<div><v-select :options="[\'one\', \'two\', \'three\']"></v-select></div>',
+          components: {
+            'v-select': Mock({
+              '../mixins/pointerScroll': {methods}
+            })
+          },
+        }).$mount()
 
+        spyOn(vm.$children[0], 'scrollTo')
+        vm.$children[0].maybeAdjustScroll()
+        expect(vm.$children[0].scrollTo).toHaveBeenCalledWith(1)
+      })
+
+      it('should scroll down if the pointer is below the current viewport bounds', () => {
+        let methods = Object.assign(pointerScroll.methods, {
+          pixelsToPointerBottom() {
+            return 2
+          },
+          viewport() {
+            return { top: 0, bottom: 1 }
+          }
+        })
+        const vm = new Vue({
+          template: '<div><v-select :options="[\'one\', \'two\', \'three\']"></v-select></div>',
+          components: {
+            'v-select': Mock({
+              '../mixins/pointerScroll': {methods}
+            })
+          },
+        }).$mount()
+
+        spyOn(vm.$children[0], 'scrollTo')
+        vm.$children[0].maybeAdjustScroll()
+        expect(vm.$children[0].scrollTo).toHaveBeenCalledWith(vm.$children[0].viewport().top + vm.$children[0].pointerHeight())
+      })
     })
 
     describe('Measuring pixel distances', () => {
-      it('should calculate pixelsToPointerTop as the sum of the height all options above the pointer', () => {
+      it('should calculate pointerHeight as the offsetHeight of the pointer element if it exists', () => {
         const vm = new Vue({
-          template: '<div><v-select :options="options"></v-select></div>',
+          template: '<div><v-select :options="[\'one\', \'two\', \'three\']""></v-select></div>',
           components: {vSelect},
-          data: {
-            options: ['one', 'two', 'three']
-          }
         }).$mount()
 
-        vm.$children[0].typeAheadPointer = 1
-        let lineHeight = vm.$children[0].$els.dropdownMenu.children[0].offsetHeight
-        expect(vm.$children[0].pixelsToPointerTop()).toEqual( lineHeight * 2 )
-      })
-      it('should calculate pixelsToPointerBottom as the sum of the height all options above the pointer plus the height of the pointer', () => {
-        const vm = new Vue({
-          template: '<div><v-select :options="options"></v-select></div>',
-          components: {vSelect},
-          data: {
-            options: ['one', 'two', 'three']
-          }
-        }).$mount()
+        //  Fresh instances start with the pointer at -1
+        vm.$children[0].typeAheadPointer = -1
+        expect(vm.$children[0].pointerHeight()).toEqual(0)
+
+        vm.$children[0].typeAheadPointer = 100
+        expect(vm.$children[0].pointerHeight()).toEqual(0)
 
         vm.$children[0].typeAheadPointer = 1
-        let lineHeight = vm.$children[0].$els.dropdownMenu.children[0].offsetHeight
-        console.log(lineHeight)
-        expect(vm.$children[0].pixelsToPointerTop()).toEqual( lineHeight * 10 + lineHeight)
-      })
-      it('should calculate pixelsToPointerCenter', () => {
-
-      })
-      it('should calculate pointerHeight', () => {
-
+        expect(vm.$children[0].pointerHeight()).toEqual(vm.$children[0].$els.dropdownMenu.children[1].offsetHeight)
       })
     })
   })
@@ -682,6 +727,3 @@ describe('Select.vue', () => {
     })
   })
 })
-
-// also see example testing a component with mocks at
-// http://vue-loader.vuejs.org/en/workflow/testing-with-mocks.html

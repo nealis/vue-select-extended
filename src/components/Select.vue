@@ -168,7 +168,11 @@
 
 
 <script type="text/babel">
+  import pointerScroll from '../mixins/pointerScroll'
+
   export default {
+    mixins: [pointerScroll],
+
     props: {
       /**
        * Contains the currently selected value. Very similar to a
@@ -325,6 +329,7 @@
       },
       filteredOptions() {
         this.typeAheadPointer = 0
+        this.maybeAdjustScroll()
       },
     },
 
@@ -442,7 +447,7 @@
       typeAheadUp() {
         if (this.typeAheadPointer > 0) {
           this.typeAheadPointer--
-          this.maybeAdjustScrollPosition()
+          this.maybeAdjustScroll()
         }
       },
 
@@ -454,7 +459,7 @@
       typeAheadDown() {
         if (this.typeAheadPointer < this.filteredOptions.length - 1) {
           this.typeAheadPointer++
-          this.maybeAdjustScrollPosition()
+          this.maybeAdjustScroll()
         }
       },
 
@@ -473,55 +478,6 @@
         if( this.clearSearchOnSelect ) {
           this.search = "";
         }
-      },
-
-      maybeAdjustScrollPosition() {
-        let bounds = this.viewport()
-        let pixelsToPointerTop = this.pixelsToPointerTop()
-        let pixelsToPointerBottom = this.pixelsToPointerBottom()
-        let pointerHeight = this.pointerHeight()
-
-        if (pixelsToPointerTop <= bounds.top) {
-          return this.scrollTo(pixelsToPointerTop)
-        } else if (pixelsToPointerBottom >= bounds.bottom) {
-//          return this.scrollTo(( this.pixelsToPointerCenter() - this.$els.dropdownMenu.offsetHeight ) + ( pointerHeight / 2))
-          return this.scrollTo(( this.pixelsToPointerCenter() - this.$els.dropdownMenu.offsetHeight ) + pointerHeight)
-        }
-      },
-
-      pixelsToPointerTop() {
-        let pixelsToPointerTop = 0
-        for (let i = 0; i < this.typeAheadPointer; i++) {
-          pixelsToPointerTop += this.$els.dropdownMenu.children[i].offsetHeight
-        }
-        return pixelsToPointerTop
-      },
-
-      pixelsToPointerBottom() {
-        return this.pixelsToPointerTop() + this.pointerHeight()
-      },
-
-      pixelsToPointerCenter() {
-        return this.pixelsToPointerTop() + ( this.pointerHeight() / 2 )
-      },
-
-      pointerHeight() {
-        return this.$els.dropdownMenu.children[this.typeAheadPointer].offsetHeight
-      },
-
-      /**
-       * The viewport is the currently viewable
-       * portion of the dropdown menu
-       */
-      viewport() {
-        return {
-          top: this.$els.dropdownMenu.scrollTop,
-          bottom: this.$els.dropdownMenu.offsetHeight + this.$els.dropdownMenu.scrollTop
-        }
-      },
-
-      scrollTo(position) {
-        return this.$els.dropdownMenu.scrollTop = position
       },
 
       /**
