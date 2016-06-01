@@ -1,4 +1,10 @@
 export default {
+  watch: {
+    typeAheadPointer() {
+      this.maybeAdjustScroll()
+    }
+  },
+
   methods: {
     /**
      * Adjust the scroll position of the dropdown list
