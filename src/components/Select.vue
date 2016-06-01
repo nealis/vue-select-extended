@@ -265,6 +265,29 @@
       },
 
       /**
+       *
+       */
+      getOptionLabel: {
+        type: Function,
+
+        /**
+         * Generate the option label text. If {option}
+         * is an object, return option[this.label].
+         *
+         * @param  {Object || String} option
+         * @return {String}
+         */
+        default(option) {
+          if( typeof option === 'object' ) {
+            if( this.label && option[this.label] ) {
+              return option[this.label]
+            }
+          }
+          return option;
+        }
+      },
+
+      /**
        * An optional callback function that is called each time the selected
        * value(s) change. When integrating with Vuex, use this callback to trigger
        * an action, rather than using :value.sync to retreive the selected value.
@@ -421,22 +444,6 @@
         }
 
         return this.value === option
-      },
-
-      /**
-       * Generate the option label text. If {option}
-       * is an object, return option[this.label].
-       *
-       * @param  {Object || String} option
-       * @return {String}
-       */
-      getOptionLabel( option ) {
-        if( typeof option === 'object' ) {
-          if( this.label && option[this.label] ) {
-            return option[this.label]
-          }
-        }
-        return option;
       },
 
       /**
