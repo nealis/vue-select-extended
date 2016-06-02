@@ -265,18 +265,13 @@
       },
 
       /**
-       *
+       * Callback to generate the label text. If {option}
+       * is an object, returns option[this.label] by default.
+       * @param  {Object || String} option
+       * @return {String}
        */
       getOptionLabel: {
         type: Function,
-
-        /**
-         * Generate the option label text. If {option}
-         * is an object, return option[this.label].
-         *
-         * @param  {Object || String} option
-         * @return {String}
-         */
         default(option) {
           if( typeof option === 'object' ) {
             if( this.label && option[this.label] ) {
