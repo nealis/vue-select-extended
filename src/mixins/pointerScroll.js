@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   methods: {
     /**
      * Adjust the scroll position of the dropdown list
