@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   watch: {
     typeAheadPointer() {
       this.maybeAdjustScroll()

@@ -10,7 +10,7 @@
 - Supports Vuex
 - Select Single/Multiple Options
 - Bootstrap Friendly Markup
-- +90% Test Coverage
+- +95% Test Coverage
 
 #### Upcoming/In Progress
 
@@ -18,12 +18,13 @@
 - Rich Option Templating
 - Asyncronous Option Loading
 
-## Demo
+## Live Examples & Docs
 [http://sagalbot.github.io/vue-select/](http://sagalbot.github.io/vue-select/)
 
 ## Install / Usage
+vue-select is now published on npm, **huge thanks to [@onefriendaday](https://github.com/onefriendaday)** for changing ownership of [his package](https://github.com/onefriendaday/vue-select). 
 ``` bash
-$ npm install sagalbot/vue-select
+$ npm install vue-select
 ```
 
 ```html

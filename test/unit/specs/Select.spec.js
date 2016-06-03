@@ -327,7 +327,7 @@ describe('Select.vue', () => {
       })
     })
 
-    it('should move the pointer visually up the list on up arrow keyUp', () => {
+    it('should move the pointer visually up the list on up arrow keyDown', () => {
       const vm = new Vue({
         template: '<div><v-select :options="options"></v-select></div>',
         components: {vSelect},
@@ -338,11 +338,11 @@ describe('Select.vue', () => {
 
       vm.$children[0].typeAheadPointer = 1
 
-      trigger(vm.$children[0].$els.search, 'keyup', (e) => e.keyCode = 38)
+      trigger(vm.$children[0].$els.search, 'keydown', (e) => e.keyCode = 38)
       expect(vm.$children[0].typeAheadPointer).toEqual(0)
     })
 
-    it('should move the pointer visually down the list on down arrow keyUp', () => {
+    it('should move the pointer visually down the list on down arrow keyDown', () => {
       const vm = new Vue({
         template: '<div><v-select :options="options"></v-select></div>',
         components: {vSelect},
@@ -352,7 +352,7 @@ describe('Select.vue', () => {
       }).$mount()
 
       vm.$children[0].typeAheadPointer = 1
-      trigger(vm.$children[0].$els.search, 'keyup', (e) => e.keyCode = 40)
+      trigger(vm.$children[0].$els.search, 'keydown', (e) => e.keyCode = 40)
       expect(vm.$children[0].typeAheadPointer).toEqual(2)
     })
 
@@ -371,7 +371,7 @@ describe('Select.vue', () => {
     })
 
     describe('Automatic Scrolling', () => {
-      it('should check if the scroll position needs to be adjusted on up arrow keyUp', () => {
+      it('should check if the scroll position needs to be adjusted on up arrow keyDown', () => {
         const vm = new Vue({
           template: '<div><v-select :options="options"></v-select></div>',
           components: {vSelect},
@@ -382,11 +382,11 @@ describe('Select.vue', () => {
 
         vm.$children[0].typeAheadPointer = 1
         spyOn(vm.$children[0], 'maybeAdjustScroll')
-        trigger(vm.$children[0].$els.search, 'keyup', (e) => e.keyCode = 38)
+        trigger(vm.$children[0].$els.search, 'keydown', (e) => e.keyCode = 38)
         expect(vm.$children[0].maybeAdjustScroll).toHaveBeenCalled()
       })
 
-      it('should check if the scroll position needs to be adjusted on down arrow keyUp', () => {
+      it('should check if the scroll position needs to be adjusted on down arrow keyDown', () => {
         const vm = new Vue({
           template: '<div><v-select :options="options"></v-select></div>',
           components: {vSelect},
@@ -396,7 +396,7 @@ describe('Select.vue', () => {
         }).$mount()
 
         spyOn(vm.$children[0], 'maybeAdjustScroll')
-        trigger(vm.$children[0].$els.search, 'keyup', (e) => e.keyCode = 40)
+        trigger(vm.$children[0].$els.search, 'keydown', (e) => e.keyCode = 40)
         expect(vm.$children[0].maybeAdjustScroll).toHaveBeenCalled()
       })
 

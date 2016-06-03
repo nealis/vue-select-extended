@@ -138,8 +138,8 @@
                 v-model="search"
                 @keydown.delete="maybeDeleteValue"
                 @keyup.esc="onEscape"
-                @keyup.up.prevent="typeAheadUp"
-                @keyup.down.prevent="typeAheadDown"
+                @keydown.up.prevent="typeAheadUp"
+                @keydown.down.prevent="typeAheadDown"
                 @keyup.enter.prevent="typeAheadSelect"
                 @blur="open = false"
                 @focus="open = true"
@@ -263,6 +263,24 @@
       label: {
         type: String,
         default: 'label'
+      },
+
+      /**
+       * Callback to generate the label text. If {option}
+       * is an object, returns option[this.label] by default.
+       * @param  {Object || String} option
+       * @return {String}
+       */
+      getOptionLabel: {
+        type: Function,
+        default(option) {
+          if( typeof option === 'object' ) {
+            if( this.label && option[this.label] ) {
+              return option[this.label]
+            }
+          }
+          return option;
+        }
       },
 
       /**
@@ -417,22 +435,6 @@
         }
 
         return this.value === option
-      },
-
-      /**
-       * Generate the option label text. If {option}
-       * is an object, return option[this.label].
-       *
-       * @param  {Object || String} option
-       * @return {String}
-       */
-      getOptionLabel( option ) {
-        if( typeof option === 'object' ) {
-          if( this.label && option[this.label] ) {
-            return option[this.label]
-          }
-        }
-        return option;
       },
 
       /**
