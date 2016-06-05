@@ -1,6 +1,6 @@
 <template>
 <p>Install from GitHub via NPM</p>
-      <pre><v-code lang="bash">npm install sagalbot/vue-select</v-code></pre>
+      <pre><v-code lang="bash">npm install vue-select</v-code></pre>
 
       <p>To use the vue-select component in your templates, simply import it, and register it with your component.</p>
 <pre><v-code lang="markup">&#x3C;template&#x3E;
