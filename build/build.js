@@ -7,6 +7,7 @@ var config = require('../config')
 var ora = require('ora')
 var webpack = require('webpack')
 var webpackConfig = require('./webpack.prod.conf')
+var umdConfig = require('./webpack.umd.conf')
 
 console.log(
   '  Tip:\n' +
@@ -22,6 +23,9 @@ rm('-rf', assetsPath)
 mkdir('-p', assetsPath)
 cp('-R', 'static/', assetsPath)
 
+/**
+ * Build the /dist/ folder (demo site)
+ */
 webpack(webpackConfig, function (err, stats) {
   spinner.stop()
   if (err) throw err
@@ -32,4 +36,19 @@ webpack(webpackConfig, function (err, stats) {
     chunks: false,
     chunkModules: false
   }) + '\n')
+})
+
+/**
+ * Build the UMD module @ /umd/vue-select.js.
+ */
+webpack(umdConfig, function (err, stats) {
+  spinner.stop()
+  if (err) throw err
+  process.stdout.write(stats.toString({
+        colors: true,
+        modules: false,
+        children: false,
+        chunks: false,
+        chunkModules: false
+      }) + '\n')
 })

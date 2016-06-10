@@ -14,5 +14,9 @@ module.exports = {
     env: require('./dev.env'),
     port: 8080,
     proxyTable: {}
+  },
+  umd: {
+    assetsRoot: path.resolve(__dirname, '../umd'),
+    assetsPublicPath: '/'
   }
 }
