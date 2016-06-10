@@ -10,8 +10,8 @@ const state = {
   multiple: true,
   maxHeight: '400px',
   options: {
-    advanced: require('../countries/advanced.js'),
-    simple: require('../countries/simple.js'),
+    advanced: require('../data/advanced.js'),
+    simple: require('../data/simple.js'),
   },
   optionType: 'advanced'
 }

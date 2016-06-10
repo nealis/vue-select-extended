@@ -141,9 +141,9 @@
    * for the demo site at http://sagalbot.github.io/vue-select/. They'll
    * be moved out of this repo in the very near future to avoid confusion.
    */
-  import countries from '../countries/advanced'
-  import simple from '../countries/simple'
-  import vSelect from './Select.vue'
+  import countries from '../data/advanced'
+  import simple from '../data/simple'
+  import vSelect from '../../src/components/Select.vue'
   import vCode from './Code.vue'
   import InstallSnippet from './snippets/InstallSnippet.vue'
   export default {

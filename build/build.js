@@ -6,6 +6,7 @@ var path = require('path')
 var config = require('../config')
 var ora = require('ora')
 var webpack = require('webpack')
+var ghpages = require('gh-pages')
 var webpackConfig = require('./webpack.prod.conf')
 
 console.log(
@@ -32,4 +33,6 @@ webpack(webpackConfig, function (err, stats) {
     chunks: false,
     chunkModules: false
   }) + '\n')
+
+  ghpages.publish(path.join(__dirname, '../dist'))
 })
