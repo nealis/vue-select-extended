@@ -143,7 +143,7 @@
    */
   import countries from '../data/advanced'
   import simple from '../data/simple'
-  import vSelect from '../../src/components/Select.vue'
+  import vSelect from 'src/components/Select.vue'
   import vCode from './Code.vue'
   import InstallSnippet from './snippets/InstallSnippet.vue'
   export default {

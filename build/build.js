@@ -33,6 +33,4 @@ webpack(webpackConfig, function (err, stats) {
     chunks: false,
     chunkModules: false
   }) + '\n')
-
-  ghpages.publish(path.join(__dirname, '../dist'))
 })
