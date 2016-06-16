@@ -190,30 +190,55 @@ describe('Select.vue', () => {
 			expect(vm.$children[0].isOptionSelected('one')).toEqual(true)
 		})
 
-		it('can run a callback when the selection changes', (done) => {
-			const vm = new Vue({
-				template: '<div><v-select :on-change="foo" value="bar" :options="options"></v-select></div>',
-				components: {vSelect},
-				data: {
-					val: null,
-					options: ['foo', 'bar', 'baz']
-				},
-				methods: {
-					foo(value) {
-						this.val = value
+		describe('onChange Callback', () => {
+			it('can run a callback when the selection changes', (done) => {
+				const vm = new Vue({
+					template: `<div><v-select :value="['foo']" :options="['foo','bar','baz']" :on-change="cb"></v-select></div>`,
+					components: {vSelect},
+					methods: {
+						cb(val) {
+						}
 					}
-				}
-			}).$mount()
+				}).$mount()
 
-			vm.$children[0].select('foo')
-			Vue.nextTick(function () {
-				expect(vm.$get('val')).toEqual('foo')
+				spyOn(vm.$children[0], 'onChange')
 
-				vm.$children[0].$set('value', 'baz')
-				Vue.nextTick(function () {
-					expect(vm.$get('val')).toEqual('baz')
-					done()
+				vm.$children[0].select('bar')
+
+				Vue.nextTick(() => {
+					expect(vm.$children[0].onChange).toHaveBeenCalledWith('bar')
+					vm.$children[0].select('baz')
+
+					Vue.nextTick(() => {
+						expect(vm.$children[0].onChange).toHaveBeenCalledWith('baz')
+						done()
+					})
 				})
+			})
+
+			it('should run onChange when multiple is true and the value changes', (done) => {
+				const vm = new Vue({
+					template: `<div><v-select v-ref:select :value="['foo']" :options="['foo','bar','baz']" multiple :on-change="cb"></v-select></div>`,
+					methods: {
+						cb(val) {
+						}
+					}
+				}).$mount()
+
+				spyOn(vm.$children[0], 'onChange')
+
+				vm.$children[0].select('bar')
+
+				Vue.nextTick(() => {
+					expect(vm.$children[0].onChange).toHaveBeenCalledWith(['foo','bar'])
+					vm.$children[0].select('baz')
+
+					Vue.nextTick(() => {
+						expect(vm.$children[0].onChange).toHaveBeenCalledWith(['foo','bar','baz'])
+						done()
+					})
+				})
+
 			})
 		})
 	})

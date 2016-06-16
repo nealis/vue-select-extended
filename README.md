@@ -7,7 +7,8 @@ Rather than bringing in jQuery just to use Select2 or Chosen, this Vue.js compon
 
 #### Features
 
-- **Tagging Support (+v.1.1.0)**
+- **AJAX Support +v1.2.0**
+- Tagging Support **+v.1.1.0**
 - No JS Dependencies
 - List Filtering/Searching
 - Supports Vuex
@@ -17,9 +18,9 @@ Rather than bringing in jQuery just to use Select2 or Chosen, this Vue.js compon
 
 #### Upcoming/In Progress
 
-- ~~Tagging (adding options not present in list, see `taggable` branch)~~ **added in v.1.1.0**
+- ~~Tagging (adding options not present in list, see `taggable` branch)~~ **+v.1.1.0**
+- ~~Asyncronous Option Loading~~ **+v.1.2.0**
 - Rich Option Templating
-- Asyncronous Option Loading
 
 ## Live Examples & Docs
 [http://sagalbot.github.io/vue-select/](http://sagalbot.github.io/vue-select/)
