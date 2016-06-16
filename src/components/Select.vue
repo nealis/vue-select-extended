@@ -1,5 +1,5 @@
 <style>
-  .v-select.dropdown {
+  .v-select {
     position: relative;
   }
 
@@ -12,6 +12,12 @@
     pointer-events: all;
     transition: all 150ms cubic-bezier(1.000, -0.115, 0.975, 0.855);
     transition-timing-function: cubic-bezier(1.000, -0.115, 0.975, 0.855);
+    opacity: 1;
+    transition: opacity .1s;
+  }
+
+  .v-select.loading .open-indicator {
+    opacity: 0;
   }
 
   .v-select .open-indicator:before {
@@ -116,6 +122,47 @@
     background: #f0f0f0;
     color: #333;
   }
+
+  .v-select .spinner {
+    opacity: 0;
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    font-size: 5px;
+    text-indent: -9999em;
+    border-top: .9em solid rgba(100,100,100,.1);
+    border-right: .9em solid rgba(100,100,100,.1);
+    border-bottom: .9em solid rgba(100,100,100,.1);
+    border-left: .9em solid rgba(60,60,60,.45);
+    transform: translateZ(0);
+    animation: vSelectSpinner 1.1s infinite linear;
+    transition: opacity .1s;
+  }
+  .v-select.loading .spinner {
+    opacity: 1;
+  }
+  .v-select .spinner,
+  .v-select .spinner:after {
+    border-radius: 50%;
+    width: 5em;
+    height: 5em;
+  }
+  @-webkit-keyframes vSelectSpinner {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes vSelectSpinner {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
 </style>
 
 <template>
@@ -134,8 +181,9 @@
 
             <input
                 v-el:search
-                v-show="searchable"
+                :debounce="debounce"
                 v-model="search"
+                v-show="searchable"
                 @keydown.delete="maybeDeleteValue"
                 @keyup.esc="onEscape"
                 @keydown.up.prevent="typeAheadUp"
@@ -150,6 +198,10 @@
             >
 
             <i v-el:open-indicator role="presentation" class="open-indicator"></i>
+
+            <slot name="spinner">
+              <div class="spinner" v-show="onSearch && loading">Loading...</div>
+            </slot>
         </div>
 
         <ul v-el:dropdown-menu v-show="open" :transition="transition" class="dropdown-menu" :style="{ 'max-height': maxHeight }">
@@ -170,9 +222,10 @@
 <script type="text/babel">
   import pointerScroll from '../mixins/pointerScroll'
   import typeAheadPointer from '../mixins/typeAheadPointer'
+  import ajax from '../mixins/ajax'
 
   export default {
-    mixins: [pointerScroll, typeAheadPointer],
+    mixins: [pointerScroll, typeAheadPointer, ajax],
 
     props: {
       /**
@@ -492,7 +545,8 @@
       dropdownClasses() {
         return {
           open: this.open,
-          searchable: this.searchable
+          searchable: this.searchable,
+          loading: this.loading
         }
       },
 

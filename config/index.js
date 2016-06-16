@@ -6,8 +6,8 @@ module.exports = {
     env: require('./prod.env'),
     index: path.resolve(__dirname, '../dist/index.html'),
     assetsRoot: path.resolve(__dirname, '../dist'),
-    assetsSubDirectory: 'static',
-    assetsPublicPath: '/',
+    assetsSubDirectory: '',
+    assetsPublicPath: ( process.argv.indexOf('publish') > 1 ) ? 'http://sagalbot.github.io/vue-select/' : '/',
     productionSourceMap: true
   },
   dev: {
