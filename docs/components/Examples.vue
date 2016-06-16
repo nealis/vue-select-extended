@@ -14,48 +14,52 @@
 
   <h2 class="page-header" id="examples">Examples</h2>
 
-  <h3 class="page-header">Single/Multiple Selection</h3>
-  <div class="row">
-    <div class="col-md-6">
-      <h4>Single Option Select</h4>
-      <pre><v-code lang="markup">&#x3C;v-select :options=&#x22;countries&#x22;&#x3E;&#x3C;/v-select&#x3E;</v-code></pre>
-      <v-select :options="countries"></v-select>
-    </div>
-
-    <div class="col-md-6">
-      <h4>Multiple Option Select</h4>
-      <pre><v-code lang="markup">&#x3C;v-select multiple :options=&#x22;countries&#x22;&#x3E;&#x3C;/v-select&#x3E;</v-code></pre>
-      <v-select multiple :options="countries"></v-select>
-    </div>
-  </div>
-
-  <h3 class="page-header">Reactive Options</h3>
-
-  <div class="row">
-    <div class="col-md-6">
-        <p>When the list of options provided by the parent changes, vue-select will react as you'd expect.</p>
-        <div style="margin-top:0;" class="radio">
-        <label>
-          <input type="radio" name="reactive-options" v-model="reactive" :value="countries">
-          <v-code lang="markup">&#x3C;v-select :options=&#x22;countries&#x22;&#x3E;&#x3C;/v-select&#x3E;</v-code>
-        </label>
+  <article class="doc-row" id="ex-multiple">
+    <h3 class="page-header">Single/Multiple Selection</h3>
+    <div class="row">
+      <div class="col-md-6">
+        <h4>Single Option Select</h4>
+        <pre><v-code lang="markup">&#x3C;v-select :options=&#x22;countries&#x22;&#x3E;&#x3C;/v-select&#x3E;</v-code></pre>
+        <v-select :options="countries"></v-select>
       </div>
 
-      <div class="radio">
-        <label>
-          <input type="radio" name="reactive-options" v-model="reactive" :value="['foo','bar','baz']">
-          <v-code lang="markup">&#x3C;v-select options=&#x22;['foo','bar','baz']&#x22;&#x3E;&#x3C;/v-select&#x3E;</v-code>
-        </label>
+      <div class="col-md-6">
+        <h4>Multiple Option Select</h4>
+        <pre><v-code lang="markup">&#x3C;v-select multiple :options=&#x22;countries&#x22;&#x3E;&#x3C;/v-select&#x3E;</v-code></pre>
+        <v-select multiple :options="countries"></v-select>
       </div>
     </div>
+  </article>
 
-    <div class="col-md-6">
-      <v-select :options="reactive"></v-select>
+  <article class="doc-row" id="ex-reactive">
+    <h3 class="page-header">Reactive Options</h3>
+    <div class="row">
+      <div class="col-md-6">
+          <p>When the list of options provided by the parent changes, vue-select will react as you'd expect.</p>
+          <div style="margin-top:0;" class="radio">
+          <label>
+            <input type="radio" name="reactive-options" v-model="reactive" :value="countries">
+            <v-code lang="markup">&#x3C;v-select :options=&#x22;countries&#x22;&#x3E;&#x3C;/v-select&#x3E;</v-code>
+          </label>
+        </div>
+
+        <div class="radio">
+          <label>
+            <input type="radio" name="reactive-options" v-model="reactive" :value="['foo','bar','baz']">
+            <v-code lang="markup">&#x3C;v-select options=&#x22;['foo','bar','baz']&#x22;&#x3E;&#x3C;/v-select&#x3E;</v-code>
+          </label>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <v-select :options="reactive"></v-select>
+      </div>
     </div>
-  </div>
+  </article>
 
-  <h3 class="page-header">Two-Way Value Syncing</h3>
-  <div class="row">
+  <article class="doc-row" id="ex-syncing">
+    <h3 class="page-header">Two-Way Value Syncing</h3>
+    <div class="row">
     <div class="col-md-6">
       <p>The most common use case for vue-select is being able to sync the components value with a parent component. The <code>value</code> property supports two-way data binding to accomplish this.</p>
       <p>The <code>.sync</code> data-binding modifier is completely optional. You may use <code>value</code> without a two-way binding to preselect options.</p>
@@ -78,9 +82,11 @@
       </div>
     </div>
   </div>
+  </article>
 
-  <h3 class="page-header">Custom Labels</h3>
-  <div class="row">
+  <article class="doc-row" id="ex-labels">
+    <h3 class="page-header">Custom Labels</h3>
+    <div class="row">
     <div class="col-md-6">
       <p>By default when the <code>options</code> array contains objects, <code>vue-select</code> looks for the <code>label</code> key for display. If your data source doesn't contain that key, you can set your own using the <code>label</code> prop.</p>
       <p>On this page, the list of countries used in the examples contains <code>value</code> and <code>label</code> properties: <v-code lang="json">{value: "CA", label: "Canada"}</v-code>. In this example, we'll display the country code instead of the label.</p>
@@ -91,9 +97,11 @@
       <v-select :options="countries" label="value"></v-select>
     </div>
   </div>
+  </article>
 
-  <h3 class="page-header">On-Change Callback <small>Vuex Compatibility</small></h3>
-  <div class="row">
+  <article class="doc-row" id="ex-vuex">
+    <h3 class="page-header">On-Change Callback <small>Vuex Compatibility</small></h3>
+    <div class="row">
     <div class="col-md-6">
       <p>vue-select provides an <code>onChange</code> property that accepts a callback function. This function is passed the currently selected value(s) as it's only parameter.</p>
       <p>This is very useful when integrating with Vuex, as it will allow your to trigger an action to update your vuex state object. Choose a callback and see it in action.</p>
@@ -127,12 +135,11 @@
       <v-select :options="countries" :on-change="getCallback"></v-select>
     </div>
   </div>
+  </article>
+
+  <ajax></ajax>
 </section>
 </template>
-
-<style type="scss">
-
-</style>
 
 <script>
   /**
@@ -145,9 +152,11 @@
   import simple from '../data/simple'
   import vSelect from 'src/components/Select.vue'
   import vCode from './Code.vue'
+  import Ajax from './snippets/Ajax.vue'
   import InstallSnippet from './snippets/InstallSnippet.vue'
+
   export default {
-    components: {vSelect,vCode,InstallSnippet},
+    components: {vSelect,vCode,InstallSnippet,Ajax},
     data () {
       return {
         countries,

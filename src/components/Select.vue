@@ -589,6 +589,7 @@
        */
       dropdownClasses() {
         return {
+          open: this.open,
           searchable: this.searchable,
           loading: this.loading
         }

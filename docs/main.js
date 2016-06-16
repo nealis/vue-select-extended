@@ -1,10 +1,19 @@
-import Vue from 'vue'
-import App from './App.vue'
-import store from './vuex/store'
 import 'prismjs'
+import Vue from 'vue'
+import App from './Docs.vue'
+import store from './vuex/store'
+import Resource from 'vue-resource'
 import vSelect from '../src/components/Select.vue'
+import vCode from './components/Code.vue'
+
+Vue.use(Resource)
 
 Vue.component('v-select', vSelect)
+Vue.component('v-code', vCode)
+
+Vue.filter('score', function (value) {
+  return Math.round(value)
+})
 
 Vue.config.debug = true
 Vue.config.devtools = true
