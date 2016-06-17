@@ -130,6 +130,7 @@
 		right: 10px;
 		font-size: 5px;
 		text-indent: -9999em;
+		overflow: hidden;
 		border-top: .9em solid rgba(100, 100, 100, .1);
 		border-right: .9em solid rgba(100, 100, 100, .1);
 		border-bottom: .9em solid rgba(100, 100, 100, .1);
