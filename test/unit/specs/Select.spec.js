@@ -752,6 +752,21 @@ describe('Select.vue', () => {
 				})
 			})
 		})
+		it('should not reset the selected value when the options property changes', (done) => {
+			const vm = new Vue({
+				template: '<div><v-select :options="options" :value.sync="value" :multiple="true" taggable></v-select></div>',
+				components: {vSelect},
+				data: {
+					value: [{label: 'one'}],
+					options: [{label: 'one'}]
+				}
+			}).$mount()
+			vm.$children[0].options = [{label: 'two'}]
+			Vue.nextTick(() => {
+				expect(vm.$children[0].value).toEqual([{label: 'one'}])
+				done()
+			})
+		})
 	})
 
 	describe('Asynchronous Loading', () => {
@@ -835,6 +850,40 @@ describe('Select.vue', () => {
 
 			Vue.nextTick(() => {
 				expect(vm.$refs.select.loading).toEqual(true)
+				done()
+			})
+		})
+	})
+
+	describe('Reset on options change', () => {
+		it('should not reset the selected value when the options property changes', (done) => {
+			const vm = new Vue({
+				template: '<div><v-select :options="options" :value.sync="value" :reset-on-options-change="false"></v-select></div>',
+				components: {vSelect},
+				data: {
+					value: 'one',
+					options: ['one', 'two', 'three']
+				}
+			}).$mount()
+			vm.$children[0].options = ['four', 'five', 'six']
+			Vue.nextTick(() => {
+				expect(vm.$children[0].value).toEqual('one')
+				done()
+			})
+		})
+
+		it('should reset the selected value when the options property changes', (done) => {
+			const vm = new Vue({
+				template: '<div><v-select :options="options" :value.sync="value"></v-select></div>',
+				components: {vSelect},
+				data: {
+					value: 'one',
+					options: ['one', 'two', 'three']
+				}
+			}).$mount()
+			vm.$children[0].options = ['four', 'five', 'six']
+			Vue.nextTick(() => {
+				expect(vm.$children[0].value).toEqual(null)
 				done()
 			})
 		})
