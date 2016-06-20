@@ -7,7 +7,7 @@ module.exports = {
     index: path.resolve(__dirname, '../dist/index.html'),
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: '',
-    assetsPublicPath: ( process.argv.indexOf('publish') > 1 ) ? 'http://sagalbot.github.io/vue-select/' : '/',
+    assetsPublicPath: ( process.argv.indexOf('publish') > 1 ) ? '//sagalbot.github.io/vue-select/' : '/',
     productionSourceMap: true
   },
   dev: {
