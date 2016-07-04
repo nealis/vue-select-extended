@@ -4,10 +4,9 @@ var path = require('path')
 module.exports = {
   build: {
     env: require('./prod.env'),
-    index: path.resolve(__dirname, '../dist/index.html'),
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: '',
-    assetsPublicPath: ( process.argv.indexOf('publish') > 1 ) ? '//sagalbot.github.io/vue-select/' : '/',
+    assetsPublicPath: '/',
     productionSourceMap: true
   },
   dev: {

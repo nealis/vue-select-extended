@@ -1,10 +1,5 @@
 import VueSelect from './components/Select.vue'
-import scroll from './mixins/pointerScroll.js'
-import pointer from './mixins/typeAheadPointer.js'
+import mixins from './mixins/index'
 
-module.exports = {
-	component: VueSelect,
-	mixins: {
-		scroll, pointer
-	}
-}
+export default VueSelect
+export { VueSelect, mixins }

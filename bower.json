@@ -1,7 +1,7 @@
 {
   "name": "vue-select",
   "description": "A native Vue.js select component that provides similar functionality to Select2/Chosen without the overhead of jQuery.",
-  "main": "umd/vue-select.js",
+  "main": "dist/vue-select.js",
   "authors": [
     "Jeff Sagal <sagalbot@gmail.com>"
   ],
