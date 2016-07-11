@@ -125,22 +125,6 @@ describe('Select.vue', () => {
 			expect(select.isValueEmpty).toEqual(true)
 		})
 
-		it('should reset the selected values when the options property changes', (done) => {
-			const vm = new Vue({
-				template: '<div><v-select :options="options" :value.sync="value" :multiple="true"></v-select></div>',
-				components: {vSelect},
-				data: {
-					value: ['one'],
-					options: ['one', 'two', 'three']
-				}
-			}).$mount()
-			vm.$children[0].options = ['four', 'five', 'six']
-			Vue.nextTick(() => {
-				expect(vm.$children[0].value).toEqual([])
-				done()
-			})
-		})
-
 		it('should reset the selected values when the multiple property changes', (done) => {
 			const vm = new Vue({
 				template: '<div><v-select :options="options" :value.sync="value" :multiple="multiple"></v-select></div>',
@@ -856,10 +840,9 @@ describe('Select.vue', () => {
 	})
 
 	describe('Reset on options change', () => {
-		it('should not reset the selected value when the options property changes', (done) => {
+		it('should not reset the selected value by default when the options property changes', (done) => {
 			const vm = new Vue({
-				template: '<div><v-select :options="options" :value.sync="value" :reset-on-options-change="false"></v-select></div>',
-				components: {vSelect},
+				template: '<div><v-select :options="options" :value.sync="value"></v-select></div>',
 				data: {
 					value: 'one',
 					options: ['one', 'two', 'three']
@@ -874,7 +857,7 @@ describe('Select.vue', () => {
 
 		it('should reset the selected value when the options property changes', (done) => {
 			const vm = new Vue({
-				template: '<div><v-select :options="options" :value.sync="value"></v-select></div>',
+				template: '<div><v-select :options="options" :value.sync="value" reset-on-options-change></v-select></div>',
 				components: {vSelect},
 				data: {
 					value: 'one',
