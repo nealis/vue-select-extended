@@ -428,7 +428,9 @@
 			 * @return {void}
 			 */
 			select(option) {
-				if (!this.isOptionSelected(option)) {
+				if (this.isOptionSelected(option)) {
+					this.deselect(option)
+				} else {
 					if (this.taggable && !this.optionExists(option)) {
 						option = this.createOption(option)
 
@@ -446,13 +448,28 @@
 					} else {
 						this.value = option
 					}
-				} else {
-					if (this.multiple) {
-						this.value.$remove(option)
-					}
 				}
 
 				this.onAfterSelect(option)
+			},
+
+			/**
+			 * De-select a given option.
+			 * @param  {Object||String} option
+			 * @return {void}
+			 */
+			deselect(option) {
+				if (this.multiple) {
+					let ref = -1
+					this.value.forEach((val) => {
+						if (val === option || typeof val === 'object' && val[this.label] === option[this.label]) {
+							ref = val
+						}
+					})
+					this.value.$remove(ref)
+				} else {
+					this.value = null
+				}
 			},
 
 			/**
@@ -496,7 +513,7 @@
 				if (this.multiple && this.value) {
 					let selected = false
 					this.value.forEach(opt => {
-						if (typeof opt === 'object' && opt[this.label] === option) {
+						if (typeof opt === 'object' && opt[this.label] === option[this.label]) {
 							selected = true
 						} else if (opt === option) {
 							selected = true

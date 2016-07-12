@@ -2,6 +2,7 @@
 
 import Vue from 'vue'
 import vSelect from 'src/components/Select.vue'
+// import vSelect from '../../../dist/vue-select'
 import pointerScroll from 'src/mixins/pointerScroll.js'
 
 Vue.component('v-select', vSelect)
@@ -94,6 +95,30 @@ describe('Select.vue', () => {
 			expect(vm.$children[0].value).toEqual(vm.value)
 		})
 
+		it('can deselect a pre-selected object', () => {
+			const vm = new Vue({
+				template: '<div><v-select :options="options" :value.sync="value" :multiple="true"></v-select></div>',
+				data: {
+					value: [{label: 'This is Foo', value: 'foo'}, {label: 'This is Bar', value: 'bar'}],
+					options: [{label: 'This is Foo', value: 'foo'}, {label: 'This is Bar', value: 'bar'}]
+				}
+			}).$mount()
+			vm.$children[0].select({label: 'This is Foo', value: 'foo'})
+			expect(vm.$children[0].value.length).toEqual(1)
+		})
+
+		it('can deselect a pre-selected string', () => {
+			const vm = new Vue({
+				template: '<div><v-select :options="options" :value.sync="value" :multiple="true"></v-select></div>',
+				data: {
+					value: ['foo', 'bar'],
+					options: ['foo','bar']
+				}
+			}).$mount()
+			vm.$children[0].select('foo')
+			expect(vm.$children[0].value.length).toEqual(1)
+		})
+
 		it('can determine if the value prop is empty', () => {
 			const vm = new Vue({
 				template: '<div><v-select :options="options" :value.sync="value"></v-select></div>',
@@ -171,7 +196,7 @@ describe('Select.vue', () => {
 				}
 			}).$mount()
 
-			expect(vm.$children[0].isOptionSelected('one')).toEqual(true)
+			expect(vm.$children[0].isOptionSelected({label: 'one'})).toEqual(true)
 		})
 
 		describe('onChange Callback', () => {
