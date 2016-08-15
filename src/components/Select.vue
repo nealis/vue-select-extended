@@ -205,7 +205,7 @@
 			<i v-el:open-indicator role="presentation" class="open-indicator"></i>
 
 			<slot name="spinner">
-				<div class="spinner" v-show="onSearch && loading">Loading...</div>
+				<div class="spinner" v-show="loading">Loading...</div>
 			</slot>
 		</div>
 
