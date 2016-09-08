@@ -23,10 +23,12 @@ Rather than bringing in jQuery just to use Select2 or Chosen, this Vue.js compon
 - Rich Option Templating
 
 ## Live Examples & Docs
-[http://sagalbot.github.io/vue-select/](http://sagalbot.github.io/vue-select/)
+- [Demo & Docs](http://sagalbot.github.io/vue-select/)
+- [Live Example on JSBin](http://jsbin.com/saxaru/5/edit?html,js,output)
 
 ## Install / Usage
-vue-select is now published on npm, **huge thanks to [@onefriendaday](https://github.com/onefriendaday)** for changing ownership of [his package](https://github.com/onefriendaday/vue-select). 
+
+#### NPM Based WorkFlows
 ``` bash
 $ npm install vue-select
 ```
@@ -51,6 +53,26 @@ export default {
 }
 </script>
 ```
+
+#### Browser Globals
+
+`v1.3.0+` no longer requires any toolchain to use the component:
+
+Just include `vue` & `vue-select.js` - I recommend using [npmcdn](https://npmcdn.com/#/).
+
+```html
+<!-- use the latest release -->
+<script src="https://npmcdn.com/vue-select@latest"></script>
+<!-- or point to a specific release -->
+<script src="https://npmcdn.com/vue-select@1.30"></script>
+```
+Then register the component in your javascript:
+
+```js
+Vue.component('v-select', VueSelect.VueSelect);
+```
+
+From there you can use as normal. Here's an [example on JSBin](http://jsbin.com/saxaru/5/edit?html,js,output).
 
 ## Parameters
 ```javascript
