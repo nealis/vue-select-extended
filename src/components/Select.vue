@@ -173,9 +173,6 @@
 <template>
 	<div class="dropdown v-select" :class="dropdownClasses">
 		<div v-el:toggle @mousedown.prevent="toggleDropdown" class="dropdown-toggle clearfix" type="button">
-        <span class="form-control" v-if="!searchable && isValueEmpty">
-          {{ placeholder }}
-        </span>
 
         <span class="selected-tag" v-for="option in valueAsArray" track-by="$index">
           {{ getOptionLabel(option) }}
@@ -188,7 +185,6 @@
 							v-el:search
 							:debounce="debounce"
 							v-model="search"
-							v-show="searchable"
 							@keydown.delete="maybeDeleteValue"
 							@keyup.esc="onEscape"
 							@keydown.up.prevent="typeAheadUp"
@@ -199,6 +195,7 @@
 							type="search"
 							class="form-control"
 							:placeholder="searchPlaceholder"
+							:readonly="!searchable"
 							:style="{ width: isValueEmpty ? '100%' : 'auto' }"
 			>
 
