@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title></title>
+
+        <link rel="stylesheet" href="/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/css/font-awesome.min.css">
+        <link rel="stylesheet" href="/css/highlight.dark.css">
+        <link rel="stylesheet" href="/css/main.css">
+    </head>
+    <body>
+
+        <header class="navbar navbar-default navbar-fixed-top">
+
+            <a class="navbar-brand" href="/">
+                The title
+                <small class="hidden-xs hidden-sm">
+                    This is the default subtitle!
+                </small>
+            </a>
+
+            
+        </header>
+
+        <main class="container">
+            <div class="row">
+
+                
+                <section id="content" class="col-sm-12">
+                    <p>Install via NPM</p>
+<pre><code class="language-bash">npm install sagalbot/vue-select</code></pre>
+<p>To use the vue-select component in your templates, simply import it, and register it within your component.</p>
+<pre><code class="language-html">&lt;template&gt;
+  &lt;div&gt;
+    &lt;v-select :value.sync="selected" :options="options"&gt;&lt;/v-select&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+&lt;script&gt;
+  import vSelect from "vue-select"
+
+  export default {
+    components: {vSelect},
+
+    data() {
+      return {
+        selected: null,
+        options: ['foo','bar','baz']
+      }
+    }
+  }
+&lt;/script&gt;</code></pre>
+<p>Alternatively, you can register the component globally. This is ideal if you are going to be using <code>vue-select</code> in multiple components.</p>
+<pre><code class="language-js">import Vue from 'vue'
+import vSelect from 'vue-select'
+
+Vue.component('v-select', vSelect)</code></pre>
+                </section>
+
+            </div>
+        </main>
+
+        <footer>
+            <div class="container">
+                <p class="text-muted">
+                    website generated with <a href="http://couscous.io" title="Markdown website generator">Couscous</a>
+                </p>
+            </div>
+        </footer>
+
+        <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+        <script src="//yastatic.net/highlightjs/8.2/highlight.min.js"></script>
+
+        <script>
+            $(function() {
+                $("section>h1").wrap('<div class="page-header" />');
+                // Syntax highlighting
+                hljs.initHighlightingOnLoad();
+            });
+        </script>
+        <!-- Livereload -->
+        <script>
+            document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] +
+                    ':35729/livereload.js?snipver=1"></' + 'script>')
+        </script>
+        <!-- End Livereload -->
+    </body>
+</html>
