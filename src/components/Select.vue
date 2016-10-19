@@ -214,6 +214,8 @@
 			</li>
 			<transition name="fade">
 				<li v-if="!filteredOptions.length" class="divider"></li>
+			</transition>
+			<transition name="fade">
 				<li v-if="!filteredOptions.length" class="text-center">
 					<slot name="no-options">Sorry, no matching options.</slot>
 				</li>
@@ -605,7 +607,7 @@
 			 * @return {array}
 			 */
 			filteredOptions() {
-				let options = this.$options.filters.filterBy(this.options, this.search)
+				let options = this.$options.filters.filterBy?this.$options.filters.filterBy(this.options, this.search):this.options
 				if (this.taggable && this.search.length && !this.optionExists(this.search)) {
 					options.unshift(this.search)
 				}
