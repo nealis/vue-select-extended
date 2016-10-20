@@ -77,13 +77,11 @@ From there you can use as normal. Here's an [example on JSBin](http://jsbin.com/
 ## Parameters
 ```javascript
  /**
-  * Contains the currently selected value. Very similar to a
-  * `value` attribute on an <input>. In most cases, you'll want
-  * to set this as a two-way binding, using :value.sync. However,
-  * this will not work with Vuex, in which case you'll need to use
-  * the onChange callback property.
-  * @type {Object||String||null}
-  */
+ * Contains the currently selected value. Very similar to a
+ * `value` attribute on an <input>. You can listen for changes
+ * using 'change' event using v-on			 
+ * @type {Object||String||null}
+ */
  value: {
    default: null
  },
@@ -166,14 +164,6 @@ From there you can use as normal. Here's an [example on JSBin](http://jsbin.com/
    default: 'label'
  },
 
- /**
-  * An optional callback function that is called each time the selected
-  * value(s) change. When integrating with Vuex, use this callback to trigger
-  * an action, rather than using :value.sync to retreive the selected value.
-  * @type {Function}
-  * @default {null}
-  */
- onChange: Function,
 
  /**
   * Enable/disable creating options from searchInput.

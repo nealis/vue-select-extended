@@ -59,9 +59,9 @@ module.exports = {
 		 */
 		toggleLoading(toggle = null) {
 			if (toggle == null) {
-				return this.loading = !this.loading
+				return this.showLoading = !this.showLoading
 			}
-			return this.loading = toggle
+			return this.showLoading = toggle
 		}
 	}
 }

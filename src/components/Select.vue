@@ -174,7 +174,7 @@
 	<div class="dropdown v-select" :class="dropdownClasses">
 		<div ref="toggle" @mousedown.prevent="toggleDropdown" class="dropdown-toggle clearfix" type="button">
 
-        <span class="selected-tag" v-for="option in valueAsArray" v-bind:key="index">
+        <span class="selected-tag" v-for="option in valueAsArray" v-bind:key="option.index">
           {{ getOptionLabel(option) }}
           <button v-if="multiple" @click="select(option)" type="button" class="close">
             <span aria-hidden="true">&times;</span>
@@ -199,14 +199,14 @@
 							:style="{ width: isValueEmpty ? '100%' : 'auto' }"
 			>
 
-			<i ref="open-indicator" role="presentation" class="open-indicator"></i>
+			<i ref="openIndicator" role="presentation" class="open-indicator"></i>
 
 			<slot name="spinner">
-				<div class="spinner" v-show="loading">Loading...</div>
+				<div class="spinner" v-show="showLoading">Loading...</div>
 			</slot>
 		</div>
 
-		<ul ref="dropdown-menu" v-show="open" :transition="transition" class="dropdown-menu" :style="{ 'max-height': maxHeight }">
+		<ul ref="dropdownMenu" v-show="open" :transition="transition" class="dropdown-menu" :style="{ 'max-height': maxHeight }">
 			<li v-for="(option, index) in filteredOptions" v-bind:key="index" :class="{ active: isOptionSelected(option), highlight: index === typeAheadPointer }" @mouseover="typeAheadPointer = index">
 				<a @mousedown.prevent="select(option)">
 					{{ getOptionLabel(option) }}
@@ -236,10 +236,8 @@
 		props: {
 			/**
 			 * Contains the currently selected value. Very similar to a
-			 * `value` attribute on an <input>. In most cases, you'll want
-			 * to set this as a two-way binding, using :value.sync. However,
-			 * this will not work with Vuex, in which case you'll need to use
-			 * the onChange callback property.
+			 * `value` attribute on an <input>. You can listen for changes
+			 * using 'change' event using v-on			 
 			 * @type {Object||String||null}
 			 */
 			value: {
@@ -345,15 +343,6 @@
 			},
 
 			/**
-			 * An optional callback function that is called each time the selected
-			 * value(s) change. When integrating with Vuex, use this callback to trigger
-			 * an action, rather than using :value.sync to retreive the selected value.
-			 * @type {Function}
-			 * @default {null}
-			 */
-			onChange: Function,
-
-			/**
 			 * Enable/disable creating options from searchInput.
 			 * @type {Boolean}
 			 */
@@ -379,7 +368,7 @@
 			createOption: {
 				type: Function,
 				default: function (newOption) {
-					if (typeof this.options[0] === 'object') {
+					if (typeof this.actualOptions[0] === 'object') {
 						return {[this.label]: newOption}
 					}
 					return newOption
@@ -399,25 +388,27 @@
 		data() {
 			return {
 				search: '',
-				open: false
+				open: false,
+				actualValue: null,
+				actualOptions: [],
+				showLoading: false
 			}
 		},
 
 		watch: {
-			value(val, old) {
+			actualValue(val, old) {
 				if (this.multiple) {
-					this.onChange ? this.onChange(val) : null
+					this.$emit('change', val)
 				} else {
-					this.onChange && val !== old ? this.onChange(val) : null
+					if(val !== old) {
+						this.$emit('change', val)
+					}
 				}
 			},
-			options() {
+			actualOptions() {
 				if (!this.taggable && this.resetOnOptionsChange) {
-					this.$set('value', this.multiple ? [] : null)
+					this.actualValue = this.multiple ? [] : null
 				}
-			},
-			multiple(val) {
-				this.$set('value', val ? [] : null)
 			}
 		},
 
@@ -436,18 +427,18 @@
 						option = this.createOption(option)
 
 						if (this.pushTags) {
-							this.options.push(option)
+							this.actualOptions.push(option)
 						}
 					}
 
 					if (this.multiple) {
-						if (!this.value) {
-							this.$set('value', [option])
+						if (!this.actualValue) {
+							this.actualValue = [option]
 						} else {
-							this.value.push(option)
+							this.actualValue.push(option)
 						}
 					} else {
-						this.value = option
+						this.actualValue = option
 					}
 				}
 
@@ -462,15 +453,15 @@
 			deselect(option) {
 				if (this.multiple) {
 					let ref = -1
-					this.value.forEach((val) => {
+					this.actualValue.forEach((val) => {
 						if (val === option || typeof val === 'object' && val[this.label] === option[this.label]) {
 							ref = val
 						}
 					})
-					var index = this.value.indexOf(ref)
-					this.value.splice(index, 1)					
+					var index = this.actualValue.indexOf(ref)
+					this.actualValue.splice(index, 1)					
 				} else {
-					this.value = null
+					this.actualValue = null
 				}
 			},
 
@@ -512,9 +503,9 @@
 			 * @return {Boolean}         True when selected || False otherwise
 			 */
 			isOptionSelected(option) {
-				if (this.multiple && this.value) {
+				if (this.multiple && this.actualValue) {
 					let selected = false
-					this.value.forEach(opt => {
+					this.actualValue.forEach(opt => {
 						if (typeof opt === 'object' && opt[this.label] === option[this.label]) {
 							selected = true
 						} else if (opt === option) {
@@ -524,7 +515,7 @@
 					return selected
 				}
 
-				return this.value === option
+				return this.actualValue === option
 			},
 
 			/**
@@ -546,14 +537,14 @@
 			 * @return {this.value}
 			 */
 			maybeDeleteValue() {
-				if (!this.$refs.search.value.length && this.value) {
-					return this.multiple ? this.value.pop() : this.$set('value', null)
+				if (!this.$refs.search.value.length && this.actualValue) {
+					return this.multiple ? this.actualValue.pop() : this.actualValue = null
 				}
 			},
 
 			/**
 			 * Determine if an option exists
-			 * within this.options array.
+			 * within this.actualOptions array.
 			 *
 			 * @param  {Object || String} option
 			 * @return {boolean}
@@ -561,7 +552,7 @@
 			optionExists(option) {
 				let exists = false
 
-				this.options.forEach(opt => {
+				this.actualOptions.forEach(opt => {
 					if (typeof opt === 'object' && opt[this.label] === option) {
 						exists = true
 					} else if (opt === option) {
@@ -583,7 +574,7 @@
 				return {
 					open: this.open,
 					searchable: this.searchable,
-					loading: this.loading
+					loading: this.showLoading
 				}
 			},
 
@@ -607,7 +598,7 @@
 			 * @return {array}
 			 */
 			filteredOptions() {
-				let options = this.$options.filters.filterBy?this.$options.filters.filterBy(this.options, this.search):this.options
+				let options = this.$options.filters.filterBy?this.$options.filters.filterBy(this.actualOptions, this.search):this.actualOptions
 				if (this.taggable && this.search.length && !this.optionExists(this.search)) {
 					options.unshift(this.search)
 				}
@@ -619,11 +610,11 @@
 			 * @return {Boolean}
 			 */
 			isValueEmpty() {
-				if (this.value) {
-					if (typeof this.value === 'object') {
-						return !Object.keys(this.value).length
+				if (this.actualValue) {
+					if (typeof this.actualValue === 'object') {
+						return !Object.keys(this.actualValue).length
 					}
-					return !this.value.length
+					return !this.actualValue.length
 				}
 
 				return true;
@@ -635,13 +626,18 @@
 			 */
 			valueAsArray() {
 				if (this.multiple) {
-					return this.value
-				} else if (this.value) {
-					return [this.value]
+					return this.actualValue
+				} else if (this.actualValue) {
+					return [this.actualValue]
 				}
 
 				return []
 			}
+		},
+		created: function() {
+			this.actualValue = this.value			
+			this.actualOptions = this.options.slice(0)
+			this.showLoading = this.loading
 		}
 
 	}
