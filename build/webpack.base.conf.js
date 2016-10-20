@@ -20,6 +20,7 @@ module.exports = {
       'assets': path.resolve(__dirname, '../docs/assets'),
       'mixins': path.resolve(__dirname, '../src/mixins'),
       'components': path.resolve(__dirname, '../docs/components')
+      'vue$': 'vue/dist/vue.js'
     }
   },
   resolveLoader: {
