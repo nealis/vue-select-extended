@@ -131,22 +131,22 @@ describe('Select.vue', () => {
 			var select = vm.$children[0]
 			expect(select.isValueEmpty).toEqual(true)
 
-			select.$set('value', ['one'])
+			select.select(['one'])
 			expect(select.isValueEmpty).toEqual(false)
 
-			select.$set('value', [{l: 'f'}])
+			select.select([{l: 'f'}])
 			expect(select.isValueEmpty).toEqual(false)
 
-			select.$set('value', 'one')
+			select.select('one')
 			expect(select.isValueEmpty).toEqual(false)
 
-			select.$set('value', {label: 'foo', value: 'foo'})
+			select.select({label: 'foo', value: 'foo'})
 			expect(select.isValueEmpty).toEqual(false)
 
-			select.$set('value', '')
+			select.select('')
 			expect(select.isValueEmpty).toEqual(true)
 
-			select.$set('value', null)
+			select.select(null)
 			expect(select.isValueEmpty).toEqual(true)
 		})
 
