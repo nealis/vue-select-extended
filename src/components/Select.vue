@@ -343,6 +343,16 @@
 			},
 
 			/**
+			 * An optional callback function that is called each time the selected
+			 * value(s) change. When integrating with Vuex, use this callback to trigger
+			 * an action, rather than using :value.sync to retreive the selected value.
+			 * @type {Function}
+			 * @default {null}
+			 */
+			onChange: Function,
+		
+
+			/**
 			 * Enable/disable creating options from searchInput.
 			 * @type {Boolean}
 			 */
@@ -368,7 +378,7 @@
 			createOption: {
 				type: Function,
 				default: function (newOption) {
-					if (typeof this.actualOptions[0] === 'object') {
+					if (typeof this.currentOptions[0] === 'object') {
 						return {[this.label]: newOption}
 					}
 					return newOption
@@ -389,27 +399,38 @@
 			return {
 				search: '',
 				open: false,
-				actualValue: null,
-				actualOptions: [],
+				currentSelection: null,
+				currentOptions: [],
 				showLoading: false
 			}
 		},
 
 		watch: {
-			actualValue(val, old) {
+			value(val, old) {
+				this.currentSelection = val
+			},
+			currentSelection(val, old) {
 				if (this.multiple) {
+					this.onChange ? this.onChange(val) : null
 					this.$emit('change', val)
 				} else {
 					if(val !== old) {
+						this.onChange? this.onChange(val) : null
 						this.$emit('change', val)
 					}
 				}
 			},
-			actualOptions() {
+			options(val) {
+				this.currentOptions = val
+			},
+			currentOptions() {
 				if (!this.taggable && this.resetOnOptionsChange) {
-					this.actualValue = this.multiple ? [] : null
+					this.currentSelection = this.multiple ? [] : null
 				}
-			}
+			},
+			multiple(val) {				
+				this.currentSelection = val ? [] : null
+ 			}
 		},
 
 		methods: {
@@ -427,18 +448,19 @@
 						option = this.createOption(option)
 
 						if (this.pushTags) {
-							this.actualOptions.push(option)
+							console.log("adding " + option +" to "+ this.currentOptions)
+							this.currentOptions.push(option)
 						}
 					}
 
 					if (this.multiple) {
-						if (!this.actualValue) {
-							this.actualValue = [option]
+						if (!this.currentSelection) {
+							this.currentSelection = [option]
 						} else {
-							this.actualValue.push(option)
+							this.currentSelection.push(option)
 						}
 					} else {
-						this.actualValue = option
+						this.currentSelection = option
 					}
 				}
 
@@ -453,15 +475,15 @@
 			deselect(option) {
 				if (this.multiple) {
 					let ref = -1
-					this.actualValue.forEach((val) => {
+					this.currentSelection.forEach((val) => {
 						if (val === option || typeof val === 'object' && val[this.label] === option[this.label]) {
 							ref = val
 						}
 					})
-					var index = this.actualValue.indexOf(ref)
-					this.actualValue.splice(index, 1)					
+					var index = this.currentSelection.indexOf(ref)
+					this.currentSelection.splice(index, 1)					
 				} else {
-					this.actualValue = null
+					this.currentSelection = null
 				}
 			},
 
@@ -503,9 +525,9 @@
 			 * @return {Boolean}         True when selected || False otherwise
 			 */
 			isOptionSelected(option) {
-				if (this.multiple && this.actualValue) {
+				if (this.multiple && this.currentSelection) {
 					let selected = false
-					this.actualValue.forEach(opt => {
+					this.currentSelection.forEach(opt => {
 						if (typeof opt === 'object' && opt[this.label] === option[this.label]) {
 							selected = true
 						} else if (opt === option) {
@@ -515,7 +537,7 @@
 					return selected
 				}
 
-				return this.actualValue === option
+				return this.currentSelection === option
 			},
 
 			/**
@@ -537,14 +559,14 @@
 			 * @return {this.value}
 			 */
 			maybeDeleteValue() {
-				if (!this.$refs.search.value.length && this.actualValue) {
-					return this.multiple ? this.actualValue.pop() : this.actualValue = null
+				if (!this.$refs.search.value.length && this.currentSelection) {
+					return this.multiple ? this.currentSelection.pop() : this.currentSelection = null
 				}
 			},
 
 			/**
 			 * Determine if an option exists
-			 * within this.actualOptions array.
+			 * within this.currentOptions array.
 			 *
 			 * @param  {Object || String} option
 			 * @return {boolean}
@@ -552,7 +574,7 @@
 			optionExists(option) {
 				let exists = false
 
-				this.actualOptions.forEach(opt => {
+				this.currentOptions.forEach(opt => {
 					if (typeof opt === 'object' && opt[this.label] === option) {
 						exists = true
 					} else if (opt === option) {
@@ -598,7 +620,7 @@
 			 * @return {array}
 			 */
 			filteredOptions() {
-				let options = this.$options.filters.filterBy?this.$options.filters.filterBy(this.actualOptions, this.search):this.actualOptions
+				let options = this.$options.filters.filterBy?this.$options.filters.filterBy(this.currentOptions, this.search):this.currentOptions
 				if (this.taggable && this.search.length && !this.optionExists(this.search)) {
 					options.unshift(this.search)
 				}
@@ -610,11 +632,11 @@
 			 * @return {Boolean}
 			 */
 			isValueEmpty() {
-				if (this.actualValue) {
-					if (typeof this.actualValue === 'object') {
-						return !Object.keys(this.actualValue).length
+				if (this.currentSelection) {
+					if (typeof this.currentSelection === 'object') {
+						return !Object.keys(this.currentSelection).length
 					}
-					return !this.actualValue.length
+					return !this.currentSelection.length
 				}
 
 				return true;
@@ -626,17 +648,17 @@
 			 */
 			valueAsArray() {
 				if (this.multiple) {
-					return this.actualValue
-				} else if (this.actualValue) {
-					return [this.actualValue]
+					return this.currentSelection
+				} else if (this.currentSelection) {
+					return [this.currentSelection]
 				}
 
 				return []
 			}
 		},
 		created: function() {
-			this.actualValue = this.value			
-			this.actualOptions = this.options.slice(0)
+			this.currentSelection = this.value			
+			this.currentOptions = this.options.slice(0)
 			this.showLoading = this.loading
 		}
 

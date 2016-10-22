@@ -164,6 +164,14 @@ From there you can use as normal. Here's an [example on JSBin](http://jsbin.com/
    default: 'label'
  },
 
+/**
+ * An optional callback function that is called each time the selected
+ * value(s) change. When integrating with Vuex, use this callback to trigger
+ * an action, rather than using :value.sync to retreive the selected value.
+ * @type {Function}
+ * @default {null}
+ */
+onChange: Function,
 
  /**
   * Enable/disable creating options from searchInput.
