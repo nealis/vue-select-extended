@@ -2,15 +2,13 @@
   <h2 class="page-header">Parameters</h2>
   <pre v-pre><code class="language-javascript">props: {
 
-    /**
+   /**
      * Contains the currently selected value. Very similar to a
-     * `value` attribute on an &amp;lt;input&amp;gt;. In most cases, you'll want
-     * to set this as a two-way binding, using :value.sync. However,
-     * this will not work with Vuex, in which case you'll need to use
-     * the onChange callback property.
+     * `value` attribute on an <input>. You can listen for changes
+     * using 'change' event using v-on			 
      * @type {Object||String||null}
      */
-    value: {
+   value: {
       default: null
     },
 
@@ -90,6 +88,8 @@
      * @default {null}
      */
     onChange: Function
+    }
+    
   }
     </code></pre>
 </template>

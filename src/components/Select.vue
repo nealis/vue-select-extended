@@ -174,7 +174,7 @@
 	<div class="dropdown v-select" :class="dropdownClasses">
 		<div ref="toggle" @mousedown.prevent="toggleDropdown" class="dropdown-toggle clearfix" type="button">
 
-        <span class="selected-tag" v-for="option in valueAsArray" v-bind:key="index">
+        <span class="selected-tag" v-for="option in valueAsArray" v-bind:key="option.index">
           {{ getOptionLabel(option) }}
           <button v-if="multiple" @click="select(option)" type="button" class="close">
             <span aria-hidden="true">&times;</span>
@@ -199,14 +199,14 @@
 							:style="{ width: isValueEmpty ? '100%' : 'auto' }"
 			>
 
-			<i ref="open-indicator" role="presentation" class="open-indicator"></i>
+			<i ref="openIndicator" role="presentation" class="open-indicator"></i>
 
 			<slot name="spinner">
-				<div class="spinner" v-show="loading">Loading...</div>
+				<div class="spinner" v-show="showLoading">Loading...</div>
 			</slot>
 		</div>
 
-		<ul ref="dropdown-menu" v-show="open" :transition="transition" class="dropdown-menu" :style="{ 'max-height': maxHeight }">
+		<ul ref="dropdownMenu" v-show="open" :transition="transition" class="dropdown-menu" :style="{ 'max-height': maxHeight }">
 			<li v-for="(option, index) in filteredOptions" v-bind:key="index" :class="{ active: isOptionSelected(option), highlight: index === typeAheadPointer }" @mouseover="typeAheadPointer = index">
 				<a @mousedown.prevent="select(option)">
 					{{ getOptionLabel(option) }}
@@ -236,10 +236,8 @@
 		props: {
 			/**
 			 * Contains the currently selected value. Very similar to a
-			 * `value` attribute on an <input>. In most cases, you'll want
-			 * to set this as a two-way binding, using :value.sync. However,
-			 * this will not work with Vuex, in which case you'll need to use
-			 * the onChange callback property.
+			 * `value` attribute on an <input>. You can listen for changes
+			 * using 'change' event using v-on			 
 			 * @type {Object||String||null}
 			 */
 			value: {
@@ -352,6 +350,7 @@
 			 * @default {null}
 			 */
 			onChange: Function,
+		
 
 			/**
 			 * Enable/disable creating options from searchInput.
@@ -379,7 +378,7 @@
 			createOption: {
 				type: Function,
 				default: function (newOption) {
-					if (typeof this.options[0] === 'object') {
+					if (typeof this.currentOptions[0] === 'object') {
 						return {[this.label]: newOption}
 					}
 					return newOption
@@ -399,26 +398,39 @@
 		data() {
 			return {
 				search: '',
-				open: false
+				open: false,
+				currentSelection: null,
+				currentOptions: [],
+				showLoading: false
 			}
 		},
 
 		watch: {
 			value(val, old) {
+				this.currentSelection = val
+			},
+			currentSelection(val, old) {
 				if (this.multiple) {
 					this.onChange ? this.onChange(val) : null
+					this.$emit('change', val)
 				} else {
-					this.onChange && val !== old ? this.onChange(val) : null
+					if(val !== old) {
+						this.onChange? this.onChange(val) : null
+						this.$emit('change', val)
+					}
 				}
 			},
-			options() {
+			options(val) {
+				this.currentOptions = val
+			},
+			currentOptions() {
 				if (!this.taggable && this.resetOnOptionsChange) {
-					this.$set('value', this.multiple ? [] : null)
+					this.currentSelection = this.multiple ? [] : null
 				}
 			},
-			multiple(val) {
-				this.$set('value', val ? [] : null)
-			}
+			multiple(val) {				
+				this.currentSelection = val ? [] : null
+ 			}
 		},
 
 		methods: {
@@ -436,18 +448,19 @@
 						option = this.createOption(option)
 
 						if (this.pushTags) {
-							this.options.push(option)
+							console.log("adding " + option +" to "+ this.currentOptions)
+							this.currentOptions.push(option)
 						}
 					}
 
 					if (this.multiple) {
-						if (!this.value) {
-							this.$set('value', [option])
+						if (!this.currentSelection) {
+							this.currentSelection = [option]
 						} else {
-							this.value.push(option)
+							this.currentSelection.push(option)
 						}
 					} else {
-						this.value = option
+						this.currentSelection = option
 					}
 				}
 
@@ -462,15 +475,15 @@
 			deselect(option) {
 				if (this.multiple) {
 					let ref = -1
-					this.value.forEach((val) => {
+					this.currentSelection.forEach((val) => {
 						if (val === option || typeof val === 'object' && val[this.label] === option[this.label]) {
 							ref = val
 						}
 					})
-					var index = this.value.indexOf(ref)
-					this.value.splice(index, 1)					
+					var index = this.currentSelection.indexOf(ref)
+					this.currentSelection.splice(index, 1)					
 				} else {
-					this.value = null
+					this.currentSelection = null
 				}
 			},
 
@@ -512,9 +525,9 @@
 			 * @return {Boolean}         True when selected || False otherwise
 			 */
 			isOptionSelected(option) {
-				if (this.multiple && this.value) {
+				if (this.multiple && this.currentSelection) {
 					let selected = false
-					this.value.forEach(opt => {
+					this.currentSelection.forEach(opt => {
 						if (typeof opt === 'object' && opt[this.label] === option[this.label]) {
 							selected = true
 						} else if (opt === option) {
@@ -524,7 +537,7 @@
 					return selected
 				}
 
-				return this.value === option
+				return this.currentSelection === option
 			},
 
 			/**
@@ -546,14 +559,14 @@
 			 * @return {this.value}
 			 */
 			maybeDeleteValue() {
-				if (!this.$refs.search.value.length && this.value) {
-					return this.multiple ? this.value.pop() : this.$set('value', null)
+				if (!this.$refs.search.value.length && this.currentSelection) {
+					return this.multiple ? this.currentSelection.pop() : this.currentSelection = null
 				}
 			},
 
 			/**
 			 * Determine if an option exists
-			 * within this.options array.
+			 * within this.currentOptions array.
 			 *
 			 * @param  {Object || String} option
 			 * @return {boolean}
@@ -561,7 +574,7 @@
 			optionExists(option) {
 				let exists = false
 
-				this.options.forEach(opt => {
+				this.currentOptions.forEach(opt => {
 					if (typeof opt === 'object' && opt[this.label] === option) {
 						exists = true
 					} else if (opt === option) {
@@ -583,7 +596,7 @@
 				return {
 					open: this.open,
 					searchable: this.searchable,
-					loading: this.loading
+					loading: this.showLoading
 				}
 			},
 
@@ -607,7 +620,7 @@
 			 * @return {array}
 			 */
 			filteredOptions() {
-				let options = this.$options.filters.filterBy?this.$options.filters.filterBy(this.options, this.search):this.options
+				let options = this.$options.filters.filterBy?this.$options.filters.filterBy(this.currentOptions, this.search):this.currentOptions
 				if (this.taggable && this.search.length && !this.optionExists(this.search)) {
 					options.unshift(this.search)
 				}
@@ -619,11 +632,11 @@
 			 * @return {Boolean}
 			 */
 			isValueEmpty() {
-				if (this.value) {
-					if (typeof this.value === 'object') {
-						return !Object.keys(this.value).length
+				if (this.currentSelection) {
+					if (typeof this.currentSelection === 'object') {
+						return !Object.keys(this.currentSelection).length
 					}
-					return !this.value.length
+					return !this.currentSelection.length
 				}
 
 				return true;
@@ -635,13 +648,18 @@
 			 */
 			valueAsArray() {
 				if (this.multiple) {
-					return this.value
-				} else if (this.value) {
-					return [this.value]
+					return this.currentSelection
+				} else if (this.currentSelection) {
+					return [this.currentSelection]
 				}
 
 				return []
 			}
+		},
+		created: function() {
+			this.currentSelection = this.value			
+			this.currentOptions = this.options.slice(0)
+			this.showLoading = this.loading
 		}
 
 	}
