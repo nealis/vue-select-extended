@@ -64,11 +64,11 @@ describe('Select.vue', () => {
 				template: '<div><v-select :options="options" :value="value"></v-select></div>',
 				components: {vSelect},
 				data: {
-					value: ['one'],
+					value: 'one',
 					options: ['one', 'two', 'three']
 				}
 			}).$mount()
-			expect(vm.$children[0].currentSelection).toEqual(vm.value)
+			expect(vm.$children[0].mutableValue).toEqual(vm.value)
 		})
 
 		it('can accept an array of objects and pre-selected value (single)', () => {
@@ -80,7 +80,7 @@ describe('Select.vue', () => {
 					options: [{label: 'This is Foo', value: 'foo'}, {label: 'This is Bar', value: 'bar'}]
 				}
 			}).$mount()
-			expect(vm.$children[0].currentSelection).toEqual(vm.value)
+			expect(vm.$children[0].mutableValue).toEqual(vm.value)
 		})
 
 		it('can accept an array of objects and pre-selected values (multiple)', () => {
@@ -92,7 +92,7 @@ describe('Select.vue', () => {
 					options: [{label: 'This is Foo', value: 'foo'}, {label: 'This is Bar', value: 'bar'}]
 				}
 			}).$mount()
-			expect(vm.$children[0].currentSelection).toEqual(vm.value)
+			expect(vm.$children[0].mutableValue).toEqual(vm.value)
 		})
 
 		it('can deselect a pre-selected object', () => {
@@ -104,7 +104,7 @@ describe('Select.vue', () => {
 				}
 			}).$mount()
 			vm.$children[0].select({label: 'This is Foo', value: 'foo'})
-			expect(vm.$children[0].currentSelection.length).toEqual(1)
+			expect(vm.$children[0].mutableValue.length).toEqual(1)
 		})
 
 		it('can deselect a pre-selected string', () => {
@@ -116,7 +116,7 @@ describe('Select.vue', () => {
 				}
 			}).$mount()
 			vm.$children[0].select('foo')
-			expect(vm.$children[0].currentSelection.length).toEqual(1)
+			expect(vm.$children[0].mutableValue.length).toEqual(1)
 		})
 
 		it('can determine if the value prop is empty', () => {
@@ -164,10 +164,10 @@ describe('Select.vue', () => {
 			vm.multiple = false
 
 			Vue.nextTick(() => {
-				expect(vm.$children[0].currentSelection).toEqual(null)
+				expect(vm.$children[0].mutableValue).toEqual(null)
 				vm.multiple = true
 				Vue.nextTick(() => {
-					expect(vm.$children[0].currentSelection).toEqual([])
+					expect(vm.$children[0].mutableValue).toEqual([])
 					done()
 				})
 			})
@@ -175,20 +175,20 @@ describe('Select.vue', () => {
 
 		it('can retain values present in a new array of options', () => {
 			const vm = new Vue({
-				template: '<div><v-select :options="options" :value.sync="value"></v-select></div>',
+				template: '<div><v-select :options="options" v-model="value"></v-select></div>',
 				components: {vSelect},
 				data: {
 					value: ['one'],
 					options: ['one', 'two', 'three']
 				}
 			}).$mount()
-			vm.$children[0].options = ['one', 'five', 'six']
-			expect(vm.$children[0].currentSelection).toEqual(['one'])
+			vm.options = ['one', 'five', 'six']
+			expect(vm.$children[0].mutableValue).toEqual(['one'])
 		})
 
 		it('can determine if an object is already selected', () => {
 			const vm = new Vue({
-				template: '<div><v-select :options="options" multiple :value.sync="value"></v-select></div>',
+				template: '<div><v-select :options="options" multiple v-model="value"></v-select></div>',
 				components: {vSelect},
 				data: {
 					value: [{label: 'one'}],
@@ -199,54 +199,57 @@ describe('Select.vue', () => {
 			expect(vm.$children[0].isOptionSelected({label: 'one'})).toEqual(true)
 		})
 
+		it('can use v-model syntax for a two way binding to a parent component', (done) => {
+			const vm = new Vue({
+				template: '<div><v-select :options="options" v-model="value"></v-select></div>',
+				components: {vSelect},
+				data: {
+					value: 'foo',
+					options: ['foo','bar','baz']
+				}
+			}).$mount()
+
+			expect(vm.$children[0].value).toEqual('foo')
+			expect(vm.$children[0].mutableValue).toEqual('foo')
+
+			vm.$children[0].mutableValue = 'bar'
+
+			Vue.nextTick(() => {
+				expect(vm.value).toEqual('bar')
+				done()
+			})
+		})
+
 		describe('change Event', () => {
-			it('can run a callback when the selection changes', (done) => {
+			it('will trigger the input event when the selection changes', (done) => {
 				const vm = new Vue({
-					template: `<div><v-select :value="['foo']" :options="['foo','bar','baz']" v-on:change="cb"></v-select></div>`,
-					components: {vSelect},
-					methods: {
-						cb(val) {
-							console.log("Value Changed to "+val)
-						}
+					template: `<div><v-select ref="select"  :value="['foo']" :options="['foo','bar','baz']" v-on:input="foo = arguments[0]"></v-select></div>`,
+					data: {
+						foo: ''
 					}
 				}).$mount()
 
-				spyOn(vm, 'cb')
-
-				vm.$children[0].select('bar')
+				vm.$refs.select.select('bar')
 
 				Vue.nextTick(() => {
-					expect(vm.cb).toHaveBeenCalledWith('bar')
-					vm.$children[0].select('baz')
-
-					Vue.nextTick(() => {
-						expect(vm.cb).toHaveBeenCalledWith('baz')
-						done()
-					})
+					expect(vm.foo).toEqual('bar')
+					done()
 				})
 			})
 
 			it('should run change when multiple is true and the value changes', (done) => {
 				const vm = new Vue({
-					template: `<div><v-select ref="select" :value="['foo']" :options="['foo','bar','baz']" multiple v-on:change="cb"></v-select></div>`,
-					methods: {
-						cb(val) {
-						}
+					template: `<div><v-select ref="select" :value="['foo']" :options="['foo','bar','baz']" multiple v-on:input="foo = arguments[0]"></v-select></div>`,
+					data: {
+						foo: ''
 					}
 				}).$mount()
 
-				spyOn(vm, 'cb')
-
-				vm.$children[0].select('bar')
+				vm.$refs.select.select('bar')
 
 				Vue.nextTick(() => {
-					expect(vm.cb).toHaveBeenCalledWith(['foo','bar'])
-					vm.$children[0].select('baz')
-
-					Vue.nextTick(() => {
-						expect(vm.cb).toHaveBeenCalledWith(['foo','bar','baz'])
-						done()
-					})
+					expect(vm.foo).toEqual(['foo','bar'])
+					done()
 				})
 
 			})
@@ -487,12 +490,14 @@ describe('Select.vue', () => {
 						return {top: 0, bottom: 1}
 					}
 				})
+
+				let mock = Mock({
+					'../mixins/pointerScroll': {methods}
+				})
 				const vm = new Vue({
-					template: '<div><v-select :options="[\'one\', \'two\', \'three\']"></v-select></div>',
+					template: `<div><v-select :options="['one', 'two', 'three']"></v-select></div>`,
 					components: {
-						'v-select': Mock({
-							'../mixins/pointerScroll': {methods}
-						})
+						'v-select': mock
 					},
 				}).$mount()
 
@@ -525,7 +530,7 @@ describe('Select.vue', () => {
 	describe('Removing values', () => {
 		it('can remove the given tag when its close icon is clicked', (done) => {
 			const vm = new Vue({
-				template: '<div><v-select :options="options" :value.sync="value" :multiple="true"></v-select></div>',
+				template: '<div><v-select :options="options" v-model="value" :multiple="true"></v-select></div>',
 				components: {vSelect},
 				data: {
 					value: ['one'],
@@ -534,7 +539,7 @@ describe('Select.vue', () => {
 			}).$mount()
 			vm.$children[0].$refs.toggle.querySelector('.close').click()
 			Vue.nextTick(() => {
-				expect(vm.$children[0].currentSelection).toEqual([])
+				expect(vm.$children[0].mutableValue).toEqual([])
 				done()
 			})
 		})
@@ -542,7 +547,7 @@ describe('Select.vue', () => {
 		it('should remove the last item in the value array on delete keypress when multiple is true', () => {
 
 			const vm = new Vue({
-				template: '<div><v-select :options="options" :value.sync="value" :multiple="true"></v-select></div>',
+				template: '<div><v-select :options="options" v-model="value" :multiple="true"></v-select></div>',
 				components: {vSelect},
 				data: {
 					value: ['one', 'two'],
@@ -551,13 +556,13 @@ describe('Select.vue', () => {
 			}).$mount()
 			vm.$children[0].maybeDeleteValue()
 			Vue.nextTick(() => {
-				expect(vm.$children[0].currentSelection).toEqual(['one'])
+				expect(vm.$children[0].mutableValue).toEqual(['one'])
 			})
 		})
 
 		it('should set value to null on delete keypress when multiple is false', () => {
 			const vm = new Vue({
-				template: '<div><v-select :options="options" :value.sync="value"></v-select></div>',
+				template: '<div><v-select :options="options" v-model="value"></v-select></div>',
 				components: {vSelect},
 				data: {
 					value: 'one',
@@ -566,7 +571,7 @@ describe('Select.vue', () => {
 			}).$mount()
 			vm.$children[0].maybeDeleteValue()
 			Vue.nextTick(() => {
-				expect(vm.$children[0].currentSelection).toEqual(null)
+				expect(vm.$children[0].mutableValue).toEqual(null)
 			})
 		})
 	})
@@ -574,7 +579,7 @@ describe('Select.vue', () => {
 	describe('Labels', () => {
 		it('can generate labels using a custom label key', () => {
 			const vm = new Vue({
-				template: '<div><v-select label="name" :options="options" :value.sync="value" :multiple="true"></v-select></div>',
+				template: '<div><v-select label="name" :options="options" v-model="value" :multiple="true"></v-select></div>',
 				components: {vSelect},
 				data: {
 					value: [{name: 'Baz'}],
@@ -594,13 +599,11 @@ describe('Select.vue', () => {
 			}).$mount()
 
 			expect(vm.$children[0].searchPlaceholder).toEqual('foo')
-			vm.$children[0].currentSelection = {label: 'one'}
+			vm.$children[0].mutableValue = {label: 'one'}
 			Vue.nextTick(() => {
 				expect(vm.$children[0].searchPlaceholder).not.toBeDefined()
 				done()
 			})
-
-			// expect(vm.$children[0].searchPlaceholder()).toEqual('foo')
 		})
 	})
 
@@ -670,7 +673,7 @@ describe('Select.vue', () => {
 
 			searchSubmit(vm, 'three')
 			Vue.nextTick(() => {
-				expect(vm.$children[0].currentSelection).toEqual(['one', 'three'])
+				expect(vm.$children[0].mutableValue).toEqual(['one', 'three'])
 				done()
 			})
 		})
@@ -687,7 +690,7 @@ describe('Select.vue', () => {
 
 			searchSubmit(vm, 'two')
 			Vue.nextTick(() => {
-				expect(vm.$children[0].currentSelection).toEqual([{label: 'one'}, {label: 'two'}])
+				expect(vm.$children[0].mutableValue).toEqual([{label: 'one'}, {label: 'two'}])
 				done()
 			})
 		})
@@ -703,7 +706,7 @@ describe('Select.vue', () => {
 			}).$mount()
 
 			searchSubmit(vm, 'three')
-			expect(vm.$children[0].currentOptions).toEqual(['one', 'two', 'three'])
+			expect(vm.$children[0].mutableOptions).toEqual(['one', 'two', 'three'])
 		})
 
 		it('wont add a freshly created option/tag to the options list when pushTags is false', () => {
@@ -717,7 +720,7 @@ describe('Select.vue', () => {
 			}).$mount()
 
 			searchSubmit(vm, 'three')
-			expect(vm.$children[0].currentOptions).toEqual(['one', 'two'])
+			expect(vm.$children[0].mutableOptions).toEqual(['one', 'two'])
 		})
 
 		it('should select an existing option if the search string matches a string from options', (done) => {
@@ -735,7 +738,7 @@ describe('Select.vue', () => {
 			searchSubmit(vm)
 
 			Vue.nextTick(() => {
-				expect(vm.$children[0].currentSelection[0]).toBe(two)
+				expect(vm.$children[0].mutableValue[0]).toBe(two)
 				done()
 			})
 		})
@@ -757,7 +760,7 @@ describe('Select.vue', () => {
 				//  This needs to be wrapped in nextTick() twice so that filteredOptions can
 				//  calculate after setting the search text, and move the typeAheadPointer index to 0.
 				Vue.nextTick(() => {
-					expect(vm.$children[0].currentSelection.label).toBe(two.label)
+					expect(vm.$children[0].mutableValue.label).toBe(two.label)
 					done()
 				})
 			})
@@ -771,9 +774,9 @@ describe('Select.vue', () => {
 					options: [{label: 'one'}]
 				}
 			}).$mount()
-			vm.$children[0].options = [{label: 'two'}]
+			vm.$children[0].mutableOptions = [{label: 'two'}]
 			Vue.nextTick(() => {
-				expect(vm.$children[0].currentSelection).toEqual([{label: 'one'}])
+				expect(vm.$children[0].mutableValue).toEqual([{label: 'one'}])
 				done()
 			})
 		})
@@ -795,17 +798,20 @@ describe('Select.vue', () => {
 		it('should trigger the onSearch callback when the search text changes', (done) => {
 			const vm = new Vue({
 				template: '<div><v-select ref="select" :on-search="foo"></v-select></div>',
+				data: {
+					called: false
+				},
 				methods: {
-					foo() {
+					foo(val) {
+						this.called = val
 					}
 				}
 			}).$mount()
 
-			spyOn(vm.$refs.select, 'onSearch')
 			vm.$refs.select.search = 'foo'
 
 			Vue.nextTick(() => {
-				expect(vm.$refs.select.onSearch).toHaveBeenCalledWith('foo', vm.$refs.select.toggleLoading)
+				expect(vm.called).toEqual('foo')
 				done()
 			})
 		})
@@ -813,18 +819,22 @@ describe('Select.vue', () => {
 		it('should not trigger the onSearch callback if the search text is empty', (done) => {
 			const vm = new Vue({
 				template: '<div><v-select ref="select" search="foo" :on-search="foo"></v-select></div>',
+				data: { called: false },
 				methods: {
-					foo() {
+					foo(val) {
+						this.called = ! this.called
 					}
 				}
 			}).$mount()
 
-			spyOn(vm.$refs.select, 'onSearch')
-			vm.$refs.select.search = ''
-
+			vm.$refs.select.search = 'foo'
 			Vue.nextTick(() => {
-				expect(vm.$refs.select.onSearch).not.toHaveBeenCalled()
-				done()
+				expect(vm.called).toBe(true)
+				vm.$refs.select.search = ''
+				Vue.nextTick(() => {
+					expect(vm.called).toBe(true)
+					done()
+				})
 			})
 		})
 
@@ -874,9 +884,9 @@ describe('Select.vue', () => {
 					options: ['one', 'two', 'three']
 				}
 			}).$mount()
-			vm.$children[0].options = ['four', 'five', 'six']
+			vm.$children[0].mutableOptions = ['four', 'five', 'six']
 			Vue.nextTick(() => {
-				expect(vm.$children[0].currentSelection).toEqual('one')
+				expect(vm.$children[0].mutableValue).toEqual('one')
 				done()
 			})
 		})
@@ -890,9 +900,9 @@ describe('Select.vue', () => {
 					options: ['one', 'two', 'three']
 				}
 			}).$mount()
-			vm.$children[0].options = ['four', 'five', 'six']
+			vm.$children[0].mutableOptions = ['four', 'five', 'six']
 			Vue.nextTick(() => {
-				expect(vm.$children[0].currentSelection).toEqual(null)
+				expect(vm.$children[0].mutableValue).toEqual(null)
 				done()
 			})
 		})

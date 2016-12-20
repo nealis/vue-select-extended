@@ -202,7 +202,7 @@
 			<i ref="openIndicator" role="presentation" class="open-indicator"></i>
 
 			<slot name="spinner">
-				<div class="spinner" v-show="showLoading">Loading...</div>
+				<div class="spinner" v-show="mutableLoading">Loading...</div>
 			</slot>
 		</div>
 
@@ -237,7 +237,7 @@
 			/**
 			 * Contains the currently selected value. Very similar to a
 			 * `value` attribute on an <input>. You can listen for changes
-			 * using 'change' event using v-on			 
+			 * using 'change' event using v-on
 			 * @type {Object||String||null}
 			 */
 			value: {
@@ -349,8 +349,12 @@
 			 * @type {Function}
 			 * @default {null}
 			 */
-			onChange: Function,
-		
+			onChange: {
+				type: Function,
+				default: function(val) {
+					this.$emit('input', val)
+				}
+			},
 
 			/**
 			 * Enable/disable creating options from searchInput.
@@ -378,7 +382,7 @@
 			createOption: {
 				type: Function,
 				default: function (newOption) {
-					if (typeof this.currentOptions[0] === 'object') {
+					if (typeof this.mutableOptions[0] === 'object') {
 						return {[this.label]: newOption}
 					}
 					return newOption
@@ -399,45 +403,80 @@
 			return {
 				search: '',
 				open: false,
-				currentSelection: null,
-				currentOptions: [],
-				showLoading: false
+				mutableValue: null,
+				mutableOptions: [],
+				mutableLoading: false
 			}
 		},
 
 		watch: {
-			value(val, old) {
-				this.currentSelection = val
+			/**
+			 * When the value prop changes, update
+			 * the internal mutableValue.
+			 * @param  {mixed} val
+			 * @return {void}
+			 */
+			value(val) {
+				this.mutableValue = val
 			},
-			currentSelection(val, old) {
+
+			/**
+			 * Maybe run the onChange callback.
+			 * @param  {string|object} val
+			 * @param  {string|object} old
+			 * @return {void}
+			 */
+			mutableValue(val, old) {
 				if (this.multiple) {
 					this.onChange ? this.onChange(val) : null
-					this.$emit('change', val)
 				} else {
-					if(val !== old) {
-						this.onChange? this.onChange(val) : null
-						this.$emit('change', val)
-					}
+					this.onChange && val !== old ? this.onChange(val) : null
 				}
 			},
+
+			/**
+			 * When options change, update
+			 * the internal mutableOptions.
+			 * @param  {array} val
+			 * @return {void}
+			 */
 			options(val) {
-				this.currentOptions = val
+				this.mutableOptions = val
 			},
-			currentOptions() {
+
+			/**
+			 * Maybe reset the mutableValue
+		 	 * when mutableOptions change.
+			 * @return {[type]} [description]
+			 */
+			mutableOptions() {
 				if (!this.taggable && this.resetOnOptionsChange) {
-					this.currentSelection = this.multiple ? [] : null
+					this.mutableValue = this.multiple ? [] : null
 				}
 			},
-			multiple(val) {				
-				this.currentSelection = val ? [] : null
+
+			/**
+			 * Always reset the mutableValue when
+			 * the multiple prop changes.
+			 * @param  {Boolean} val
+			 * @return {void}
+			 */
+			multiple(val) {
+				this.mutableValue = val ? [] : null
  			}
+		},
+
+		created() {
+			this.mutableValue = this.value
+			this.mutableOptions = this.options.slice(0)
+			this.mutableLoading = this.loading
 		},
 
 		methods: {
 
 			/**
 			 * Select a given option.
-			 * @param  {Object||String} option
+			 * @param  {Object|String} option
 			 * @return {void}
 			 */
 			select(option) {
@@ -448,19 +487,18 @@
 						option = this.createOption(option)
 
 						if (this.pushTags) {
-							console.log("adding " + option +" to "+ this.currentOptions)
-							this.currentOptions.push(option)
+							this.mutableOptions.push(option)
 						}
 					}
 
 					if (this.multiple) {
-						if (!this.currentSelection) {
-							this.currentSelection = [option]
+						if (!this.mutableValue) {
+							this.mutableValue = [option]
 						} else {
-							this.currentSelection.push(option)
+							this.mutableValue.push(option)
 						}
 					} else {
-						this.currentSelection = option
+						this.mutableValue = option
 					}
 				}
 
@@ -469,27 +507,27 @@
 
 			/**
 			 * De-select a given option.
-			 * @param  {Object||String} option
+			 * @param  {Object|String} option
 			 * @return {void}
 			 */
 			deselect(option) {
 				if (this.multiple) {
 					let ref = -1
-					this.currentSelection.forEach((val) => {
+					this.mutableValue.forEach((val) => {
 						if (val === option || typeof val === 'object' && val[this.label] === option[this.label]) {
 							ref = val
 						}
 					})
-					var index = this.currentSelection.indexOf(ref)
-					this.currentSelection.splice(index, 1)					
+					var index = this.mutableValue.indexOf(ref)
+					this.mutableValue.splice(index, 1)
 				} else {
-					this.currentSelection = null
+					this.mutableValue = null
 				}
 			},
 
 			/**
 			 * Called from this.select after each selection.
-			 * @param  {Object||String} option
+			 * @param  {Object|String} option
 			 * @return {void}
 			 */
 			onAfterSelect(option) {
@@ -521,13 +559,13 @@
 
 			/**
 			 * Check if the given option is currently selected.
-			 * @param  {Object||String}  option
-			 * @return {Boolean}         True when selected || False otherwise
+			 * @param  {Object|String}  option
+			 * @return {Boolean}        True when selected | False otherwise
 			 */
 			isOptionSelected(option) {
-				if (this.multiple && this.currentSelection) {
+				if (this.multiple && this.mutableValue) {
 					let selected = false
-					this.currentSelection.forEach(opt => {
+					this.mutableValue.forEach(opt => {
 						if (typeof opt === 'object' && opt[this.label] === option[this.label]) {
 							selected = true
 						} else if (opt === option) {
@@ -537,7 +575,7 @@
 					return selected
 				}
 
-				return this.currentSelection === option
+				return this.mutableValue === option
 			},
 
 			/**
@@ -559,14 +597,14 @@
 			 * @return {this.value}
 			 */
 			maybeDeleteValue() {
-				if (!this.$refs.search.value.length && this.currentSelection) {
-					return this.multiple ? this.currentSelection.pop() : this.currentSelection = null
+				if (!this.$refs.search.value.length && this.mutableValue) {
+					return this.multiple ? this.mutableValue.pop() : this.mutableValue = null
 				}
 			},
 
 			/**
 			 * Determine if an option exists
-			 * within this.currentOptions array.
+			 * within this.mutableOptions array.
 			 *
 			 * @param  {Object || String} option
 			 * @return {boolean}
@@ -574,7 +612,7 @@
 			optionExists(option) {
 				let exists = false
 
-				this.currentOptions.forEach(opt => {
+				this.mutableOptions.forEach(opt => {
 					if (typeof opt === 'object' && opt[this.label] === option) {
 						exists = true
 					} else if (opt === option) {
@@ -596,7 +634,7 @@
 				return {
 					open: this.open,
 					searchable: this.searchable,
-					loading: this.showLoading
+					loading: this.mutableLoading
 				}
 			},
 
@@ -620,7 +658,13 @@
 			 * @return {array}
 			 */
 			filteredOptions() {
-				let options = this.$options.filters.filterBy?this.$options.filters.filterBy(this.currentOptions, this.search):this.currentOptions
+
+				let options = this.mutableOptions.filter((option) => {
+					if( typeof option === 'object' ) {
+						return option[this.label].indexOf(this.search) > -1
+					}
+					return option.indexOf(this.search) > -1
+				})
 				if (this.taggable && this.search.length && !this.optionExists(this.search)) {
 					options.unshift(this.search)
 				}
@@ -632,11 +676,11 @@
 			 * @return {Boolean}
 			 */
 			isValueEmpty() {
-				if (this.currentSelection) {
-					if (typeof this.currentSelection === 'object') {
-						return !Object.keys(this.currentSelection).length
+				if (this.mutableValue) {
+					if (typeof this.mutableValue === 'object') {
+						return !Object.keys(this.mutableValue).length
 					}
-					return !this.currentSelection.length
+					return !this.mutableValue.length
 				}
 
 				return true;
@@ -648,19 +692,14 @@
 			 */
 			valueAsArray() {
 				if (this.multiple) {
-					return this.currentSelection
-				} else if (this.currentSelection) {
-					return [this.currentSelection]
+					return this.mutableValue
+				} else if (this.mutableValue) {
+					return [this.mutableValue]
 				}
 
 				return []
 			}
 		},
-		created: function() {
-			this.currentSelection = this.value			
-			this.currentOptions = this.options.slice(0)
-			this.showLoading = this.loading
-		}
 
 	}
 </script>
