@@ -170,11 +170,11 @@
 	<div class="dropdown v-select" :class="dropdownClasses">
 		<div ref="toggle" @mousedown.prevent="toggleDropdown" class="dropdown-toggle clearfix" type="button">
 
-        <span :class="selectedTagClasses" v-for="option in selectedOptions" v-bind:key="option.index">
-					<slot name="selected" :data="getOptionData(option)" :label="getOptionLabel(option)" :value="getOptionValue(option)">
-						{{ getOptionLabel(option) }}
+        <span :class="selectedTagClasses" v-for="option in mutableValues" v-bind:key="option.index">
+					<slot name="selected" :data="option">
+						{{ option[valueField] }}
 					</slot>
-          <button @click="select(option)" type="button" class="close">
+          <button @click="toggle(option)" type="button" class="close">
             <span aria-hidden="true">&times;</span>
           </button>
         </span>
@@ -208,9 +208,9 @@
 
 		<ul ref="dropdownMenu" v-show="open" :transition="transition" class="dropdown-menu" :style="{ 'max-height': maxHeight }" @scroll="scroll">
 			<li v-for="(option, index) in filteredOptions" v-bind:key="index" :class="{ active: isOptionSelected(option), highlight: index === typeAheadPointer }" @mouseover="typeAheadPointer = index">
-				<a @mousedown.prevent="select(option)">
-					<slot name="item"  :data="getOptionData(option)" :label="getOptionLabel(option)" :value="getOptionValue(option)">
-						{{ getOptionLabel(option) }}
+				<a @mousedown.prevent="toggle(option)">
+					<slot name="item" :data="option">
+						{{ option[valueField] }}
 					</slot>
 				</a>
 			</li>
@@ -237,21 +237,33 @@
 
 		props: {
 			/**
-			 * Contains the currently selected value. Very similar to a
-			 * `value` attribute on an <input>. You can listen for changes
-			 * using 'change' event using v-on
-			 * @type {Object||String||null}
+			 * Contains the currently selected values.
+			 * @type {Object}
 			 */
-			value: {
-				default: null
+			values: {
+				default() {
+					return []
+				}
 			},
 
 			/**
-			 * An array of strings or objects to be used as dropdown choices.
-			 * If you are using an array of objects, vue-select will look for
-			 * a `label` key (ex. [{label: 'This is Foo', value: 'foo'}]). A
-			 * custom label key can be set with the `label` prop.
-			 * @type {Object}
+			 * The name of the attribute inside the values used to
+			 * distinguish them
+			 */
+			valueField: {
+				default: 'value'
+			},
+
+			/**
+			 * The name of the attribute inside the values used to
+			 * filter them
+			 */
+			filterField: {
+				default: 'value'
+			},
+
+			/**
+			 * An array of objects to be used as dropdown choices.
 			 */
 			options: {
 				type: Array,
@@ -327,69 +339,6 @@
 			},
 
 			/**
-			 * Tells vue-select what key to use when generating option
-			 * labels when each `option` is an object.
-			 * @type {String}
-			 */
-			label: {
-				type: String,
-				default: 'label'
-			},
-
-			/**
-			 * Callback to generate the label text. If {option}
-			 * is an object, returns option[this.label] by default.
-			 * @param  {Object || String} option
-			 * @return {String}
-			 */
-			getOptionLabel: {
-				type: Function,
-				default(option) {
-					if (typeof option === 'object') {
-						if (this.label && option[this.label]) {
-							return option[this.label]
-						}
-					}
-					return option;
-				}
-			},
-
-			/**
-			 * Callback to generate the value text. If {option}
-			 * is an object, returns option[this.value] by default.
-			 * @param  {Object || String} option
-			 * @return {String}
-			 */
-			getOptionValue: {
-				type: Function,
-				default(option) {
-					if (typeof option === 'object') {
-						if (option.value) {
-							return option.value
-						}
-					}
-					return option;
-				}
-			},
-
-			/**
-			 * Callback to extract additional data from option.
-			 * @param  {Object || String} option
-			 * @return {Object}
-			 */
-			getOptionData: {
-				type: Function,
-				default(option) {
-					if (typeof option === 'object') {
-						if (option.data) {
-							return option.data
-						}
-					}
-					return {};
-				}
-			},
-
-			/**
 			 * An optional callback function that is called each time the selected
 			 * value(s) change. When integrating with Vuex, use this callback to trigger
 			 * an action, rather than using :value.sync to retreive the selected value.
@@ -423,20 +372,6 @@
 			},
 
 			/**
-			 * User defined function for adding Options
-			 * @type {Function}
-			 */
-			createOption: {
-				type: Function,
-				default: function (newOption) {
-					if (typeof this.mutableOptions[0] === 'object') {
-						return {[this.label]: newOption}
-					}
-					return newOption
-				}
-			},
-
-			/**
 			 * When false, updating the options will not reset the select value
 			 * @type {Boolean}
 			 */
@@ -450,7 +385,7 @@
 			return {
 				search: '',
 				open: false,
-				mutableValue: null,
+				mutableValues: [],
 				mutableOptions: [],
 				mutableLoading: false
 			}
@@ -459,12 +394,12 @@
 		watch: {
 			/**
 			 * When the value prop changes, update
-			 * the internal mutableValue.
+			 * the internal mutableValues.
 			 * @param  {mixed} val
 			 * @return {void}
 			 */
-			value(val) {
-				this.mutableValue = val
+			values(val) {
+				this.mutableValues = val
 			},
 
 			/**
@@ -473,7 +408,7 @@
 			 * @param  {string|object} old
 			 * @return {void}
 			 */
-			mutableValue(val, old) {
+			mutableValues(val, old) {
 				if (this.multiple) {
 					this.onChange ? this.onChange(val) : null
 				} else {
@@ -492,29 +427,29 @@
 			},
 
 			/**
-			 * Maybe reset the mutableValue
+			 * Maybe reset the mutableValues
 		 	 * when mutableOptions change.
 			 * @return {[type]} [description]
 			 */
 			mutableOptions() {
 				if (!this.taggable && this.resetOnOptionsChange) {
-					this.mutableValue = this.multiple ? [] : null
+					this.mutableValues = []
 				}
 			},
 
 			/**
-			 * Always reset the mutableValue when
+			 * Always reset the mutableValues when
 			 * the multiple prop changes.
 			 * @param  {Boolean} val
 			 * @return {void}
 			 */
 			multiple(val) {
-				this.mutableValue = val ? [] : null
+				this.mutableValues = []
  			}
 		},
 
 		created() {
-			this.mutableValue = this.value
+			this.mutableValues = this.mutableValues
 			this.mutableOptions = this.options.slice(0)
 			this.mutableLoading = this.loading
 		},
@@ -522,50 +457,49 @@
 		methods: {
 
 			/**
-			 * Select a given option.
-			 * @param  {Object|String} option
+			 * Toggle a given option.
+			 * @param  {Object} option
 			 * @return {void}
 			 */
-			select(option) {
+			toggle(option) {
 				if (this.isOptionSelected(option)) {
 					this.deselect(option)
-				} else if (this.optionExists(option)){
-					if (this.multiple) {
-						if (!this.mutableValue) {
-							this.mutableValue = [option]
-						} else {
-							this.mutableValue.push(option)
-						}
-					} else {
-						this.mutableValue = option
-					}
-					this.onAfterSelect(option)
-				} else if (this.taggable) {
-					option = this.createOption(option)
-					if (this.pushTags) {
-						this.mutableOptions.push(option)
-					}
-					this.onAfterSelect(option)
+				} else {
+					this.select(option)
 				}
 			},
 
 			/**
+			 * Select a given option
+			 * @param  {Object} option
+			 * @return {void}
+			 */
+			select(option) {
+				if (this.multiple) {
+					this.mutableValues.push(option)
+				} else {
+					this.mutableValues = [option]
+				}
+				this.onAfterSelect(option)
+			},
+
+			/**
 			 * De-select a given option.
-			 * @param  {Object|String} option
+			 * @param  {Object} option
 			 * @return {void}
 			 */
 			deselect(option) {
 				if (this.multiple) {
 					let ref = -1
-					this.mutableValue.forEach(val => {
-						if (val === option || typeof val === 'object' && val[this.label] === option[this.label]) {
+					this.mutableValues.forEach(val => {
+						if (val[this.valueField] === option[this.valueField]) {
 							ref = val
 						}
 					})
-					var index = this.mutableValue.indexOf(ref)
-					this.mutableValue.splice(index, 1)
+					var index = this.mutableValues.indexOf(ref)
+					this.mutableValues.splice(index, 1)
 				} else {
-					this.mutableValue = null
+					this.mutableValues = []
 				}
 			},
 
@@ -622,20 +556,16 @@
 			 * @return {Boolean}        True when selected | False otherwise
 			 */
 			isOptionSelected(option) {
-				if (this.multiple && this.mutableValue) {
+				if (this.mutableValues !== null && this.mutableValues !== undefined) {
 					let selected = false
-					this.mutableValue.forEach(opt => {
-						if (typeof opt === 'object' && opt[this.label] === option[this.label]) {
-							selected = true
-						} else if (opt === option) {
+					this.mutableValues.forEach(opt => {
+						if (opt[this.valueField] === option[this.valueField]) {
 							selected = true
 						}
 					})
 					return selected
 				}
-
-				if (option && this.mutableValue === option.value) return true
-				return this.mutableValue === option
+				return false
 			},
 
 			/**
@@ -654,11 +584,10 @@
 			/**
 			 * Delete the value on Delete keypress when there is no
 			 * text in the search input, & there's tags to delete
-			 * @return {this.value}
 			 */
 			maybeDeleteValue() {
-				if (!this.$refs.search.value.length && this.mutableValue) {
-					return this.multiple ? this.mutableValue.pop() : this.mutableValue = null
+				if (this.$refs.search.value.length === 0 && this.mutableValues.length > 0) {
+					this.deselect(this.mutableValues[this.mutableValues.length-1])
 				}
 			},
 
@@ -670,17 +599,9 @@
 			 * @return {boolean}
 			 */
 			optionExists(option) {
-				let exists = false
-
-				this.mutableOptions.forEach(opt => {
-					if (typeof opt === 'object' && opt[this.label] === option) {
-						exists = true
-					} else if (opt === option) {
-						exists = true
-					}
-				})
-
-				return exists
+				return this.mutableOptions
+					.filter(opt => opt[this.valueField] === option.valueField)
+					.length > 0
 			}
 		},
 
@@ -730,11 +651,13 @@
 			 */
 			filteredOptions() {
 				let search = this.search.toLowerCase()
-				let options = this.mutableOptions.filter((option) => {
-					if( typeof option === 'object' ) {
-						return option[this.label].toLowerCase().indexOf(search) > -1
+				let options = this.mutableOptions.filter(option => {
+					if (typeof option[this.filterField] !== 'string') {
+						console.log('Option cant be filtered', this.filterField, option)
+						return false
+					} else {
+						return option[this.filterField].toLowerCase().indexOf(search) > -1
 					}
-					return option.toLowerCase().indexOf(search) > -1
 				})
 				if (this.taggable && search.length && !this.optionExists(search)) {
 					options.unshift(search)
@@ -751,16 +674,12 @@
 			 * @return {Boolean}
 			 */
 			isValueEmpty() {
-				if (this.mutableValue === null || this.mutableValue === undefined) {
+				if (this.mutableValues.length === 0) {
 					return true;
 				}
-				if (typeof this.mutableValue === 'object') {
-					return !Object.keys(this.mutableValue).length
-				}
-				if (typeof this.mutableValue === 'string') {
-					return !this.mutableValue.trim().length
-				}
-				return false;
+				return this.mutableValues
+					.filter(val => val[this.valueField] !== undefined)
+					.length === 0
 			},
 		},
 
