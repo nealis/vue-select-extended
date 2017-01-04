@@ -43,10 +43,11 @@ module.exports = {
 		 * invoke the onSearch callback.
 		 */
 		search() {
-			if (this.search.length > 0 && this.onSearch) {
-				this.onSearch(this.search, this.toggleLoading)
-			}
+			this.refreshOptions()
 		},
+		open() {
+			if (this.open && this.onSearch) this.onSearch(this.search, this.toggleLoading)
+		}
 	},
 
 	methods: {
@@ -59,9 +60,15 @@ module.exports = {
 		 */
 		toggleLoading(toggle = null) {
 			if (toggle == null) {
-				return this.showLoading = !this.showLoading
+				return this.mutableLoading = !this.mutableLoading
 			}
-			return this.showLoading = toggle
+			return this.mutableLoading = toggle
+		},
+
+		refreshOptions() {
+			if (this.onSearch) {
+				this.onSearch(this.search, this.toggleLoading)
+			}
 		}
 	}
 }

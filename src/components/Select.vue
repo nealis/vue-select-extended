@@ -64,7 +64,7 @@
 	.v-select > .dropdown-menu {
 		margin: 0;
 		width: 100%;
-		overflow-y: scroll;
+		overflow-y: auto;
 		border-top: none;
 		border-top-left-radius: 0;
 		border-top-right-radius: 0;
@@ -72,20 +72,21 @@
 
 	.v-select .selected-tag {
 		color: #333;
-		background-color: #f0f0f0;
-		border: 1px solid #ccc;
-		border-radius: 4px;
-		height: 26px;
 		margin: 4px 1px 0px 3px;
 		padding: 0 0.25em;
 		float: left;
 		line-height: 1.7em;
 	}
 
+	.v-select .selected-tag.multiple {
+		background-color: #f0f0f0;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+	}
+
 	.v-select .selected-tag .close {
 		float: none;
 		margin-right: 0;
-		font-size: 20px;
 	}
 
 	.v-select input[type=search],
@@ -124,10 +125,9 @@
 	}
 
 	.v-select .spinner {
-		opacity: 0;
 		position: absolute;
-		top: 5px;
-		right: 10px;
+		top: 1em;
+    right: 4em;
 		font-size: 5px;
 		text-indent: -9999em;
 		overflow: hidden;
@@ -140,15 +140,11 @@
 		transition: opacity .1s;
 	}
 
-	.v-select.loading .spinner {
-		opacity: 1;
-	}
-
 	.v-select .spinner,
 	.v-select .spinner:after {
 		border-radius: 50%;
-		width: 5em;
-		height: 5em;
+		width: 4em;
+		height: 4em;
 	}
 
 	@-webkit-keyframes vSelectSpinner {
@@ -174,9 +170,11 @@
 	<div class="dropdown v-select" :class="dropdownClasses">
 		<div ref="toggle" @mousedown.prevent="toggleDropdown" class="dropdown-toggle clearfix" type="button">
 
-        <span class="selected-tag" v-for="option in valueAsArray" v-bind:key="option.index">
-          {{ getOptionLabel(option) }}
-          <button v-if="multiple" @click="select(option)" type="button" class="close">
+        <span :class="selectedTagClasses" v-for="option in selectedOptions" v-bind:key="option.index">
+					<slot name="selected" :data="getOptionData(option)" :label="getOptionLabel(option)" :value="getOptionValue(option)">
+						{{ getOptionLabel(option) }}
+					</slot>
+          <button @click="select(option)" type="button" class="close">
             <span aria-hidden="true">&times;</span>
           </button>
         </span>
@@ -199,17 +197,21 @@
 							:style="{ width: isValueEmpty ? '100%' : 'auto' }"
 			>
 
-			<i ref="openIndicator" role="presentation" class="open-indicator"></i>
+			<slot name="open-indicator">
+				<i ref="openIndicator" role="presentation" class="open-indicator"></i>
+			</slot>
 
 			<slot name="spinner">
 				<div class="spinner" v-show="mutableLoading">Loading...</div>
 			</slot>
 		</div>
 
-		<ul ref="dropdownMenu" v-show="open" :transition="transition" class="dropdown-menu" :style="{ 'max-height': maxHeight }">
+		<ul ref="dropdownMenu" v-show="open" :transition="transition" class="dropdown-menu" :style="{ 'max-height': maxHeight }" @scroll="scroll">
 			<li v-for="(option, index) in filteredOptions" v-bind:key="index" :class="{ active: isOptionSelected(option), highlight: index === typeAheadPointer }" @mouseover="typeAheadPointer = index">
 				<a @mousedown.prevent="select(option)">
-					{{ getOptionLabel(option) }}
+					<slot name="item"  :data="getOptionData(option)" :label="getOptionLabel(option)" :value="getOptionValue(option)">
+						{{ getOptionLabel(option) }}
+					</slot>
 				</a>
 			</li>
 			<transition name="fade">
@@ -266,6 +268,16 @@
 			maxHeight: {
 				type: String,
 				default: '400px'
+			},
+
+			/**
+			 * Accept a callback function that will be
+			 * run when the dropdown has a scrollbar and
+			 * is scrolled to the bottom.
+			 */
+			onScrollEnd: {
+				type: Function,
+				default: function(){}
 			},
 
 			/**
@@ -339,6 +351,41 @@
 						}
 					}
 					return option;
+				}
+			},
+
+			/**
+			 * Callback to generate the value text. If {option}
+			 * is an object, returns option[this.value] by default.
+			 * @param  {Object || String} option
+			 * @return {String}
+			 */
+			getOptionValue: {
+				type: Function,
+				default(option) {
+					if (typeof option === 'object') {
+						if (option.value) {
+							return option.value
+						}
+					}
+					return option;
+				}
+			},
+
+			/**
+			 * Callback to extract additional data from option.
+			 * @param  {Object || String} option
+			 * @return {Object}
+			 */
+			getOptionData: {
+				type: Function,
+				default(option) {
+					if (typeof option === 'object') {
+						if (option.data) {
+							return option.data
+						}
+					}
+					return {};
 				}
 			},
 
@@ -482,15 +529,7 @@
 			select(option) {
 				if (this.isOptionSelected(option)) {
 					this.deselect(option)
-				} else {
-					if (this.taggable && !this.optionExists(option)) {
-						option = this.createOption(option)
-
-						if (this.pushTags) {
-							this.mutableOptions.push(option)
-						}
-					}
-
+				} else if (this.optionExists(option)){
 					if (this.multiple) {
 						if (!this.mutableValue) {
 							this.mutableValue = [option]
@@ -500,9 +539,14 @@
 					} else {
 						this.mutableValue = option
 					}
+					this.onAfterSelect(option)
+				} else if (this.taggable) {
+					option = this.createOption(option)
+					if (this.pushTags) {
+						this.mutableOptions.push(option)
+					}
+					this.onAfterSelect(option)
 				}
-
-				this.onAfterSelect(option)
 			},
 
 			/**
@@ -513,7 +557,7 @@
 			deselect(option) {
 				if (this.multiple) {
 					let ref = -1
-					this.mutableValue.forEach((val) => {
+					this.mutableValue.forEach(val => {
 						if (val === option || typeof val === 'object' && val[this.label] === option[this.label]) {
 							ref = val
 						}
@@ -532,13 +576,27 @@
 			 */
 			onAfterSelect(option) {
 				if (!this.multiple) {
-					this.open = !this.open
+					this.open = false
 					this.$refs.search.blur()
 				}
 
 				if (this.clearSearchOnSelect) {
 					this.search = ''
 				}
+			},
+
+			/**
+			 * Handles dropdown scroll. Calls onScrollEnd when
+			 * the dropdown is scrollable and scrolled to the
+			 * bottom.
+			 */
+			scroll(event) {
+        var elem = event.currentTarget;
+        if (elem.scrollHeight - elem.scrollTop <= elem.offsetHeight) {
+					if (typeof this.onScrollEnd === 'function') {
+						this.onScrollEnd()
+					}
+        }
 			},
 
 			/**
@@ -553,6 +611,7 @@
 					} else {
 						this.open = true
 						this.$refs.search.focus()
+						// SEARCH NOW
 					}
 				}
 			},
@@ -575,6 +634,7 @@
 					return selected
 				}
 
+				if (option && this.mutableValue === option.value) return true
 				return this.mutableValue === option
 			},
 
@@ -626,6 +686,17 @@
 
 		computed: {
 
+		/**
+		 * Classes to be output on selected tags
+		 * @return {Object}
+		 */
+			selectedTagClasses() {
+				return {
+					'selected-tag': true,
+					multiple: this.multiple
+				}
+			},
+
 			/**
 			 * Classes to be output on .dropdown
 			 * @return {Object}
@@ -658,17 +729,21 @@
 			 * @return {array}
 			 */
 			filteredOptions() {
-
+				let search = this.search.toLowerCase()
 				let options = this.mutableOptions.filter((option) => {
 					if( typeof option === 'object' ) {
-						return option[this.label].indexOf(this.search) > -1
+						return option[this.label].toLowerCase().indexOf(search) > -1
 					}
-					return option.indexOf(this.search) > -1
+					return option.toLowerCase().indexOf(search) > -1
 				})
-				if (this.taggable && this.search.length && !this.optionExists(this.search)) {
-					options.unshift(this.search)
+				if (this.taggable && search.length && !this.optionExists(search)) {
+					options.unshift(search)
 				}
 				return options
+			},
+
+			selectedOptions() {
+				return this.mutableOptions.filter(this.isOptionSelected, this)
 			},
 
 			/**
@@ -676,29 +751,17 @@
 			 * @return {Boolean}
 			 */
 			isValueEmpty() {
-				if (this.mutableValue) {
-					if (typeof this.mutableValue === 'object') {
-						return !Object.keys(this.mutableValue).length
-					}
-					return !this.mutableValue.length
+				if (this.mutableValue === null || this.mutableValue === undefined) {
+					return true;
 				}
-
-				return true;
+				if (typeof this.mutableValue === 'object') {
+					return !Object.keys(this.mutableValue).length
+				}
+				if (typeof this.mutableValue === 'string') {
+					return !this.mutableValue.trim().length
+				}
+				return false;
 			},
-
-			/**
-			 * Return the current value in array format.
-			 * @return {Array}
-			 */
-			valueAsArray() {
-				if (this.multiple) {
-					return this.mutableValue
-				} else if (this.mutableValue) {
-					return [this.mutableValue]
-				}
-
-				return []
-			}
 		},
 
 	}
