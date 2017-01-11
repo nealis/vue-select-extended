@@ -3,6 +3,11 @@
 		position: relative;
 	}
 
+	.v-select .disabled {
+		cursor: not-allowed !important;
+		background-color: rgb(248, 248, 248) !important;
+	}
+
 	.v-select .open-indicator {
 		position: absolute;
 		bottom: 6px;
@@ -172,7 +177,7 @@
 
 <template>
 	<div class="dropdown v-select" :class="dropdownClasses">
-		<div @click.prevent="toggleDropdown" ref="toggle" class="dropdown-toggle clearfix" type="button">
+		<div @click.prevent="toggleDropdown" ref="toggle" :class="['dropdown-toggle', 'clearfix', {'disabled': disabled}]" type="button">
 
         <div :class="selectedTagClasses" v-for="option in mutableValues" v-bind:key="option.index">
 					<div class="selected-tag-content">
@@ -197,14 +202,15 @@
 							@keyup.enter.prevent="typeAheadSelect"
 							@blur="open = false"
 							type="search"
-							class="form-control"
+							:disabled="disabled"
+              :class="[{'disabled': disabled}, 'form-control']"
 							:maxlength="(isValueEmpty || multiple) ? maxlength : 0"
 							:placeholder="searchPlaceholder"
 							:readonly="!searchable"
 							:style="{ width: isValueEmpty ? '100%' : (multiple ? 'auto' : '2em') }"
 			>
 
-			<div ref="openIndicator" class="open-indicator-container">
+			<div ref="openIndicator" :class="[{'disabled': disabled}, 'open-indicator-container']">
 				<slot name="open-indicator">
 					<i role="presentation" class="open-indicator"></i>
 				</slot>
@@ -215,7 +221,7 @@
 			</slot>
 		</div>
 
-		<ul ref="dropdownMenu" v-show="open" :transition="transition" class="dropdown-menu" :style="{ 'max-height': maxHeight }" @scroll="scroll">
+		<ul ref="dropdownMenu" v-show="open && !disabled" :transition="transition" class="dropdown-menu" :style="{ 'max-height': maxHeight }" @scroll="scroll">
 			<li v-for="(option, index) in filteredOptions" v-bind:key="index" :class="{ active: isOptionSelected(option), highlight: index === typeAheadPointer }" @mouseover="typeAheadPointer = index">
 				<a @mousedown.prevent.stop="toggle(option)">
 					<slot name="item" :data="option">
@@ -245,6 +251,12 @@
 		mixins: [pointerScroll, typeAheadPointer, ajax],
 
 		props: {
+
+			disabled: {
+				type: Boolean,
+				default: false
+			},
+
 			/**
 			 * Contains the currently selected values.
 			 * @type {Object}
@@ -496,7 +508,7 @@
 		 * puts the focus on the input field.
 		 */
 			focus() {
-				if (document.activeElement !== this.$refs.search) {
+				if (!this.disabled && document.activeElement !== this.$refs.search) {
 					this.$refs.search.focus()
 				}
 			},
@@ -581,7 +593,7 @@
 			 */
 			toggleDropdown(e) {
 				if (e.target === this.$refs.openIndicator || e.target === this.$refs.search || e.target === this.$refs.toggle || e.target === this.$el) {
-					if (this.open) {
+					if (this.open || this.disabled) {
 						this.open = false
 					} else if (this.$refs.search == document.activeElement || e.target === this.$refs.openIndicator) {
 						this.open = true

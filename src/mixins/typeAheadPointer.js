@@ -24,7 +24,7 @@ module.exports = {
      * @return {void}
      */
     typeAheadUp() {
-      if (this.typeAheadPointer > 0) {
+      if (!this.disabled && this.typeAheadPointer > 0) {
         this.typeAheadPointer--
         if( this.maybeAdjustScroll ) {
           this.maybeAdjustScroll()
@@ -38,7 +38,7 @@ module.exports = {
      * @return {void}
      */
     typeAheadDown() {
-      if (this.typeAheadPointer < this.filteredOptions.length - 1) {
+      if (!this.disabled && this.typeAheadPointer < this.filteredOptions.length - 1) {
         this.typeAheadPointer++
         if( this.maybeAdjustScroll ) {
           this.maybeAdjustScroll()
@@ -52,14 +52,16 @@ module.exports = {
      * @return {void}
      */
     typeAheadSelect() {
-      if( this.filteredOptions[ this.typeAheadPointer ] ) {
-        this.select( this.filteredOptions[ this.typeAheadPointer ] );
-      } else if (this.taggable && this.search.length){
-        this.select(this.search)
-      }
+      if (!this.disabled) {
+        if( this.filteredOptions[ this.typeAheadPointer ] ) {
+          this.select( this.filteredOptions[ this.typeAheadPointer ] );
+        } else if (this.taggable && this.search.length){
+          this.select(this.search)
+        }
 
-      if( this.clearSearchOnSelect ) {
-        this.search = "";
+        if( this.clearSearchOnSelect ) {
+          this.search = "";
+        }
       }
     },
   }
