@@ -72,10 +72,14 @@
 
 	.v-select .selected-tag {
 		color: #333;
-		margin: 4px 1px 0px 3px;
+	  margin: 2px 1px 0 3px;
 		padding: 0 0.25em;
 		float: left;
 		line-height: 1.7em;
+	}
+
+	.v-select .selected-tag-content {
+		display: inline;
 	}
 
 	.v-select .selected-tag.multiple {
@@ -168,22 +172,23 @@
 
 <template>
 	<div class="dropdown v-select" :class="dropdownClasses">
-		<div @mousedown.prevent="toggleDropdown" ref="toggle" class="dropdown-toggle clearfix" type="button">
+		<div @click.prevent="toggleDropdown" ref="toggle" class="dropdown-toggle clearfix" type="button">
 
-        <span :class="selectedTagClasses" v-for="option in mutableValues" v-bind:key="option.index">
-					<slot name="selected" :data="option">
-						{{ option[valueField] }}
-					</slot>
-          <button @click="toggle(option)" type="button" class="close">
+        <div :class="selectedTagClasses" v-for="option in mutableValues" v-bind:key="option.index">
+					<div class="selected-tag-content">
+						<slot name="selected" :data="option">
+							{{ option[valueField] }}
+						</slot>
+					</div>
+          <button @click.prevent.stop="toggle(option)" type="button" class="close">
             <span aria-hidden="true">&times;</span>
           </button>
-        </span>
+        </div>
 
 			<input
 							ref="search"
 							:debounce="debounce"
 							v-model="search"
-							@mousedown.prevent="toggleDropdown"
 							@keydown="open = true"
 							@keydown.delete="maybeDeleteValue"
 							@keyup.esc="onEscape"
@@ -199,7 +204,7 @@
 							:style="{ width: isValueEmpty ? '100%' : (multiple ? 'auto' : '2em') }"
 			>
 
-			<div ref="openIndicator" class="open-indicator-container" @mousedown.prevent="toggleDropdown">
+			<div ref="openIndicator" class="open-indicator-container">
 				<slot name="open-indicator">
 					<i role="presentation" class="open-indicator"></i>
 				</slot>
@@ -212,7 +217,7 @@
 
 		<ul ref="dropdownMenu" v-show="open" :transition="transition" class="dropdown-menu" :style="{ 'max-height': maxHeight }" @scroll="scroll">
 			<li v-for="(option, index) in filteredOptions" v-bind:key="index" :class="{ active: isOptionSelected(option), highlight: index === typeAheadPointer }" @mouseover="typeAheadPointer = index">
-				<a @mousedown.prevent="toggle(option)">
+				<a @mousedown.prevent.stop="toggle(option)">
 					<slot name="item" :data="option">
 						{{ option[valueField] }}
 					</slot>
@@ -222,7 +227,7 @@
 				<li v-if="!filteredOptions.length" class="divider"></li>
 			</transition>
 			<transition name="fade">
-				<li v-if="!filteredOptions.length" class="text-center">
+				<li v-if="!filteredOptions.length" class="text-center no-data">
 					<slot name="no-options">Sorry, no matching options.</slot>
 				</li>
 			</transition>
@@ -471,7 +476,7 @@
 
 			open(val) {
 				if (val) {
-					this.$refs.search.focus()
+					this.focus()
 				} else {
 					this.$refs.search.blur()
 					this.onCloseDropdown()
@@ -486,6 +491,15 @@
 		},
 
 		methods: {
+
+		/**
+		 * puts the focus on the input field.
+		 */
+			focus() {
+				if (document.activeElement !== this.$refs.search) {
+					this.$refs.search.focus()
+				}
+			},
 
 			/**
 			 * Toggle a given option.
@@ -569,10 +583,10 @@
 				if (e.target === this.$refs.openIndicator || e.target === this.$refs.search || e.target === this.$refs.toggle || e.target === this.$el) {
 					if (this.open) {
 						this.open = false
-					} else if (this.$refs.search === document.activeElement || e.target === this.$refs.openIndicator) {
+					} else if (this.$refs.search == document.activeElement || e.target === this.$refs.openIndicator) {
 						this.open = true
 					} else {
-						this.$refs.search.focus()
+						this.focus()
 					}
 				}
 			},
