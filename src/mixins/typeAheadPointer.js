@@ -6,8 +6,14 @@ module.exports = {
   },
 
   watch: {
-    filteredOptions() {
-      this.typeAheadPointer = 0
+    filteredOptions(newVal, oldVal) {
+      if (this.typeAheadPointer > 0) {
+        this.typeAheadPointer = newVal.findIndex(opt =>
+          opt[this.valueField] === oldVal[this.typeAheadPointer][this.valueField]
+        )
+      } else {
+        this.typeAheadPointer = 0
+      }
     }
   },
 

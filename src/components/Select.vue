@@ -168,7 +168,7 @@
 
 <template>
 	<div class="dropdown v-select" :class="dropdownClasses">
-		<div ref="toggle" @mousedown.prevent="toggleDropdown" class="dropdown-toggle clearfix" type="button">
+		<div @mousedown.prevent="toggleDropdown" ref="toggle" class="dropdown-toggle clearfix" type="button">
 
         <span :class="selectedTagClasses" v-for="option in mutableValues" v-bind:key="option.index">
 					<slot name="selected" :data="option">
@@ -183,23 +183,27 @@
 							ref="search"
 							:debounce="debounce"
 							v-model="search"
+							@mousedown.prevent="toggleDropdown"
+							@keydown="open = true"
 							@keydown.delete="maybeDeleteValue"
 							@keyup.esc="onEscape"
 							@keydown.up.prevent="typeAheadUp"
 							@keydown.down.prevent="typeAheadDown"
 							@keyup.enter.prevent="typeAheadSelect"
 							@blur="open = false"
-							@focus="open = true"
 							type="search"
 							class="form-control"
+							:maxlength="(isValueEmpty || multiple) ? maxlength : 0"
 							:placeholder="searchPlaceholder"
 							:readonly="!searchable"
-							:style="{ width: isValueEmpty ? '100%' : 'auto' }"
+							:style="{ width: isValueEmpty ? '100%' : (multiple ? 'auto' : '2em') }"
 			>
 
-			<slot name="open-indicator">
-				<i ref="openIndicator" role="presentation" class="open-indicator"></i>
-			</slot>
+			<div ref="openIndicator" class="open-indicator-container" @mousedown.prevent="toggleDropdown">
+				<slot name="open-indicator">
+					<i role="presentation" class="open-indicator"></i>
+				</slot>
+			</div>
 
 			<slot name="spinner">
 				<div class="spinner" v-show="mutableLoading">Loading...</div>
@@ -263,6 +267,13 @@
 			},
 
 			/**
+			 * Maximum text search input length in characters
+			 */
+			maxlength: {
+				default: 255
+			},
+
+			/**
 			 * An array of objects to be used as dropdown choices.
 			 */
 			options: {
@@ -283,11 +294,22 @@
 			},
 
 			/**
-			 * Accept a callback function that will be
+			 * A callback function that will be
 			 * run when the dropdown has a scrollbar and
 			 * is scrolled to the bottom.
 			 */
 			onScrollEnd: {
+				type: Function,
+				default: function() {
+					if (this.onSearch) this.onSearch(this.search, this.toggleLoading, this.typeAheadPointer)
+				}
+			},
+
+			/**
+			 * A callback function that will be
+			 * run when the dropdown is closing.
+			 */
+			onCloseDropdown: {
 				type: Function,
 				default: function(){}
 			},
@@ -445,7 +467,16 @@
 			 */
 			multiple(val) {
 				this.mutableValues = []
- 			}
+ 			},
+
+			open(val) {
+				if (val) {
+					this.$refs.search.focus()
+				} else {
+					this.$refs.search.blur()
+					this.onCloseDropdown()
+				}
+			}
 		},
 
 		created() {
@@ -509,13 +540,11 @@
 			 * @return {void}
 			 */
 			onAfterSelect(option) {
-				if (!this.multiple) {
-					this.open = false
-					this.$refs.search.blur()
-				}
-
 				if (this.clearSearchOnSelect) {
 					this.search = ''
+				}
+				if (!this.multiple) {
+					this.open = false
 				}
 			},
 
@@ -527,9 +556,7 @@
 			scroll(event) {
         var elem = event.currentTarget;
         if (elem.scrollHeight - elem.scrollTop <= elem.offsetHeight) {
-					if (typeof this.onScrollEnd === 'function') {
-						this.onScrollEnd()
-					}
+					this.onScrollEnd()
         }
 			},
 
@@ -541,11 +568,11 @@
 			toggleDropdown(e) {
 				if (e.target === this.$refs.openIndicator || e.target === this.$refs.search || e.target === this.$refs.toggle || e.target === this.$el) {
 					if (this.open) {
-						this.$refs.search.blur() // dropdown will close on blur
-					} else {
+						this.open = false
+					} else if (this.$refs.search === document.activeElement || e.target === this.$refs.openIndicator) {
 						this.open = true
+					} else {
 						this.$refs.search.focus()
-						// SEARCH NOW
 					}
 				}
 			},
@@ -575,7 +602,7 @@
 			 */
 			onEscape() {
 				if (!this.search.length) {
-					this.$refs.search.blur()
+					this.open = false
 				} else {
 					this.search = ''
 				}
@@ -653,8 +680,7 @@
 				let search = this.search.toLowerCase()
 				let options = this.mutableOptions.filter(option => {
 					if (typeof option[this.filterField] !== 'string') {
-						console.log('Option cant be filtered', this.filterField, option)
-						return false
+						return true
 					} else {
 						return option[this.filterField].toLowerCase().indexOf(search) > -1
 					}
