@@ -1,11 +1,24 @@
 <style>
 	.v-select {
 		position: relative;
+		background-color: white;
+		/* Fix behavior in tables */
+    display: table;
+    table-layout: fixed;
+    width: 100%;
 	}
 
 	.v-select .disabled {
 		cursor: not-allowed !important;
 		background-color: rgb(248, 248, 248) !important;
+	}
+
+	.v-select .clear > span {
+		height: 26px;
+    position: absolute;
+    top: 6px;
+    right: 14px;
+    width: 20px;
 	}
 
 	.v-select .open-indicator {
@@ -53,7 +66,8 @@
 		background: none;
 		border: 1px solid rgba(60, 60, 60, .26);
 		border-radius: 4px;
-		white-space: normal;
+		white-space: nowrap;
+		overflow: hidden;
 	}
 
 	.v-select.searchable .dropdown-toggle {
@@ -81,10 +95,19 @@
 		padding: 0 0.25em;
 		float: left;
 		line-height: 1.7em;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.v-select .selected-tag.single {
+		max-width: 75%;
+		text-align: left;
 	}
 
 	.v-select .selected-tag-content {
-		display: inline;
+		display: block;
+		text-overflow: ellipsis;
+		overflow: hidden;
 	}
 
 	.v-select .selected-tag.multiple {
@@ -136,7 +159,7 @@
 	.v-select .spinner {
 		position: absolute;
 		top: 1em;
-    right: 4em;
+    right: 4em; /* 7em when selected a value and not multiple */
 		font-size: 5px;
 		text-indent: -9999em;
 		overflow: hidden;
@@ -147,6 +170,10 @@
 		transform: translateZ(0);
 		animation: vSelectSpinner 1.1s infinite linear;
 		transition: opacity .1s;
+	}
+
+	.v-select .spinner.shifted-left {
+		right: 7em;
 	}
 
 	.v-select .spinner,
@@ -177,7 +204,7 @@
 
 <template>
 	<div class="dropdown v-select" :class="dropdownClasses">
-		<div @click.prevent="toggleDropdown" ref="toggle" :class="['dropdown-toggle', 'clearfix', {'disabled': disabled}]" type="button">
+		<div @click.prevent.stop="toggleDropdown" ref="toggle" :class="['dropdown-toggle', 'clearfix', {'disabled': disabled}]" type="button">
 
         <div :class="selectedTagClasses" v-for="option in mutableValues" v-bind:key="option.index">
 					<div class="selected-tag-content">
@@ -185,7 +212,7 @@
 							{{ option[valueField] }}
 						</slot>
 					</div>
-          <button @click.prevent.stop="toggle(option)" type="button" class="close">
+          <button v-show="multiple" @click.prevent.stop="toggle(option)" type="button" class="close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
@@ -199,7 +226,7 @@
 							@keyup.esc="onEscape"
 							@keydown.up.prevent="typeAheadUp"
 							@keydown.down.prevent="typeAheadDown"
-							@keyup.enter.prevent="typeAheadSelect"
+							@keyup.enter.prevent.stop="typeAheadSelect"
 							@blur="open = false"
 							type="search"
 							:disabled="disabled"
@@ -210,6 +237,10 @@
 							:style="{ width: isValueEmpty ? '100%' : (multiple ? 'auto' : '2em') }"
 			>
 
+			<button v-show="!multiple && !isValueEmpty" @click.prevent.stop="clear" type="button" class="close clear">
+				<span aria-hidden="true">&times;</span>
+			</button>
+
 			<div ref="openIndicator" :class="[{'disabled': disabled}, 'open-indicator-container']">
 				<slot name="open-indicator">
 					<i role="presentation" class="open-indicator"></i>
@@ -217,7 +248,7 @@
 			</div>
 
 			<slot name="spinner">
-				<div class="spinner" v-show="mutableLoading">Loading...</div>
+				<div :class="spinnerClasses" v-show="mutableLoading">Loading...</div>
 			</slot>
 		</div>
 
@@ -526,6 +557,10 @@
 				}
 			},
 
+			clear() {
+				this.mutableValues = []
+			},
+
 			/**
 			 * Select a given option
 			 * @param  {Object} option
@@ -592,10 +627,14 @@
 			 * @return {void}
 			 */
 			toggleDropdown(e) {
-				if (e.target === this.$refs.openIndicator || e.target === this.$refs.search || e.target === this.$refs.toggle || e.target === this.$el) {
+				let validTargets = [this.$refs.openIndicator, this.$refs.search, this.$refs.toggle];
+				let alwaysOpenTargets = [this.$refs.openIndicator];
+				let isTargetValid = validTargets.some(item => item === e.target || item.contains(e.target))
+				let alwaysOpen = alwaysOpenTargets.some(item => item === e.target || item.contains(e.target))
+				if (isTargetValid || alwaysOpen) {
 					if (this.open || this.disabled) {
 						this.open = false
-					} else if (this.$refs.search == document.activeElement || e.target === this.$refs.openIndicator) {
+					} else if ((!this.multiple && this.isValueEmpty) || alwaysOpen || document.activeElement === this.$refs.search) {
 						this.open = true
 					} else {
 						this.focus()
@@ -667,9 +706,18 @@
 			selectedTagClasses() {
 				return {
 					'selected-tag': true,
-					multiple: this.multiple
+					multiple: this.multiple,
+					single: !this.multiple
 				}
 			},
+
+ 			spinnerClasses() {
+ 				return {
+ 					'spinner': true,
+ 					'shifted-left': !this.isValueEmpty && !this.multiple,
+ 					single: !this.multiple
+ 				}
+ 			},
 
 			/**
 			 * Classes to be output on .dropdown
