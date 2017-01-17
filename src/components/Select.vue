@@ -212,7 +212,7 @@
 							{{ option[valueField] }}
 						</slot>
 					</div>
-          <button v-show="multiple" @click.prevent.stop="toggle(option)" type="button" class="close">
+          <button v-show="multiple && allowClear" @click.prevent.stop="toggle(option)" type="button" class="close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
@@ -237,7 +237,7 @@
 							:style="{ width: isValueEmpty ? '100%' : (multiple ? 'auto' : '2em') }"
 			>
 
-			<button v-show="!multiple && !isValueEmpty" @click.prevent.stop="clear" type="button" class="close clear">
+			<button v-show="!multiple && !isValueEmpty && allowClear" @click.prevent.stop="clear" type="button" class="close clear">
 				<span aria-hidden="true">&times;</span>
 			</button>
 
@@ -286,6 +286,11 @@
 			disabled: {
 				type: Boolean,
 				default: false
+			},
+
+			allowClear: {
+				type: Boolean,
+				default: true
 			},
 
 			/**
@@ -678,7 +683,7 @@
 			 * text in the search input, & there's tags to delete
 			 */
 			maybeDeleteValue() {
-				if (this.$refs.search.value.length === 0 && this.mutableValues.length > 0) {
+				if (this.allowClear && this.$refs.search.value.length === 0 && this.mutableValues.length > 0) {
 					this.deselect(this.mutableValues[this.mutableValues.length-1])
 				}
 			},
