@@ -254,7 +254,7 @@
 
 		<ul ref="dropdownMenu" v-show="open && !disabled" :transition="transition" class="dropdown-menu" :style="{ 'max-height': maxHeight }" @scroll="scroll">
 			<li v-for="(option, index) in filteredOptions" v-bind:key="index" :class="{ active: isOptionSelected(option), highlight: index === typeAheadPointer }" @mouseover="typeAheadPointer = index">
-				<a @mousedown.prevent.stop="toggle(option)">
+				<a @click.prevent.stop="toggle(option)" @mousedown.prevent.stop>
 					<slot name="item" :data="option">
 						{{ option[valueField] }}
 					</slot>
