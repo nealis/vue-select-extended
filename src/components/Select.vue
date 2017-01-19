@@ -226,6 +226,7 @@
 							@keyup.esc="onEscape"
 							@keydown.up.prevent="typeAheadUp"
 							@keydown.down.prevent="typeAheadDown"
+							@keydown.enter.prevent.stop
 							@keyup.enter.prevent.stop="typeAheadSelect"
 							@blur="open = false"
 							type="search"
