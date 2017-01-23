@@ -82,6 +82,7 @@
 
 	.v-select > .dropdown-menu {
 		margin: 0;
+		min-width: 0;
 		width: 100%;
 		overflow-y: auto;
 		border-top: none;
