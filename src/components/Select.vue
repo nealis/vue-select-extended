@@ -760,10 +760,10 @@
 			filteredOptions() {
 				let search = this.search.toLowerCase()
 				let options = this.mutableOptions.filter(option => {
-					if (typeof option[this.filterField] !== 'string') {
-						return true
-					} else {
+					if (typeof option[this.filterField] === 'string' && (!this.onSearch || this.mutableLoading)) {
 						return option[this.filterField].toLowerCase().indexOf(search) > -1
+					} else {
+						return true;
 					}
 				})
 				if (this.taggable && search.length && !this.optionExists(search)) {
