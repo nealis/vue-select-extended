@@ -623,7 +623,8 @@
 			 */
 			scroll(event) {
         var elem = event.currentTarget;
-        if (elem.scrollHeight - elem.scrollTop <= elem.offsetHeight) {
+				if (elem.scrollHeight != this.prevScrollHeight && elem.scrollHeight - elem.scrollTop <= elem.offsetHeight) {
+					this.prevScrollHeight = elem.scrollHeight
 					this.onScrollEnd()
         }
 			},
