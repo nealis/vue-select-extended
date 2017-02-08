@@ -45,8 +45,8 @@ module.exports = {
 		search() {
 			this.refreshOptions()
 		},
-		open() {
-			if (this.open && this.onSearch) this.onSearch(this.search, this.toggleLoading)
+		open(val, old) {
+			if (val != old && this.open && this.onSearch) this.onSearch(this.search, this.toggleLoading)
 		}
 	},
 

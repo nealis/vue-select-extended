@@ -38,6 +38,7 @@ module.exports = {
      * @return {void}
      */
     typeAheadDown() {
+      this.open = true
       if (!this.disabled && this.typeAheadPointer < this.filteredOptions.length - 1) {
         this.typeAheadPointer++
         if( this.maybeAdjustScroll ) {
@@ -53,14 +54,17 @@ module.exports = {
      */
     typeAheadSelect() {
       if (!this.disabled) {
-        if( this.filteredOptions[ this.typeAheadPointer ] ) {
-          this.select( this.filteredOptions[ this.typeAheadPointer ] );
-        } else if (this.taggable && this.search.length){
-          this.select(this.search)
-        }
-
-        if( this.clearSearchOnSelect ) {
-          this.search = "";
+        if (!this.open) {
+          this.open = true
+        } else {
+          if( this.filteredOptions[ this.typeAheadPointer ] ) {
+            this.select( this.filteredOptions[ this.typeAheadPointer ] );
+          } else if (this.taggable && this.search.length){
+            this.select(this.search)
+          }
+          if( this.clearSearchOnSelect ) {
+            this.search = "";
+          }
         }
       }
     },

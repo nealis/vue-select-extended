@@ -63,7 +63,7 @@
 	.v-select .dropdown-toggle {
 		display: block;
 		padding: 0;
-		background: none;
+		background-color: white;
 		border: 1px solid rgba(60, 60, 60, .26);
 		border-radius: 4px;
 		white-space: nowrap;
@@ -222,21 +222,19 @@
 							ref="search"
 							:debounce="debounce"
 							v-model="search"
-							@keydown="open = true"
 							@keydown.delete="maybeDeleteValue"
 							@keyup.esc="onEscape"
 							@keydown.up.prevent="typeAheadUp"
 							@keydown.down.prevent="typeAheadDown"
-							@keydown.enter.prevent.stop
 							@keyup.enter.prevent.stop="typeAheadSelect"
 							@blur="open = false"
 							type="search"
 							:disabled="disabled"
               :class="[{'disabled': disabled}, 'form-control']"
-							:maxlength="(isValueEmpty || multiple) ? maxlength : 0"
+							:maxlength="(isValueEmpty || multiple || !allowClear) ? maxlength : 0"
 							:placeholder="searchPlaceholder"
 							:readonly="!searchable"
-							:style="{ width: isValueEmpty ? '100%' : (multiple ? 'auto' : '2em') }"
+							:style="{ width: isValueEmpty ? '100%' : ((multiple || open) ? 'auto' : '2em') }"
 			>
 
 			<button v-show="!multiple && !isValueEmpty && allowClear" @click.prevent.stop="clear" type="button" class="close clear">
@@ -479,6 +477,10 @@
 				this.mutableValues = val
 			},
 
+			search() {
+				this.open = true
+			},
+
 			/**
 			 * Maybe run the onChange callback.
 			 * @param  {string|object} val
@@ -635,18 +637,10 @@
 			 * @return {void}
 			 */
 			toggleDropdown(e) {
-				let validTargets = [this.$refs.openIndicator, this.$refs.search, this.$refs.toggle];
-				let alwaysOpenTargets = [this.$refs.openIndicator];
-				let isTargetValid = validTargets.some(item => item === e.target || item.contains(e.target))
-				let alwaysOpen = alwaysOpenTargets.some(item => item === e.target || item.contains(e.target))
-				if (isTargetValid || alwaysOpen) {
-					if (this.open || this.disabled) {
-						this.open = false
-					} else if ((!this.multiple && this.isValueEmpty) || alwaysOpen || document.activeElement === this.$refs.search) {
-						this.open = true
-					} else {
-						this.focus()
-					}
+				if (this.open || this.disabled) {
+					this.open = false
+				} else {
+					this.open = true
 				}
 			},
 
