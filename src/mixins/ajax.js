@@ -44,9 +44,6 @@ module.exports = {
 		 */
 		search() {
 			this.refreshOptions()
-		},
-		open(val, old) {
-			if (val != old && this.open && this.onSearch) this.onSearch(this.search, this.toggleLoading)
 		}
 	},
 
@@ -66,7 +63,7 @@ module.exports = {
 		},
 
 		refreshOptions() {
-			if (this.onSearch) {
+			if (this.open && this.onSearch) {
 				this.onSearch(this.search, this.toggleLoading)
 			}
 		}

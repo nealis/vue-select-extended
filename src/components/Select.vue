@@ -82,7 +82,6 @@
 
 	.v-select > .dropdown-menu {
 		margin: 0;
-		min-width: 0;
 		width: 100%;
 		overflow-y: auto;
 		border-top: none;
@@ -231,13 +230,13 @@
 							type="search"
 							:disabled="disabled"
               :class="[{'disabled': disabled}, 'form-control']"
-							:maxlength="(isValueEmpty || multiple || !allowClear) ? maxlength : 0"
+							:maxlength="maxlength"
 							:placeholder="searchPlaceholder"
 							:readonly="!searchable"
 							:style="{ width: isValueEmpty ? '100%' : ((multiple || open) ? 'auto' : '2em') }"
 			>
 
-			<button v-show="!multiple && !isValueEmpty && allowClear" @click.prevent.stop="clear" type="button" class="close clear">
+			<button v-show="!multiple && !isValueEmpty && allowClear" @click.prevent.stop="clear" tabIndex="-1" type="button" class="close clear">
 				<span aria-hidden="true">&times;</span>
 			</button>
 
@@ -252,7 +251,7 @@
 			</slot>
 		</div>
 
-		<ul ref="dropdownMenu" v-show="open && !disabled" :transition="transition" class="dropdown-menu" :style="{ 'max-height': maxHeight }" @scroll="scroll">
+		<ul ref="dropdownMenu" v-show="open && !disabled" :transition="transition" class="dropdown-menu" :style="{ 'max-height': maxHeight, 'min-width': minWidth }" @scroll="scroll">
 			<li v-for="(option, index) in filteredOptions" v-bind:key="index" :class="{ active: isOptionSelected(option), highlight: index === typeAheadPointer }" @mouseover="typeAheadPointer = index">
 				<a @click.prevent.stop="toggle(option)" @mousedown.prevent.stop>
 					<slot name="item" :data="option">
@@ -344,6 +343,16 @@
 			maxHeight: {
 				type: String,
 				default: '400px'
+			},
+
+			/**
+			 * Sets the min-width property on the dropdown list.
+			 * @deprecated
+			 * @type {String}
+			 */
+			minWidth: {
+				type: String,
+				default: '0'
 			},
 
 			/**
@@ -477,8 +486,8 @@
 				this.mutableValues = val
 			},
 
-			search() {
-				this.open = true
+			search(val) {
+				if (val) this.open = true
 			},
 
 			/**
@@ -526,12 +535,15 @@
 				this.mutableValues = []
  			},
 
-			open(val) {
-				if (val) {
-					this.focus()
-				} else {
-					this.$refs.search.blur()
-					this.onCloseDropdown()
+			open(val, old) {
+				if (val != old) {
+					if(this.open) {
+						 this.focus()
+						 if(this.onSearch) this.onSearch(this.search, this.toggleLoading)
+					} else {
+						this.search = ''
+						this.onCloseDropdown()
+					}
 				}
 			}
 		},
@@ -559,7 +571,7 @@
 			 * @return {void}
 			 */
 			toggle(option) {
-				if (this.isOptionSelected(option)) {
+				if (this.isOptionSelected(option) && this.allowClear) {
 					this.deselect(option)
 				} else {
 					this.select(option)
