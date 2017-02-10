@@ -26,9 +26,6 @@ module.exports = {
     typeAheadUp() {
       if (!this.disabled && this.typeAheadPointer > 0) {
         this.typeAheadPointer--
-        if( this.maybeAdjustScroll ) {
-          this.maybeAdjustScroll()
-        }
       }
     },
 
@@ -39,10 +36,11 @@ module.exports = {
      */
     typeAheadDown() {
       this.open = true
-      if (!this.disabled && this.typeAheadPointer < this.filteredOptions.length - 1) {
-        this.typeAheadPointer++
-        if( this.maybeAdjustScroll ) {
-          this.maybeAdjustScroll()
+      if (!this.disabled){
+        if (this.typeAheadPointer < this.filteredOptions.length - 1) {
+          this.typeAheadPointer++
+        } else {
+          this.onScrollEnd()
         }
       }
     },

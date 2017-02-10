@@ -91,7 +91,7 @@
 
 	.v-select .selected-tag {
 		color: #333;
-	  margin: 2px 1px 0 3px;
+	  margin: 3px 1px 0 3px;
 		padding: 0 0.25em;
 		float: left;
 		line-height: 1.7em;
@@ -100,7 +100,7 @@
 	}
 
 	.v-select .selected-tag.single {
-		max-width: 75%;
+		max-width: calc(100% - 20px - 2em);
 		text-align: left;
 	}
 
@@ -206,7 +206,7 @@
 	<div class="dropdown v-select" :class="dropdownClasses">
 		<div @click.prevent.stop="toggleDropdown" ref="toggle" :class="['dropdown-toggle', 'clearfix', {'disabled': disabled}]" type="button">
 
-        <div :class="selectedTagClasses" v-for="option in mutableValues" v-bind:key="option.index">
+        <div :class="selectedTagClasses" v-for="option in mutableValues" v-bind:key="option.index" v-show="!focused || multiple">
 					<div class="selected-tag-content">
 						<slot name="selected" :data="option">
 							{{ option[valueField] }}
@@ -222,18 +222,18 @@
 							:debounce="debounce"
 							v-model="search"
 							@keydown.delete="maybeDeleteValue"
-							@keyup.esc="onEscape"
 							@keydown.up.prevent="typeAheadUp"
 							@keydown.down.prevent="typeAheadDown"
 							@keyup.enter.prevent.stop="typeAheadSelect"
-							@blur="open = false"
+							@blur="onBlur"
+							@focus="onFocus"
 							type="search"
 							:disabled="disabled"
               :class="[{'disabled': disabled}, 'form-control']"
 							:maxlength="maxlength"
-							:placeholder="searchPlaceholder"
+							:placeholder="placeholder"
 							:readonly="!searchable"
-							:style="{ width: isValueEmpty ? '100%' : ((multiple || open) ? 'auto' : '2em') }"
+							:style="{ width: isValueEmpty || focused ? 'calc(100% - 20px - 2em)' : '2em' }"
 			>
 
 			<button v-show="!multiple && !isValueEmpty && allowClear" @click.prevent.stop="clear" tabIndex="-1" type="button" class="close clear">
@@ -385,6 +385,13 @@
 				default: true
 			},
 
+			buildPlaceholder: {
+				type: Function,
+				default: function(data){
+					return data ? '' + data[this.valueField] : ''
+				}
+			},
+
 			/**
 			 * Equivalent to the `multiple` attribute on a `<select>` input.
 			 * @type {Object}
@@ -392,15 +399,6 @@
 			multiple: {
 				type: Boolean,
 				default: false
-			},
-
-			/**
-			 * Equivalent to the `placeholder` attribute on an `<input>`.
-			 * @type {Object}
-			 */
-			placeholder: {
-				type: String,
-				default: ''
 			},
 
 			/**
@@ -468,6 +466,7 @@
 		data() {
 			return {
 				search: '',
+				focused: false,
 				open: false,
 				mutableValues: [],
 				mutableOptions: [],
@@ -555,6 +554,15 @@
 		},
 
 		methods: {
+
+			onFocus() {
+				this.focused = true
+			},
+
+			onBlur() {
+				this.focused = false
+				this.open = false
+			},
 
 		/**
 		 * puts the focus on the input field.
@@ -675,19 +683,6 @@
 			},
 
 			/**
-			 * If there is any text in the search input, remove it.
-			 * Otherwise, blur the search input to close the dropdown.
-			 * @return {[type]} [description]
-			 */
-			onEscape() {
-				if (!this.search.length) {
-					this.open = false
-				} else {
-					this.search = ''
-				}
-			},
-
-			/**
 			 * Delete the value on Delete keypress when there is no
 			 * text in the search input, & there's tags to delete
 			 */
@@ -712,6 +707,14 @@
 		},
 
 		computed: {
+
+			placeholder() {
+				if (this.focused) {
+					return this.buildPlaceholder(this.mutableValues.length > 0 ? this.mutableValues[0] : null)
+				} else {
+					return ''
+				}
+			},
 
 		/**
 		 * Classes to be output on selected tags
@@ -742,17 +745,6 @@
 					open: this.open,
 					searchable: this.searchable,
 					loading: this.mutableLoading
-				}
-			},
-
-			/**
-			 * Return the placeholder string if it's set
-			 * & there is no value selected.
-			 * @return {String} Placeholder text
-			 */
-			searchPlaceholder() {
-				if (this.isValueEmpty && this.placeholder) {
-					return this.placeholder;
 				}
 			},
 
