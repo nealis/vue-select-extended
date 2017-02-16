@@ -225,6 +225,7 @@
 							@keydown.up.prevent="typeAheadUp"
 							@keydown.down.prevent="typeAheadDown"
 							@keyup.enter.prevent.stop="typeAheadSelect"
+							@keydown.enter.prevent.stop
 							@blur="onBlur"
 							@focus="onFocus"
 							type="search"
