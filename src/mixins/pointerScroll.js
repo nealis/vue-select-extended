@@ -1,7 +1,9 @@
 module.exports = {
   watch: {
     typeAheadPointer() {
-      if (this.open) this.maybeAdjustScroll()
+      if (this.open && this.$refs.dropdownMenu) {
+        this.maybeAdjustScroll()
+      }
     }
   },
 
@@ -30,6 +32,9 @@ module.exports = {
      */
     pixelsToPointerTop() {
       let pixelsToPointerTop = 0
+      if (this.typeAheadPointer >= this.$refs.dropdownMenu.children.length) {
+        this.typeAheadPointer = -1
+      }
       for (let i = 0; i < this.typeAheadPointer; i++) {
         pixelsToPointerTop += this.$refs.dropdownMenu.children[i].offsetHeight
       }
