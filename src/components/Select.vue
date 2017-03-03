@@ -1,7 +1,6 @@
 <style>
 	.v-select {
 		position: relative;
-		background-color: white;
 		/* Fix behavior in tables */
     display: table;
     table-layout: fixed;
