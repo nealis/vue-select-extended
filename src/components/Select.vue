@@ -84,6 +84,13 @@
 		margin: 0;
 		width: 100%;
 		overflow-y: auto;
+		border-top-left-radius: 0;
+	}
+
+	.v-select > .dropdown-menu-simple {
+		margin: 0;
+		width: 100%;
+		overflow-y: auto;
 		border-top: none;
 		border-top-left-radius: 0;
 		border-top-right-radius: 0;
@@ -252,7 +259,7 @@
 			</slot>
 		</div>
 
-		<ul ref="dropdownMenu" v-show="open && !disabled" :transition="transition" class="dropdown-menu" :style="{ 'max-height': maxHeight, 'min-width': minWidth }" @scroll="scroll">
+		<ul ref="dropdownMenu" v-show="open && !disabled" :transition="transition" :class="dropdownMenuClasses" :style="{ 'max-height': maxHeight, 'min-width': minWidth }" @scroll="scroll">
 			<li v-for="(option, index) in filteredOptions" v-bind:key="index" :class="{ active: isOptionSelected(option), highlight: index === typeAheadPointer }" @mouseover="typeAheadPointer = index">
 				<a @click.prevent.stop="toggle(option)" @mousedown.prevent.stop>
 					<slot name="item" :data="option">
@@ -261,7 +268,7 @@
 				</a>
 			</li>
 			<transition name="fade">
-				<li v-if="!filteredOptions.length" class="divider"></li>
+				<li v-if="!filteredOptions.length && minWidth == '0'" class="divider"></li>
 			</transition>
 			<transition name="fade">
 				<li v-if="!filteredOptions.length" class="text-center no-data">
@@ -348,7 +355,6 @@
 
 			/**
 			 * Sets the min-width property on the dropdown list.
-			 * @deprecated
 			 * @type {String}
 			 */
 			minWidth: {
@@ -746,6 +752,16 @@
 					open: this.open,
 					searchable: this.searchable,
 					loading: this.mutableLoading
+				}
+			},
+
+			/**
+			 * @return {Object}
+			 */
+			dropdownMenuClasses() {
+				return {
+					'dropdown-menu-simple': this.minWidth == '0',
+					'dropdown-menu': true
 				}
 			},
 
