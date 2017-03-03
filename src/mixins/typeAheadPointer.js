@@ -23,9 +23,12 @@ module.exports = {
      * subtracting the current index by one.
      * @return {void}
      */
-    typeAheadUp() {
-      if (!this.disabled && this.typeAheadPointer > 0) {
-        this.typeAheadPointer--
+    typeAheadUp(event) {
+      if (!event || this.open) {
+        if (event) event.stopPropagation()
+        if (!this.disabled && this.typeAheadPointer > 0) {
+          this.typeAheadPointer--
+        }
       }
     },
 
@@ -34,13 +37,16 @@ module.exports = {
      * adding the current index by one.
      * @return {void}
      */
-    typeAheadDown() {
-      this.open = true
-      if (!this.disabled){
-        if (this.typeAheadPointer < this.filteredOptions.length - 1) {
-          this.typeAheadPointer++
-        } else {
-          this.onScrollEnd()
+    typeAheadDown(event) {
+      if (!event || this.open) {
+        if (event) event.stopPropagation()
+        this.open = true
+        if (!this.disabled){
+          if (this.typeAheadPointer < this.filteredOptions.length - 1) {
+            this.typeAheadPointer++
+          } else {
+            this.onScrollEnd()
+          }
         }
       }
     },

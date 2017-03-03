@@ -235,6 +235,7 @@
 							@blur="onBlur"
 							@focus="onFocus"
 							type="search"
+							:name="name"
 							:disabled="disabled"
               :class="[{'disabled': disabled}, 'form-control']"
 							:maxlength="maxlength"
@@ -292,6 +293,11 @@
 			disabled: {
 				type: Boolean,
 				default: false
+			},
+
+			name: {
+				type: String,
+				default: ''
 			},
 
 			allowClear: {
