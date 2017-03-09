@@ -259,7 +259,7 @@
 			</slot>
 		</div>
 
-		<ul ref="dropdownMenu" v-show="open && !disabled" :transition="transition" :class="dropdownMenuClasses" :style="{ 'max-height': maxHeight, 'min-width': minWidth }" @scroll="scroll">
+		<ul ref="dropdownMenu" v-show="open && !disabled" :transition="transition" :class="dropdownMenuClasses" :style="{ 'max-height': maxHeight, 'min-width': minWidth }" @mousewheel="scroll" @scroll="scroll">
 			<li v-for="(option, index) in filteredOptions" v-bind:key="index" :class="{ active: isOptionSelected(option), highlight: index === typeAheadPointer }" @mouseover="typeAheadPointer = index">
 				<a @click.prevent.stop="toggle(option)" @mousedown.prevent.stop>
 					<slot name="item" :data="option">
@@ -657,6 +657,17 @@
 			 */
 			scroll(event) {
         var elem = event.currentTarget;
+				this.checkIfScrolledToEnd(elem);
+			},
+
+			handleMouseWheel(event) {
+				// https://jsfiddle.net/tovic/6nFTC/
+        var elem = event.currentTarget
+		    var delta = Math.max(-1, Math.min(1, (event.wheelDelta || -event.detail)))
+				if (delta < 0) this.checkIfScrolledToEnd(elem)
+			},
+
+			checkIfScrolledToEnd(elem) {
 				if (elem.scrollHeight != this.prevScrollHeight && elem.scrollHeight - elem.scrollTop <= elem.offsetHeight) {
 					this.prevScrollHeight = elem.scrollHeight
 					this.onScrollEnd()
