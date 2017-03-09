@@ -210,7 +210,7 @@
 
 <template>
 	<div class="dropdown v-select" :class="dropdownClasses">
-		<div @click.prevent.stop="toggleDropdown" ref="toggle" :class="['dropdown-toggle', 'clearfix', {'disabled': disabled}]" type="button">
+		<div @mousedown.prevent.stop="toggleDropdown" ref="toggle" :class="['dropdown-toggle', 'clearfix', {'disabled': disabled}]" type="button">
 
         <div :class="selectedTagClasses" v-for="option in mutableValues" v-bind:key="option.index" v-show="!focused || multiple">
 					<div class="selected-tag-content">
@@ -234,6 +234,7 @@
 							@keydown.enter.prevent.stop
 							@blur="onBlur"
 							@focus="onFocus"
+							@mousedown.prevent.stop="toggleDropdown"
 							type="search"
 							:name="name"
 							:disabled="disabled"
