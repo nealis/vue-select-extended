@@ -212,15 +212,12 @@
 	<div class="dropdown v-select" :class="dropdownClasses">
 		<div @mousedown.prevent.stop="toggleDropdown" ref="toggle" :class="['dropdown-toggle', 'clearfix', {'disabled': disabled}]" type="button">
 
-        <div :class="selectedTagClasses" v-for="option in mutableValues" v-bind:key="option.index" v-show="!focused || multiple">
+        <div :class="selectedTagClasses" v-show="!focused && !isValueEmpty && !multiple">
 					<div class="selected-tag-content">
-						<slot name="selected" :data="option">
-							{{ option[valueField] }}
+						<slot name="selected" :data="preparedValues || {}">
+							{{ placeholder }}
 						</slot>
 					</div>
-          <button v-show="multiple && allowClear" @click.prevent.stop="toggle(option)" type="button" class="close">
-            <span aria-hidden="true">&times;</span>
-          </button>
         </div>
 
 			<input
@@ -240,12 +237,12 @@
 							:disabled="disabled"
               :class="[{'disabled': disabled}, 'form-control']"
 							:maxlength="maxlength"
-							:placeholder="placeholder"
+							:placeholder="focused || multiple ? placeholder : ''"
 							:readonly="!searchable"
-							:style="{ width: isValueEmpty || focused ? 'calc(100% - 20px - 2em)' : '2em' }"
+							:style="{ width: isValueEmpty || focused || multiple ? 'calc(100% - 20px - 2em)' : '2em' }"
 			>
 
-			<button v-show="!multiple && !isValueEmpty && allowClear" @click.prevent.stop="clear" tabIndex="-1" type="button" class="close clear">
+			<button v-show="!isValueEmpty && allowClear" @click.prevent.stop="clear" tabIndex="-1" type="button" class="close clear">
 				<span aria-hidden="true">&times;</span>
 			</button>
 
@@ -401,6 +398,15 @@
 			buildPlaceholder: {
 				type: Function,
 				default: function(data){
+				    if (Array.isArray(data)) {
+				        if (data.length > 0) {
+                            return data
+                                .map(v => v[this.valueField])
+                                .join(', ')
+						} else {
+				            return ''
+						}
+                    }
 					return data ? '' + data[this.valueField] : ''
 				}
 			},
@@ -732,12 +738,16 @@
 
 		computed: {
 
-			placeholder() {
-				if (this.focused) {
-					return this.buildPlaceholder(this.mutableValues.length > 0 ? this.mutableValues[0] : null)
-				} else {
-					return ''
+		    preparedValues() {
+		        if (this.multiple) {
+		            return this.mutableValues
+				} else if (this.mutableValues.length > 0) {
+		            return this.mutableValues[0]
 				}
+			},
+
+			placeholder() {
+				return this.buildPlaceholder(this.preparedValues || '')
 			},
 
 		/**
@@ -747,8 +757,9 @@
 			selectedTagClasses() {
 				return {
 					'selected-tag': true,
-					multiple: this.multiple,
-					single: !this.multiple
+					single: true
+					// multiple: this.multiple,
+					// single: !this.multiple
 				}
 			},
 
