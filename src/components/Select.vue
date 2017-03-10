@@ -86,6 +86,14 @@
 		border-top-left-radius: 0;
 	}
 
+	.v-select > .dropdown-menu > .dropdown-buttons {
+		padding: 5px;
+	}
+
+	.v-select > .dropdown-menu > .dropdown-buttons > button:not(:first-child) {
+		margin-left: 5px;
+	}
+
 	.v-select > .dropdown-menu-simple {
 		margin: 0;
 		width: 100%;
@@ -149,6 +157,8 @@
 
 	.v-select li a {
 		cursor: pointer;
+		display: flex;
+		align-items: center;
 	}
 
 	.v-select .active a {
@@ -160,6 +170,12 @@
 	.v-select li:hover > a {
 		background: #f0f0f0;
 		color: #333;
+	}
+
+	.v-select li a > input[type="checkbox"] {
+		flex-shrink: 0;
+		flex-grow: 0;
+		margin: 0 4px 2px 0;
 	}
 
 	.v-select .spinner {
@@ -212,9 +228,9 @@
 	<div class="dropdown v-select" :class="dropdownClasses">
 		<div @mousedown.prevent.stop="toggleDropdown" ref="toggle" :class="['dropdown-toggle', 'clearfix', {'disabled': disabled}]" type="button">
 
-        <div :class="selectedTagClasses" v-show="!focused && !isValueEmpty && !multiple">
+        <div :class="selectedTagClasses" v-if="!focused && !isValueEmpty">
 					<div class="selected-tag-content">
-						<slot name="selected" :data="preparedValues || {}">
+						<slot name="selected" :data="mutableValues[0]" :values="mutableValues">
 							{{ placeholder }}
 						</slot>
 					</div>
@@ -237,12 +253,12 @@
 							:disabled="disabled"
               :class="[{'disabled': disabled}, 'form-control']"
 							:maxlength="maxlength"
-							:placeholder="focused || multiple ? placeholder : ''"
+							:placeholder="focused ? placeholder : ''"
 							:readonly="!searchable"
-							:style="{ width: isValueEmpty || focused || multiple ? 'calc(100% - 20px - 2em)' : '2em' }"
+							:style="{ width: isValueEmpty || focused ? 'calc(100% - 20px - 2em)' : '2em' }"
 			>
 
-			<button v-show="!isValueEmpty && allowClear" @click.prevent.stop="clear" tabIndex="-1" type="button" class="close clear">
+			<button v-show="!isValueEmpty && allowClear" @mousedown.prevent.stop="clear" tabIndex="-1" type="button" class="close clear">
 				<span aria-hidden="true">&times;</span>
 			</button>
 
@@ -258,19 +274,27 @@
 		</div>
 
 		<ul ref="dropdownMenu" v-show="open && !disabled" :transition="transition" :class="dropdownMenuClasses" :style="{ 'max-height': maxHeight, 'min-width': minWidth }" @mousewheel="scroll" @scroll="scroll">
-			<li v-for="(option, index) in filteredOptions" v-bind:key="index" :class="{ active: isOptionSelected(option), highlight: index === typeAheadPointer }" @mouseover="typeAheadPointer = index">
-				<a @click.prevent.stop="toggle(option)" @mousedown.prevent.stop>
-					<slot name="item" :data="option">
-						{{ option[valueField] }}
-					</slot>
+			<li class="dropdown-buttons" v-if="multiple && filteredOptions.length > 0">
+				<button type="button" class="btn btn-default" @mousedown.prevent.stop="selectFiltered">{{ translate('Select all') }}</button>
+				<button type="button" class="btn btn-default" @mousedown.prevent.stop="deselectFiltered">{{ translate('Clear') }}</button>
+			</li>
+			<li v-for="(option, index) in filteredOptions" v-bind:key="index" :class="{ active: !multiple && isOptionSelected(option), highlight: index === typeAheadPointer, divider: option.vselectOptionType === 'divider' }" @mouseover="onMouseOver(index, option)">
+				<a v-if="!option.vselectOptionType" @click.prevent.stop="toggle(option)" @mousedown.prevent.stop>
+					<input type="checkbox" :checked="isOptionSelected(option)" v-if="multiple">
+					<span class="item-container">
+						<slot name="item" :data="option">
+							{{ option[valueField] }}
+						</slot>
+					</span>
 				</a>
+
 			</li>
 			<transition name="fade">
 				<li v-if="!filteredOptions.length && minWidth == '0'" class="divider"></li>
 			</transition>
 			<transition name="fade">
 				<li v-if="!filteredOptions.length" class="text-center no-data">
-					<slot name="no-options">Sorry, no matching options.</slot>
+					<slot name="no-options">{{ translate('No data') }}</slot>
 				</li>
 			</transition>
 		</ul>
@@ -293,9 +317,21 @@
 				default: false
 			},
 
+			showSelectedOnTop: {
+			    type: Boolean,
+				default: true
+			},
+
 			name: {
 				type: String,
 				default: ''
+			},
+
+			translations: {
+			  	type: Object,
+				default() {
+			  	    return {}
+				}
 			},
 
 			allowClear: {
@@ -487,6 +523,7 @@
 				search: '',
 				focused: false,
 				open: false,
+				optionsOnTop: [],
 				mutableValues: [],
 				mutableOptions: [],
 				mutableLoading: false
@@ -560,6 +597,7 @@
 						 if(this.onSearch) this.onSearch(this.search, this.toggleLoading)
 					} else {
 						this.search = ''
+						this.optionsOnTop = Array.from(this.mutableValues) // shallow copy
 						this.onCloseDropdown()
 					}
 				}
@@ -574,9 +612,37 @@
 
 		methods: {
 
+		    onMouseOver(index, option){
+                if (!option.vselectOptionType) this.typeAheadPointer = index
+			},
+
+		    translate(msg) {
+		        return this.translations[msg] || msg
+			},
+
+			isOptionVisibleByFilter(option){
+                if (typeof option[this.filterField] === 'string' && (!this.onSearch || this.mutableLoading)) {
+                    return option[this.filterField].toLowerCase().indexOf(this.search) > -1
+                } else {
+                    return true;
+                }
+			},
+
 			onFocus() {
 				this.focused = true
 			},
+
+			selectFiltered() {
+			    this.filteredOptions.forEach(opt => {
+			        if (!this.isOptionSelected(opt)) this.select(opt)
+                })
+			},
+
+            deselectFiltered() {
+                this.filteredOptions.forEach(opt => {
+                    if (this.isOptionSelected(opt)) this.deselect(opt)
+                })
+            },
 
 			onBlur() {
 				this.focused = false
@@ -615,12 +681,14 @@
 			 * @return {void}
 			 */
 			select(option) {
-				if (this.multiple) {
-					this.mutableValues.push(option)
-				} else {
-					this.mutableValues = [option]
+			    if (!option.vselectOptionType) {
+                    if (this.multiple) {
+                        this.mutableValues.push(option)
+                    } else {
+                        this.mutableValues = [option]
+                    }
+                    this.onAfterSelect(option)
 				}
-				this.onAfterSelect(option)
 			},
 
 			/**
@@ -649,7 +717,7 @@
 			 * @return {void}
 			 */
 			onAfterSelect(option) {
-				if (this.clearSearchOnSelect) {
+				if (this.clearSearchOnSelect && !this.multiple) {
 					this.search = ''
 				}
 				if (!this.multiple) {
@@ -712,6 +780,19 @@
 				return false
 			},
 
+            isOptionOnTop(option) {
+                if (this.optionsOnTop !== null && this.optionsOnTop !== undefined) {
+                    let selected = false
+                    this.optionsOnTop.forEach(opt => {
+                        if (opt[this.valueField] === option[this.valueField]) {
+                            selected = true
+                        }
+                    })
+                    return selected
+                }
+                return false
+            },
+
 			/**
 			 * Delete the value on Delete keypress when there is no
 			 * text in the search input, & there's tags to delete
@@ -747,7 +828,7 @@
 			},
 
 			placeholder() {
-				return this.buildPlaceholder(this.preparedValues || '')
+				return this.buildPlaceholder(this.mutableValues)
 			},
 
 		/**
@@ -766,7 +847,7 @@
  			spinnerClasses() {
  				return {
  					'spinner': true,
- 					'shifted-left': !this.isValueEmpty && !this.multiple,
+ 					'shifted-left': !this.isValueEmpty && this.allowClear,
  					single: !this.multiple
  				}
  			},
@@ -803,17 +884,26 @@
 			 */
 			filteredOptions() {
 				let search = this.search.toLowerCase()
-				let options = this.mutableOptions.filter(option => {
-					if (typeof option[this.filterField] === 'string' && (!this.onSearch || this.mutableLoading)) {
-						return option[this.filterField].toLowerCase().indexOf(search) > -1
-					} else {
-						return true;
-					}
-				})
+				let options = []
+				if (this.multiple && this.showSelectedOnTop) {
+				    options = options
+						.concat(this.optionsOnTop)
+				}
+                let additionalOptions = this.mutableOptions
+				if (this.multiple && this.showSelectedOnTop) {
+				    additionalOptions = this.mutableOptions.filter(option => !this.isOptionOnTop(option))
+                }
+                if (options.length > 0 && additionalOptions.length > 0) {
+				    options = options.concat({
+				        vselectOptionType: 'divider',
+						vselectClientOnly: true
+				    })
+                }
+				options = options.concat(additionalOptions)
 				if (this.taggable && search.length && !this.optionExists(search)) {
 					options.unshift(search)
 				}
-				return options
+				return options.filter(this.isOptionVisibleByFilter, this)
 			},
 
 			selectedOptions() {

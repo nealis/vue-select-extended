@@ -26,8 +26,19 @@ module.exports = {
     typeAheadUp(event) {
       if (!event || this.open) {
         if (event) event.stopPropagation()
-        if (!this.disabled && this.typeAheadPointer > 0) {
-          this.typeAheadPointer--
+        if (!this.disabled) {
+            let filterableIndexes = this.filteredOptions
+                .map((opt, index) => {
+                    return {vselectOptionType: opt.vselectOptionType, index: index}
+                })
+                .filter(opt => !opt.vselectOptionType)
+                .map(opt => opt.index)
+            let mappedPointer = filterableIndexes.indexOf(this.typeAheadPointer)
+            if (mappedPointer > 0) {
+                this.typeAheadPointer = filterableIndexes[mappedPointer - 1]
+            } else {
+                this.onScrollEnd()
+            }
         }
       }
     },
@@ -42,8 +53,15 @@ module.exports = {
         if (event) event.stopPropagation()
         this.open = true
         if (!this.disabled){
-          if (this.typeAheadPointer < this.filteredOptions.length - 1) {
-            this.typeAheadPointer++
+          let filterableIndexes = this.filteredOptions
+              .map((opt, index) => {
+                return {vselectOptionType: opt.vselectOptionType, index: index}
+              })
+              .filter(opt => !opt.vselectOptionType)
+              .map(opt => opt.index)
+          let mappedPointer = filterableIndexes.indexOf(this.typeAheadPointer)
+          if (mappedPointer < filterableIndexes.length - 1) {
+            this.typeAheadPointer = filterableIndexes[mappedPointer + 1]
           } else {
             this.onScrollEnd()
           }
@@ -65,9 +83,6 @@ module.exports = {
             this.select( this.filteredOptions[ this.typeAheadPointer ] );
           } else if (this.taggable && this.search.length){
             this.select(this.search)
-          }
-          if( this.clearSearchOnSelect ) {
-            this.search = "";
           }
         }
       }
