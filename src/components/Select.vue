@@ -597,7 +597,7 @@
 						 if(this.onSearch) this.onSearch(this.search, this.toggleLoading)
 					} else {
 						this.search = ''
-						this.optionsOnTop = Array.from(this.mutableValues) // shallow copy
+						this.updateOptionsOnTop()
 						this.onCloseDropdown()
 					}
 				}
@@ -611,6 +611,10 @@
 		},
 
 		methods: {
+
+		    updateOptionsOnTop() {
+                this.optionsOnTop = Array.from(this.mutableValues) // shallow copy
+			},
 
 		    onMouseOver(index, option){
                 if (!option.vselectOptionType) this.typeAheadPointer = index
@@ -633,15 +637,11 @@
 			},
 
 			selectFiltered() {
-			    this.filteredOptions.forEach(opt => {
-			        if (!this.isOptionSelected(opt)) this.select(opt)
-                })
+			    this.select(this.filteredOptions)
 			},
 
             deselectFiltered() {
-                this.filteredOptions.forEach(opt => {
-                    if (this.isOptionSelected(opt)) this.deselect(opt)
-                })
+			    this.deselect(this.filteredOptions)
             },
 
 			onBlur() {
@@ -676,52 +676,43 @@
 			},
 
 			/**
-			 * Select a given option
+			 * Select a given option or list of options
 			 * @param  {Object} option
 			 * @return {void}
 			 */
 			select(option) {
-			    if (!option.vselectOptionType) {
-                    if (this.multiple) {
-                        this.mutableValues.push(option)
-                    } else {
-                        this.mutableValues = [option]
-                    }
-                    this.onAfterSelect(option)
-				}
+				let list = [].concat(option)
+					.filter(item => !item.vselectOptionType && !this.isOptionSelected(item))
+				this.mutableValues = this.multiple ? this.mutableValues.concat(list) : list
+                if (this.clearSearchOnSelect && !this.multiple) {
+                    this.search = ''
+                }
+                if (!this.multiple) {
+                    this.open = false
+                }
 			},
 
 			/**
-			 * De-select a given option.
-			 * @param  {Object} option
+			 * De-select a given option or list of options.
+			 * @param  {Object|Array} option
 			 * @return {void}
 			 */
 			deselect(option) {
 				if (this.multiple) {
-					let ref = -1
-					this.mutableValues.forEach(val => {
-						if (val[this.valueField] === option[this.valueField]) {
-							ref = val
-						}
-					})
-					var index = this.mutableValues.indexOf(ref)
-					this.mutableValues.splice(index, 1)
+					let list = []
+						.concat(option)
+						.forEach(opt => {
+                            let ref = -1
+                            this.mutableValues.forEach(val => {
+                                if (val[this.valueField] === opt[this.valueField]) {
+                                    ref = val
+                                }
+                            })
+                            let index = this.mutableValues.indexOf(ref)
+                            this.mutableValues.splice(index, 1)
+						})
 				} else {
 					this.mutableValues = []
-				}
-			},
-
-			/**
-			 * Called from this.select after each selection.
-			 * @param  {Object|String} option
-			 * @return {void}
-			 */
-			onAfterSelect(option) {
-				if (this.clearSearchOnSelect && !this.multiple) {
-					this.search = ''
-				}
-				if (!this.multiple) {
-					this.open = false
 				}
 			},
 
