@@ -664,7 +664,7 @@
 			 * @return {void}
 			 */
 			toggle(option) {
-				if (this.isOptionSelected(option) && this.allowClear) {
+				if (this.isOptionSelected(option)) {
 					this.deselect(option)
 				} else {
 					this.select(option)
@@ -711,7 +711,7 @@
                             let index = this.mutableValues.indexOf(ref)
                             this.mutableValues.splice(index, 1)
 						})
-				} else {
+				} else if (this.allowClear) {
 					this.mutableValues = []
 				}
 			},
