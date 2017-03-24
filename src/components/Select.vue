@@ -595,11 +595,11 @@
 			open(val, old) {
 				if (val != old) {
 					if(this.open) {
+                      	 this.updateOptionsOnTop()
 						 this.focus()
 						 if(this.searchable) this.onSearch(this.search, this.toggleLoading)
 					} else {
 						this.search = ''
-						this.updateOptionsOnTop()
 						this.onCloseDropdown()
 					}
 				}
