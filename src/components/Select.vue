@@ -13,11 +13,10 @@
 	}
 
 	.v-select .clear > span {
-		height: 26px;
-    position: absolute;
-    top: 6px;
-    right: 14px;
-    width: 20px;
+		position: absolute;
+		top: 6px;
+		right: 14px;
+		width: 20px;
 	}
 
 	.v-select .open-indicator {
@@ -114,7 +113,7 @@
 	}
 
 	.v-select .selected-tag.single {
-		max-width: calc(100% - 20px - 2em);
+		max-width: calc(100% - 4px);
 		text-align: left;
 	}
 
@@ -141,15 +140,19 @@
 		border: none;
 		outline: none;
 		margin: 0;
-		padding: 0 .5em;
-		width: 10em;
-		max-width: 100%;
+		padding: 0;
+		width: 0;
 		background: none;
 		position: relative;
 		box-shadow: none;
 		float: left;
 		clear: none;
 	}
+
+    .v-select input[type=search].focused {
+        width: 100%;
+        padding: 0 .5em;
+    }
 
 	.v-select input[type=search]:disabled {
 		cursor: pointer;
@@ -237,25 +240,24 @@
         </div>
 
 			<input
-							ref="search"
-							:debounce="debounce"
-							v-model="search"
-							@keydown.delete="maybeDeleteValue"
-							@keydown.up.prevent="typeAheadUp"
-							@keydown.down.prevent="typeAheadDown"
-							@keyup.enter.prevent.stop="typeAheadSelect"
-							@keydown.enter.prevent.stop
-							@blur="onBlur"
-							@focus="onFocus"
-							@mousedown.prevent.stop="toggleDropdown"
-							type="search"
-							:name="name"
-							:disabled="disabled"
-              :class="[{'disabled': disabled}, 'form-control']"
-							:maxlength="maxlength"
-							:placeholder="focused ? placeholder : ''"
-							:readonly="!searchable"
-							:style="{ width: isValueEmpty || focused ? 'calc(100% - 20px - 2em)' : '2em' }"
+				ref="search"
+				:debounce="debounce"
+				v-model="search"
+				@keydown.delete="maybeDeleteValue"
+				@keydown.up.prevent="typeAheadUp"
+				@keydown.down.prevent="typeAheadDown"
+				@keyup.enter.prevent.stop="typeAheadSelect"
+				@keydown.enter.prevent.stop
+				@blur="onBlur"
+				@focus="onFocus"
+				@mousedown.prevent.stop="toggleDropdown"
+				type="search"
+				:name="name"
+				:disabled="disabled"
+                :class="[{'disabled': disabled}, {focused: focused}, 'form-control']"
+				:maxlength="maxlength"
+				:placeholder="focused ? placeholder : ''"
+				:readonly="!searchable"
 			>
 
 			<button v-show="!isValueEmpty && allowClear" @mousedown.prevent.stop="clear" tabIndex="-1" type="button" class="close clear">
@@ -409,7 +411,7 @@
 			onScrollEnd: {
 				type: Function,
 				default: function() {
-					if (this.onSearch) this.onSearch(this.search, this.toggleLoading, this.typeAheadPointer)
+					if (this.searchable) this.onSearch(this.search, this.toggleLoading, this.typeAheadPointer)
 				}
 			},
 
@@ -594,7 +596,7 @@
 				if (val != old) {
 					if(this.open) {
 						 this.focus()
-						 if(this.onSearch) this.onSearch(this.search, this.toggleLoading)
+						 if(this.searchable) this.onSearch(this.search, this.toggleLoading)
 					} else {
 						this.search = ''
 						this.updateOptionsOnTop()
@@ -625,8 +627,11 @@
 			},
 
 			isOptionVisibleByFilter(option){
-                if (typeof option[this.filterField] === 'string' && (!this.onSearch || this.mutableLoading)) {
-                    return option[this.filterField].toLowerCase().indexOf(this.search) > -1
+		      	let shouldFilter = (this.searchable || this.mutableLoading)
+				  && typeof option[this.filterField] === 'string'
+                if (shouldFilter) {
+		      	    let filter = this.search.toLowerCase()
+                    return option[this.filterField].toLowerCase().indexOf(filter) > -1
                 } else {
                     return true;
                 }
