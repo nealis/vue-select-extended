@@ -63,7 +63,7 @@ module.exports = {
 		},
 
 		refreshOptions() {
-			if (this.open && this.searchable) {
+			if (this.open) {
 				this.onSearch(this.search, this.toggleLoading)
 			}
 		}

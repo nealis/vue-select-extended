@@ -147,6 +147,7 @@
 		box-shadow: none;
 		float: left;
 		clear: none;
+		text-align: start;
 	}
 
     .v-select input[type=search].focused {
@@ -597,7 +598,7 @@
 					if(this.open) {
                       	 this.updateOptionsOnTop()
 						 this.focus()
-						 if(this.searchable) this.onSearch(this.search, this.toggleLoading)
+						 this.onSearch(this.search, this.toggleLoading)
 					} else {
 						this.search = ''
 						this.onCloseDropdown()
