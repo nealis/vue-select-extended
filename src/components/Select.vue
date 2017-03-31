@@ -857,7 +857,8 @@
 				return {
 					open: this.open,
 					searchable: this.searchable,
-					loading: this.mutableLoading
+					loading: this.mutableLoading,
+				  	focused: this.focused
 				}
 			},
 
