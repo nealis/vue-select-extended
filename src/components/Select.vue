@@ -85,12 +85,10 @@
 		border-top-left-radius: 0;
 	}
 
-	.v-select > .dropdown-menu > .dropdown-buttons {
-		padding: 5px;
-	}
-
-	.v-select > .dropdown-menu > .dropdown-buttons > button:not(:first-child) {
-		margin-left: 5px;
+	.v-select > .dropdown-menu > li > button {
+		margin: 5px;
+		margin-left: 1.8em;
+		width: auto;
 	}
 
 	.v-select > .dropdown-menu-simple {
@@ -277,10 +275,19 @@
 		</div>
 
 		<ul ref="dropdownMenu" v-show="open && !disabled" :transition="transition" :class="dropdownMenuClasses" :style="{ 'max-height': maxHeight, 'min-width': minWidth }" @mousewheel="scroll" @scroll="scroll">
-			<li class="dropdown-buttons" v-if="multiple && filteredOptions.length > 0">
-				<button type="button" class="btn btn-default" @mousedown.prevent.stop="selectFiltered">{{ translate('Select all') }}</button>
-				<button type="button" class="btn btn-default" @mousedown.prevent.stop="deselectFiltered">{{ translate('Clear') }}</button>
+			<li v-if="multiple && filteredOptions.length > 0">
+				<a @mousedown.prevent.stop="selectFiltered">
+					<input type="checkbox" style="visibility: hidden">
+					{{ translate('Select all') }}
+				</a>
 			</li>
+			<li v-if="multiple && filteredOptions.length > 0">
+				<a @mousedown.prevent.stop="deselectFiltered">
+					<input type="checkbox" style="visibility: hidden">
+					{{ translate('Clear') }}
+				</a>
+			</li>
+			<li v-if="multiple && filteredOptions.length > 0" class="divider"></li>
 			<li v-for="(option, index) in filteredOptions" v-bind:key="index" :class="{ active: !multiple && isOptionSelected(option), highlight: index === typeAheadPointer, divider: option.vselectOptionType === 'divider' }" @mouseover="onMouseOver(index, option)">
 				<a v-if="!option.vselectOptionType" @click.prevent.stop="toggle(option)" @mousedown.prevent.stop>
 					<input type="checkbox" :checked="isOptionSelected(option)" v-if="multiple">
