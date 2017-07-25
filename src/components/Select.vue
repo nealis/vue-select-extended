@@ -80,7 +80,7 @@
 
 	.v-select > .dropdown-menu {
 		margin: 0;
-		width: 100%;
+		width: auto;
 		overflow-y: auto;
 		border-top-left-radius: 0;
 	}
@@ -100,6 +100,10 @@
 		border-top: none;
 		border-top-left-radius: 0;
 		border-top-right-radius: 0;
+	}
+
+	.v-select .no-data {
+		padding: 0 0.25em;
 	}
 
 	.v-select .selected-tag {
@@ -276,7 +280,7 @@
 			</slot>
 		</div>
 
-		<ul ref="dropdownMenu" v-show="open && !disabled" :transition="transition" :class="dropdownMenuClasses" :style="{ 'max-height': maxHeight, 'min-width': minWidth }" @mousewheel="scroll" @scroll="scroll">
+		<ul ref="dropdownMenu" v-show="open && !disabled" :transition="transition" :class="dropdownMenuClasses" :style="dropdownMenuStyle" @mousewheel="scroll" @scroll="scroll">
 			<li class="dropdown-buttons" v-if="multiple && filteredOptions.length > 0">
 				<button type="button" class="btn btn-default" @mousedown.prevent.stop="selectFiltered">{{ translate('Select all') }}</button>
 				<button type="button" class="btn btn-default" @mousedown.prevent.stop="deselectFiltered">{{ translate('Clear') }}</button>
@@ -293,11 +297,13 @@
 
 			</li>
 			<transition name="fade">
-				<li v-if="!filteredOptions.length && minWidth == '0'" class="divider"></li>
+				<li v-if="!filteredOptions.length && useSimpleDropdown" class="divider"></li>
 			</transition>
 			<transition name="fade">
 				<li v-if="!filteredOptions.length" class="text-center no-data">
-					<slot name="no-options">{{ translate('No data') }}</slot>
+					<slot name="no-options">
+						<span class="no-options">{{ translate('No data') }}</span>
+					</slot>
 				</li>
 			</transition>
 		</ul>
@@ -403,6 +409,25 @@
 				type: String,
 				default: '0'
 			},
+
+            /**
+             * Sets the max-width property on the dropdown list. Empty string for no limit.
+             * @type {String}
+             */
+            maxWidth: {
+                type: String,
+                default: ''
+            },
+
+            /**
+             * if true, use a simpler dropdown. If false then use a larger dropdown
+			 * better suited for longer strings.
+             * @type {Boolean}
+             */
+            useSimpleDropdown: {
+                type: Boolean,
+                default: true
+            },
 
 			/**
 			 * A callback function that will be
@@ -867,9 +892,21 @@
 			 */
 			dropdownMenuClasses() {
 				return {
-					'dropdown-menu-simple': this.minWidth == '0',
+					'dropdown-menu-simple': this.useSimpleDropdown,
 					'dropdown-menu': true
 				}
+			},
+
+			dropdownMenuStyle() {
+                const style =  {
+                    'max-height': this.maxHeight,
+					'width:': this.useSimpleDropdown ? '100%' : 'auto'
+                }
+                if (!this.useSimpleDropdown) {
+                    style['min-width'] = this.minWidth
+                    style['man-width'] = this.maxWidth
+				}
+                return style
 			},
 
 			/**
