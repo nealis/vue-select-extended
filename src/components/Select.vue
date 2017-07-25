@@ -253,6 +253,7 @@
 				@keyup.enter.prevent.stop="typeAheadSelect"
 				@keydown.enter.prevent.stop
 				@blur="onBlur"
+				@focus="onFocus"
 				@mousedown.prevent.stop="toggleDropdown"
 				:name="name"
 				:disabled="disabled"
@@ -658,6 +659,10 @@
                 } else {
                     return true;
                 }
+			},
+
+			onFocus() {
+				this.focused = true
 			},
 
 			selectFiltered() {
