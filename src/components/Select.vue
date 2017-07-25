@@ -236,13 +236,13 @@
 	<div class="dropdown v-select" :class="dropdownClasses">
 		<div @mousedown.prevent.stop="toggleDropdown" ref="toggle" :class="['dropdown-toggle', 'clearfix', {'disabled': disabled}]" type="button">
 
-        <div :class="selectedTagClasses" v-if="!focused && !isValueEmpty">
-					<div class="selected-tag-content">
-						<slot name="selected" :data="mutableValues[0]" :values="mutableValues">
-							{{ placeholder }}
-						</slot>
-					</div>
-        </div>
+			<div :class="selectedTagClasses" v-if="!focused && !isValueEmpty">
+				<div class="selected-tag-content">
+					<slot name="selected" :data="mutableValues[0]" :values="mutableValues">
+						{{ placeholder }}
+					</slot>
+				</div>
+			</div>
 
 			<input
 				ref="search"
@@ -263,9 +263,9 @@
 				:maxlength="maxlength"
 				:placeholder="focused ? placeholder : ''"
 				:readonly="!searchable"
-			>
+			/>
 
-			<button v-show="!isValueEmpty && allowClear" @mousedown.prevent.stop="clear" tabIndex="-1" type="button" class="close clear">
+			<button v-if="!disabled && !isValueEmpty && allowClear" @mousedown.prevent.stop="clear" tabIndex="-1" type="button" class="close clear">
 				<span aria-hidden="true">&times;</span>
 			</button>
 
