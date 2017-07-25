@@ -234,7 +234,7 @@
 
 <template>
 	<div class="dropdown v-select" :class="dropdownClasses">
-		<div @mousedown.prevent.stop="toggleDropdown" ref="toggle" :class="['dropdown-toggle', 'clearfix', {'disabled': disabled}]" type="button">
+		<div @mousedown.prevent.stop="toggleDropdown" ref="toggle" :class="['dropdown-toggle', 'clearfix', {'disabled': disabled}]">
 
 			<div :class="selectedTagClasses" v-if="!focused && !isValueEmpty">
 				<div class="selected-tag-content">
@@ -243,10 +243,9 @@
 					</slot>
 				</div>
 			</div>
-
 			<input
+				type="search"
 				ref="search"
-				:debounce="debounce"
 				v-model="search"
 				@keydown.delete="maybeDeleteValue"
 				@keydown.up.prevent="typeAheadUp"
@@ -254,9 +253,7 @@
 				@keyup.enter.prevent.stop="typeAheadSelect"
 				@keydown.enter.prevent.stop
 				@blur="onBlur"
-				@focus="onFocus"
 				@mousedown.prevent.stop="toggleDropdown"
-				type="search"
 				:name="name"
 				:disabled="disabled"
                 :class="[{'disabled': disabled}, {focused: focused}, 'form-control']"
@@ -619,10 +616,10 @@
  			},
 
 			open(val, old) {
+			    if (this.open) this.focus()
 				if (val != old) {
 					if(this.open) {
                       	 this.updateOptionsOnTop()
-						 this.focus()
 						 this.onSearch(this.search, this.toggleLoading)
 					} else {
 						this.search = ''
@@ -663,10 +660,6 @@
                 }
 			},
 
-			onFocus() {
-				this.focused = true
-			},
-
 			selectFiltered() {
 			    this.select(this.filteredOptions)
 			},
@@ -684,8 +677,11 @@
 		 * puts the focus on the input field.
 		 */
 			focus() {
-				if (!this.disabled && document.activeElement !== this.$refs.search) {
+				if (!this.disabled) {
+                    this.focused = true
 					this.$refs.search.focus()
+                    // safari workaround
+                    setTimeout(() => this.$refs.search.focus(), 50)
 				}
 			},
 
