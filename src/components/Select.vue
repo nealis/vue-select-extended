@@ -81,6 +81,7 @@
 	.v-select > .dropdown-menu {
 		margin: 0;
 		width: auto;
+		min-width: 100%;
 		overflow-y: auto;
 		border-top-left-radius: 0;
 	}
@@ -278,7 +279,7 @@
 			</slot>
 		</div>
 
-		<ul ref="dropdownMenu" v-show="open && !disabled" :transition="transition" :class="dropdownMenuClasses" :style="dropdownMenuStyle" @mousewheel="scroll" @scroll="scroll">
+		<ul ref="dropdownMenu" v-show="open && !disabled" :transition="transition" :class="dropdownMenuClasses" :style="dropdownMenuStyle" @mousewheel="scroll" @scroll="scroll" onresize="checkIfDropdownIsAsWideAsSelect">
 			<li class="dropdown-buttons" v-if="multiple && filteredOptions.length > 0">
 				<button type="button" class="btn btn-default" @mousedown.prevent.stop="selectFiltered">{{ translate('Select all') }}</button>
 				<button type="button" class="btn btn-default" @mousedown.prevent.stop="deselectFiltered">{{ translate('Clear') }}</button>
@@ -310,6 +311,7 @@
 
 
 <script type="text/babel">
+	import Vue from 'vue'
 	import pointerScroll from '../mixins/pointerScroll'
 	import typeAheadPointer from '../mixins/typeAheadPointer'
 	import ajax from '../mixins/ajax'
@@ -405,7 +407,7 @@
 			 */
 			minWidth: {
 				type: String,
-				default: '0'
+				default: '100%'
 			},
 
             /**
@@ -552,7 +554,8 @@
 				optionsOnTop: [],
 				mutableValues: [],
 				mutableOptions: [],
-				mutableLoading: false
+				mutableLoading: false,
+				dropdownAsWideAsSelect: true
 			}
 		},
 
@@ -604,6 +607,12 @@
 				if (!this.taggable && this.resetOnOptionsChange) {
 					this.mutableValues = []
 				}
+				// Check right now
+                this.checkIfDropdownIsAsWideAsSelect()
+				// Check after render
+				Vue.nextTick(() => this.checkIfDropdownIsAsWideAsSelect())
+				// Check after some time (next render sometimes is not enough)
+				setTimeout(() => this.checkIfDropdownIsAsWideAsSelect(), 100)
 			},
 
 			/**
@@ -620,8 +629,10 @@
 			    if (this.open) this.focus()
 				if (val != old) {
 					if(this.open) {
-                      	 this.updateOptionsOnTop()
-						 this.onSearch(this.search, this.toggleLoading)
+						this.updateOptionsOnTop()
+						this.onSearch(this.search, this.toggleLoading)
+                        this.checkIfDropdownIsAsWideAsSelect()
+                        Vue.nextTick(() => this.checkIfDropdownIsAsWideAsSelect())
 					} else {
 						this.search = ''
 						this.onCloseDropdown()
@@ -637,6 +648,12 @@
 		},
 
 		methods: {
+
+		    checkIfDropdownIsAsWideAsSelect() {
+                let horizontalScrollbarVisible = this.$refs.dropdownMenu.scrollWidth !== this.$refs.dropdownMenu.clientWidth
+                this.dropdownAsWideAsSelect = this.$refs.dropdownMenu.offsetWidth <= this.$refs.toggle.offsetWidth && !horizontalScrollbarVisible
+            	// console.log('DropdownAsWideAsSelect', this.dropdownAsWideAsSelect, 'DropdownMenuClientWidth', this.$refs.dropdownMenu.clientWidth, 'DropdownMenuOffsetWidth', this.$refs.dropdownMenu.offsetWidth, 'DropdownMenuScrollWidth', this.$refs.dropdownMenu.scrollWidth, 'VSelectOffsetWidth', this.$refs.toggle.offsetWidth, 'HorizontalScrollbarVisible', horizontalScrollbarVisible)
+			},
 
 		    updateOptionsOnTop() {
                 this.optionsOnTop = Array.from(this.mutableValues) // shallow copy
@@ -893,7 +910,7 @@
 			 */
 			dropdownMenuClasses() {
 				return {
-					'dropdown-menu-simple': this.useSimpleDropdown,
+					'dropdown-menu-simple': this.useSimpleDropdown || this.dropdownAsWideAsSelect,
 					'dropdown-menu': true
 				}
 			},
@@ -905,7 +922,7 @@
                 }
                 if (!this.useSimpleDropdown) {
                     style['min-width'] = this.minWidth
-                    style['man-width'] = this.maxWidth
+                    style['max-width'] = this.maxWidth
 				}
                 return style
 			},
