@@ -650,9 +650,11 @@
 		methods: {
 
 		    checkIfDropdownIsAsWideAsSelect() {
-                let horizontalScrollbarVisible = this.$refs.dropdownMenu.scrollWidth !== this.$refs.dropdownMenu.clientWidth
-                this.dropdownAsWideAsSelect = this.$refs.dropdownMenu.offsetWidth <= this.$refs.toggle.offsetWidth && !horizontalScrollbarVisible
-            	// console.log('DropdownAsWideAsSelect', this.dropdownAsWideAsSelect, 'DropdownMenuClientWidth', this.$refs.dropdownMenu.clientWidth, 'DropdownMenuOffsetWidth', this.$refs.dropdownMenu.offsetWidth, 'DropdownMenuScrollWidth', this.$refs.dropdownMenu.scrollWidth, 'VSelectOffsetWidth', this.$refs.toggle.offsetWidth, 'HorizontalScrollbarVisible', horizontalScrollbarVisible)
+		        if (this.$refs.dropdownMenu && this.$refs.toggle) {
+                    let horizontalScrollbarVisible = this.$refs.dropdownMenu.scrollWidth !== this.$refs.dropdownMenu.clientWidth
+                    this.dropdownAsWideAsSelect = this.$refs.dropdownMenu.offsetWidth <= this.$refs.toggle.offsetWidth && !horizontalScrollbarVisible
+                    // console.log('DropdownAsWideAsSelect', this.dropdownAsWideAsSelect, 'DropdownMenuClientWidth', this.$refs.dropdownMenu.clientWidth, 'DropdownMenuOffsetWidth', this.$refs.dropdownMenu.offsetWidth, 'DropdownMenuScrollWidth', this.$refs.dropdownMenu.scrollWidth, 'VSelectOffsetWidth', this.$refs.toggle.offsetWidth, 'HorizontalScrollbarVisible', horizontalScrollbarVisible)
+                }
 			},
 
 		    updateOptionsOnTop() {
