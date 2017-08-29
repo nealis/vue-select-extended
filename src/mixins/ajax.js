@@ -24,16 +24,6 @@ module.exports = {
 		onSearch: {
 			type: Function,
 			default: function(search, loading){}
-		},
-
-		/**
-		 * The number of milliseconds to wait before
-		 * invoking this.onSearch(). Used to prevent
-		 * sending an AJAX request until input is complete.
-		 */
-		debounce: {
-			type: Number,
-			default: 0
 		}
 	},
 
