@@ -16,7 +16,7 @@ base.output = {
 
 var webpackConfig = Object.assign({}, base)
 
-webpackConfig.devtool = '#source-map'
+webpackConfig.devtool = false
 webpackConfig.plugins = (webpackConfig.plugins || []).concat([
   new webpack.DefinePlugin({
     'process.env': {
