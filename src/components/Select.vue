@@ -247,6 +247,7 @@
 			<input
 				type="search"
 				ref="search"
+				autocomplete="off"
 				v-model="search"
 				@keydown.delete="maybeDeleteValue"
 				@keydown.up.prevent="typeAheadUp"
@@ -581,11 +582,7 @@
 			 * @return {void}
 			 */
 			mutableValues(val, old) {
-				if (this.multiple) {
-					this.onChange ? this.onChange(val) : null
-				} else {
-					this.onChange && val !== old ? this.onChange(val) : null
-				}
+			    if (this.onChange) this.onChange(val, old)
 			},
 
 			/**
@@ -605,7 +602,7 @@
 			 */
 			mutableOptions() {
 				if (!this.taggable && this.resetOnOptionsChange) {
-					this.mutableValues = []
+					this.clear()
 				}
 				// Check right now
                 this.checkIfDropdownIsAsWideAsSelect()
@@ -622,7 +619,7 @@
 			 * @return {void}
 			 */
 			multiple(val) {
-				this.mutableValues = []
+				this.clear()
  			},
 
 			open(val, old) {
@@ -763,7 +760,7 @@
                             this.mutableValues.splice(index, 1)
 						})
 				} else if (this.allowClear) {
-					this.mutableValues = []
+					this.clear()
 				}
 			},
 
