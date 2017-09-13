@@ -723,22 +723,25 @@
 				this.mutableValues = []
 			},
 
-			/**
-			 * Select a given option or list of options
-			 * @param  {Object} option
-			 * @return {void}
-			 */
-			select(option) {
-				let list = [].concat(option)
-					.filter(item => !item.vselectOptionType && !this.isOptionSelected(item))
-				this.mutableValues = this.multiple ? this.mutableValues.concat(list) : list
+            /**
+             * Select a given option or list of options
+             * @param  {Object} option
+             * @return {void}
+             */
+            select(option) {
                 if (this.clearSearchOnSelect && !this.multiple) {
                     this.search = ''
                 }
-                if (!this.multiple) {
+                let list = [].concat(option)
+                    .filter(item => !item.vselectOptionType && (!this.isOptionSelected(item) || !this.multiple))
+                if (this.multiple){
+                    list = this.mutableValues.concat(list)
+                } else if (list.length > 1) {
+                    list = [list[0]]
                     this.open = false
                 }
-			},
+                this.mutableValues = list
+            },
 
 			/**
 			 * De-select a given option or list of options.
