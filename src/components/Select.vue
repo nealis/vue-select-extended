@@ -736,8 +736,10 @@
                     .filter(item => !item.vselectOptionType && (!this.isOptionSelected(item) || !this.multiple))
                 if (this.multiple){
                     list = this.mutableValues.concat(list)
-                } else if (list.length > 1) {
-                    list = [list[0]]
+                } else {
+                    if (list.length > 1) {
+                        list = [list[0]]
+                    }
                     this.open = false
                 }
                 this.mutableValues = list
