@@ -2,9 +2,9 @@
 	.v-select {
 		position: relative;
 		/* Fix behavior in tables */
-    display: table;
-    table-layout: fixed;
-    width: 100%;
+		display: table;
+		table-layout: fixed;
+		width: 100%;
 	}
 
 	.v-select .disabled {
@@ -109,7 +109,7 @@
 
 	.v-select .selected-tag {
 		color: #333;
-	  margin: 3px 1px 0 3px;
+		margin: 3px 1px 0 3px;
 		padding: 0 0.25em;
 		float: left;
 		line-height: 1.7em;
@@ -190,7 +190,7 @@
 	.v-select .spinner {
 		position: absolute;
 		top: 1em;
-    right: 4em; /* 7em when selected a value and not multiple */
+    	right: 4em; /* 7em when selected a value and not multiple */
 		font-size: 5px;
 		text-indent: -9999em;
 		overflow: hidden;
@@ -244,6 +244,7 @@
 					</slot>
 				</div>
 			</div>
+
 			<input
 				type="search"
 				ref="search"
@@ -276,7 +277,7 @@
 			</div>
 
 			<slot name="spinner">
-				<div :class="spinnerClasses" v-show="mutableLoading">Loading...</div>
+				<div :class="spinnerClasses" v-show="mutableLoading"></div>
 			</slot>
 		</div>
 
@@ -294,7 +295,6 @@
 						</slot>
 					</span>
 				</a>
-
 			</li>
 			<transition name="fade">
 				<li v-if="!filteredOptions.length && useSimpleDropdown" class="divider"></li>
@@ -694,9 +694,9 @@
 				this.open = false
 			},
 
-		/**
-		 * puts the focus on the input field.
-		 */
+			/**
+			 * puts the focus on the input field.
+			 */
 			focus() {
 				if (!this.disabled) {
                     this.focused = true
@@ -781,8 +781,8 @@
 
 			handleMouseWheel(event) {
 				// https://jsfiddle.net/tovic/6nFTC/
-        var elem = event.currentTarget
-		    var delta = Math.max(-1, Math.min(1, (event.wheelDelta || -event.detail)))
+				var elem = event.currentTarget
+				var delta = Math.max(-1, Math.min(1, (event.wheelDelta || -event.detail)))
 				if (delta < 0) this.checkIfScrolledToEnd(elem)
 			},
 
@@ -790,7 +790,7 @@
 				if (elem.scrollHeight != this.prevScrollHeight && elem.scrollHeight - elem.scrollTop <= elem.offsetHeight) {
 					this.prevScrollHeight = elem.scrollHeight
 					this.onScrollEnd()
-        }
+				}
 			},
 
 			/**
@@ -875,10 +875,10 @@
 				return this.buildPlaceholder(this.mutableValues)
 			},
 
-		/**
-		 * Classes to be output on selected tags
-		 * @return {Object}
-		 */
+			/**
+			 * Classes to be output on selected tags
+			 * @return {Object}
+			 */
 			selectedTagClasses() {
 				return {
 					'selected-tag': true,
