@@ -9,7 +9,7 @@
 
 	.v-select .disabled {
 		cursor: not-allowed !important;
-		background-color: rgb(248, 248, 248) !important;
+		background-color: rgb(238, 238, 238) !important;
 	}
 
 	.v-select .clear > span {
@@ -700,9 +700,13 @@
 			focus() {
 				if (!this.disabled) {
                     this.focused = true
-					this.$refs.search.focus()
+					if (this.$refs.search) {
+                        this.$refs.search.focus()
+					}
                     // safari workaround
-                    setTimeout(() => this.$refs.search.focus(), 50)
+                    setTimeout(() => {
+                        if (this.$refs.search) this.$refs.search.focus()
+					}, 50)
 				}
 			},
 
@@ -842,7 +846,7 @@
 			 * text in the search input, & there's tags to delete
 			 */
 			maybeDeleteValue() {
-				if (this.allowClear && this.$refs.search.value.length === 0 && this.mutableValues.length > 0) {
+				if (this.allowClear && this.search.length === 0 && this.mutableValues.length > 0) {
 					this.deselect(this.mutableValues[this.mutableValues.length-1])
 				}
 			},
