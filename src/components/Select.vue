@@ -63,6 +63,7 @@
 		padding: 0;
 		background-color: white;
 		border: 1px solid rgba(60, 60, 60, .26);
+		box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
 		border-radius: 4px;
 		white-space: nowrap;
 		overflow: hidden;
@@ -70,12 +71,16 @@
 
 	.v-select.searchable .dropdown-toggle {
 		cursor: text;
+		/* transition: box-shadow,border-color .5s ease; */
 	}
 
 	.v-select.open .dropdown-toggle {
 		border-bottom: none;
 		border-bottom-left-radius: 0;
 		border-bottom-right-radius: 0;
+		/* border-color: #66afe9;
+		box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(102, 175, 233, 0.6);
+		outline: 0 none; */
 	}
 
 	.v-select > .dropdown-menu {
@@ -791,8 +796,7 @@
 			},
 
 			checkIfScrolledToEnd(elem) {
-				if (elem.scrollHeight != this.prevScrollHeight && elem.scrollHeight - elem.scrollTop <= elem.offsetHeight) {
-					this.prevScrollHeight = elem.scrollHeight
+				if (elem.scrollHeight - elem.scrollTop === elem.clientHeight) {
 					this.onScrollEnd()
 				}
 			},
