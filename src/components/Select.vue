@@ -288,8 +288,8 @@
 
 		<ul ref="dropdownMenu" v-show="open && !disabled" :transition="transition" :class="dropdownMenuClasses" :style="dropdownMenuStyle" @mousewheel="scroll" @scroll="scroll" onresize="checkIfDropdownIsAsWideAsSelect">
 			<li class="dropdown-buttons" v-if="multiple && filteredOptions.length > 0">
-				<button type="button" class="btn btn-default" @mousedown.prevent.stop="selectFiltered">{{ translate('Select all') }}</button>
-				<button type="button" class="btn btn-default" @mousedown.prevent.stop="deselectFiltered">{{ translate('Clear') }}</button>
+				<button type="button" class="btn btn-default" @mousedown.prevent.stop="onClickSelectAll">{{ translate('Select all') }}</button>
+				<button type="button" class="btn btn-default" @mousedown.prevent.stop="clear">{{ translate('Clear') }}</button>
 			</li>
 			<li v-for="(option, index) in filteredOptions" v-bind:key="index" :class="{ active: !multiple && isOptionSelected(option), highlight: index === typeAheadPointer, divider: option.vselectOptionType === 'divider' }" @mouseover="onMouseOver(index, option)">
 				<a v-if="!option.vselectOptionType" @click.prevent.stop="toggle(option)" @mousedown.prevent.stop>
@@ -380,6 +380,18 @@
 				default: 'value'
 			},
 
+			applySearchFilterToOption: {
+			    type: Function,
+				default: function(search, option, filterField){
+                    let filter = search.toLowerCase()
+					if (!filterField) return true;
+                    if (typeof option[filterField] === 'string') {
+                        return option[filterField].toLowerCase().indexOf(filter) > -1
+					}
+					return false;
+				}
+			},
+
 			/**
 			 * Maximum text search input length in characters
 			 */
@@ -447,6 +459,13 @@
 				}
 			},
 
+            onClickSelectAll: {
+                type: Function,
+                default: function() {
+                    this.selectAll();
+                }
+            },
+
 			/**
 			 * A callback function that will be
 			 * run when the dropdown is closing.
@@ -455,6 +474,17 @@
 				type: Function,
 				default: function(){}
 			},
+
+            /**
+             * A callback function that will be
+             * run when the dropdown is opening.
+             */
+            onOpenDropdown: {
+                type: Function,
+                default: function(){
+                    this.onSearch(this.search, this.toggleLoading)
+				}
+            },
 
 			/**
 			 * Enable/disable filtering the options.
@@ -632,9 +662,9 @@
 				if (val != old) {
 					if(this.open) {
 						this.updateOptionsOnTop()
-						this.onSearch(this.search, this.toggleLoading)
                         this.checkIfDropdownIsAsWideAsSelect()
                         Vue.nextTick(() => this.checkIfDropdownIsAsWideAsSelect())
+						this.onOpenDropdown()
 					} else {
 						this.search = ''
 						this.onCloseDropdown()
@@ -673,10 +703,8 @@
 
 			isOptionVisibleByFilter(option){
 		      	let shouldFilter = (this.searchable || this.mutableLoading)
-				  && typeof option[this.filterField] === 'string'
                 if (shouldFilter) {
-		      	    let filter = this.search.toLowerCase()
-                    return option[this.filterField].toLowerCase().indexOf(filter) > -1
+		      	    return this.applySearchFilterToOption(this.search, option, this.filterField)
                 } else {
                     return true;
                 }
@@ -686,13 +714,9 @@
 				this.focused = true
 			},
 
-			selectFiltered() {
-			    this.select(this.filteredOptions)
+			selectAll() {
+			    return this.select(this.mutableOptions)
 			},
-
-            deselectFiltered() {
-			    this.deselect(this.filteredOptions)
-            },
 
 			onBlur() {
 				this.focused = false
@@ -752,6 +776,7 @@
                     this.open = false
                 }
                 this.mutableValues = list
+				return list
             },
 
 			/**
@@ -850,7 +875,7 @@
 			 * text in the search input, & there's tags to delete
 			 */
 			maybeDeleteValue() {
-				if (this.allowClear && this.search.length === 0 && this.mutableValues.length > 0) {
+				if (!this.multiple && this.allowClear && this.search.length === 0 && this.mutableValues.length > 0) {
 					this.deselect(this.mutableValues[this.mutableValues.length-1])
 				}
 			},
