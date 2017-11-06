@@ -690,7 +690,7 @@
 			},
 
 		    updateOptionsOnTop() {
-                this.optionsOnTop = Array.from(this.mutableValues) // shallow copy
+                this.optionsOnTop = this.mutableValues.map(val => val[this.valueField])
 			},
 
 		    onMouseOver(index, option){
@@ -858,16 +858,7 @@
 			},
 
             isOptionOnTop(option) {
-                if (this.optionsOnTop !== null && this.optionsOnTop !== undefined) {
-                    let selected = false
-                    this.optionsOnTop.forEach(opt => {
-                        if (opt[this.valueField] === option[this.valueField]) {
-                            selected = true
-                        }
-                    })
-                    return selected
-                }
-                return false
+                return this.optionsOnTop.indexOf(option[this.valueField]) > -1
             },
 
 			/**
@@ -977,11 +968,11 @@
 				let options = []
 				if (this.multiple && this.showSelectedOnTop) {
 				    options = options
-						.concat(this.optionsOnTop)
+						.concat(this.mutableValues.filter(opt => this.isOptionOnTop(opt)))
 				}
                 let additionalOptions = this.mutableOptions
 				if (this.multiple && this.showSelectedOnTop) {
-				    additionalOptions = this.mutableOptions.filter(option => !this.isOptionOnTop(option))
+				    additionalOptions = this.mutableOptions.filter(opt => !this.isOptionOnTop(opt))
                 }
                 if (options.length > 0 && additionalOptions.length > 0) {
 				    options = options.concat({
