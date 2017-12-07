@@ -67,20 +67,24 @@
 		border-radius: 4px;
 		white-space: nowrap;
 		overflow: hidden;
+		transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+	}
+
+	.v-select .dropdown-toggle.focused {
+		border-color: #66afe9;
+		outline: 0;
+		box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, .6);
+		transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
 	}
 
 	.v-select.searchable .dropdown-toggle {
 		cursor: text;
-		/* transition: box-shadow,border-color .5s ease; */
 	}
 
 	.v-select.open .dropdown-toggle {
 		border-bottom: none;
 		border-bottom-left-radius: 0;
 		border-bottom-right-radius: 0;
-		/* border-color: #66afe9;
-		box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(102, 175, 233, 0.6);
-		outline: 0 none; */
 	}
 
 	.v-select > .dropdown-menu {
@@ -240,7 +244,7 @@
 
 <template>
 	<div class="dropdown v-select" :class="dropdownClasses">
-		<div @mousedown.prevent.stop="toggleDropdown" ref="toggle" :class="['dropdown-toggle', 'clearfix', {'disabled': disabled}]">
+		<div @mousedown.prevent.stop="toggleDropdown" ref="toggle" :class="['dropdown-toggle', 'clearfix', {'disabled': disabled}, {'focused': focused}]">
 
 			<div :class="selectedTagClasses" v-if="!focused && !isValueEmpty">
 				<div class="selected-tag-content">
