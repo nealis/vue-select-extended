@@ -584,6 +584,15 @@
 				type: Boolean,
 				default: false
 			},
+
+			/**
+			 * When true, everytime you click on a VSelect it's data will be reloaded
+			 * @type {Boolean}
+			 */
+			alwaysReload: {
+				type: Boolean,
+				default: false
+			},
 		},
 
 		data() {
