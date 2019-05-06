@@ -604,8 +604,7 @@
 				mutableValues: [],
 				mutableOptions: [],
 				mutableLoading: false,
-				dropdownAsWideAsSelect: true,
-				alwaysReload: false,
+				dropdownAsWideAsSelect: true
 			}
 		},
 
